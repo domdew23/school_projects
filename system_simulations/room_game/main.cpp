@@ -58,10 +58,9 @@ int main(int argc, char** argv){
 		file.close();
 	} 
 
-	//for (int i = 0; i < num_rooms; i++){
-		//rooms[i]->init_neighbors(rooms);
-	//}
-	rooms[0]->init_neighbors(rooms);
+	for (int i = 0; i < num_rooms; i++){
+		rooms[i]->init_neighbors(rooms);
+	}
 	Room r = rooms[0]->get_south();
 	cout << "south id: " << r.get_id() << endl;
 	//Room* room_0 = rooms[0];
