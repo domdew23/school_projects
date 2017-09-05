@@ -3,10 +3,6 @@
 #include "room.h"
 using namespace std;
 
-Room::Room(){
-	id = -1;
-	state = -9999;
-}
 Room::Room(int id, int state, int ids[]){
 	this->id = id;
 	this->state = state;
@@ -18,19 +14,15 @@ Room::Room(int id, int state, int ids[]){
 void Room::init_neighbors(Room* rooms[]){
 	if (neighbor_ids[0] != -1){
 		set_north(rooms[neighbor_ids[0]]);
-		cout << "North ID: " << neighbors[0]->get_id() << " North State: " << neighbors[0]->get_state() << endl;
 	}
 	if (neighbor_ids[1] != -1){
 		set_south(rooms[neighbor_ids[1]]);
-		cout << "South ID: " << neighbors[1]->get_id() << " South State: " << neighbors[1]->get_state() << endl;
 	}
 	if (neighbor_ids[2] != -1){
 		set_east(rooms[neighbor_ids[2]]);
-		cout << "East ID: " << neighbors[2]->get_id() << " East State: " << neighbors[2]->get_state() << endl;
 	}
 	if (neighbor_ids[3] != -1){
 		set_west(rooms[neighbor_ids[3]]);
-		cout << "West ID: " << neighbors[3]->get_id() << " West State: " << neighbors[3]->get_state() << endl;
 	}
 }
 
@@ -72,4 +64,20 @@ int Room::get_id(){
 
 int Room::get_state(){
 	return this->state;
+}
+
+void Room::print_neighbors(){
+	cout << "Room #" << id << " has following neighbors:" << endl;
+	if (neighbors[0] != NULL){
+		cout << "Room #" << neighbors[0]->get_id() << " to the north with state " << neighbors[0]->get_state() << endl;
+	}
+	if (neighbors[1] != NULL){
+		cout << "Room #" << neighbors[1]->get_id() << " to the south with state " << neighbors[1]->get_state() << endl;
+	}
+	if (neighbors[2] != NULL){
+		cout << "Room #" << neighbors[2]->get_id() << " to the east with state " << neighbors[2]->get_state() << endl;
+	}
+	if (neighbors[3] != NULL){
+		cout << "Room #" << neighbors[3]->get_id() << " to the west with state " << neighbors[3]->get_state() << endl;
+	}
 }

@@ -37,6 +37,7 @@ using namespace std;
 // creature object -> subclasses: PC, NPC, animal
 
 int main(int argc, char** argv){
+	int respect = 40;
 	int num_rooms = 0;
 	int state, north_id, south_id, east_id, west_id = 0;
 	Room* rooms[3] = {};
@@ -61,6 +62,8 @@ int main(int argc, char** argv){
 	for (int i = 0; i < num_rooms; i++){
 		rooms[i]->init_neighbors(rooms);
 	}
+	cout << "-------" << endl;
+	rooms[0]->print_neighbors();
 	Room r = rooms[0]->get_south();
 	cout << "south id: " << r.get_id() << endl;
 	//Room* room_0 = rooms[0];
