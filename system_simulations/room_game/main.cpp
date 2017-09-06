@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
 #include "room.h"
+#include "creature.h"
 using namespace std;
 
 // rooms connected with doors, contain creatures
@@ -38,40 +41,55 @@ using namespace std;
 
 int main(int argc, char** argv){
 	int respect = 40;
-	int num_rooms = 0;
-	int state, north_id, south_id, east_id, west_id = 0;
+	int num_rooms, num_creatures, state, north_id, south_id, east_id, west_id = 0;
+	int creature_type, creature_location = 0;
 	Room* rooms[3] = {};
+	vector<Creature*> creatures;
 
 	if (argc == 2){
 		ifstream file(argv[1]);
 		if (file.is_open()){
-			if (file >> num_rooms){
-				cout << "Num rooms: " << num_rooms <<  endl;
-			}
+			file >> num_rooms;
 			for (int i = 0; i < num_rooms; i++){
 				if (file >> state >> north_id >> south_id >> east_id >> west_id){
 					int neighbor_ids[4] = {north_id, south_id, east_id, west_id};
 					Room* room = new Room(i, state, neighbor_ids);
 					rooms[i] = room;
 				}
-			}	
+			}
+			file >> num_creatures;
+			for (int i = 0; i < num_creatures; ++i){
+				if (file >> creature_type >> creature_location){
+					if (creature_type == 0){
+						//PC
+					} else if (creature_type == 1){
+						//animal
+					} else if (creature_type == 2){
+						//NPC
+					} else {
+						//error
+					}
+					Creature* c = new Creature(i);
+					creature_location = c->set_current_room(rooms, num_rooms, creature_location);
+					rooms[creature_location]->add_creature(c);
+					creatures.push_back(c);
+				}
+			}
 		}
-		file.close();
-	} 
-
+	} else {
+		cout << "Unexpected amount of arguments" << endl;
+	}
 	for (int i = 0; i < num_rooms; i++){
 		rooms[i]->init_neighbors(rooms);
+		rooms[i]->print_neighbors();
 	}
-	cout << "-------" << endl;
-	rooms[0]->print_neighbors();
-	Room r = rooms[0]->get_south();
-	cout << "south id: " << r.get_id() << endl;
-	//Room* room_0 = rooms[0];
-	//int id = room_0->get_id();
-	//cout << "ID: " << id << endl;
-	//Room* room_2 = new Room(34, 4);
-	//room_0->set_south(rooms[1]);
 
-	//cout << "South: " << room_0->get_south().get_state() << endl;
+	for (int i = 0; i < num_creatures; i++){
+		creatures[i]->look();
+		//cout << "Creature id: " << creatures[i]->get_id() << endl;
+		//cout << "Room location: " << creatures[i]->get_room()->get_id() << endl;
+	}
+
+
 	return 0;
 }
