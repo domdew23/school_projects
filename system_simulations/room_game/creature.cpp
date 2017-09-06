@@ -3,8 +3,9 @@
 #include "room.h"
 using namespace std;
 
-Creature::Creature(int id){
-	this->id = id;
+Creature::Creature(){
+	id = 0;
+	current_room = NULL;
 }
 
 int Creature::set_current_room(Room* rooms[], int num_rooms, int location){
@@ -25,7 +26,10 @@ Room* Creature::get_current_room(){
 	return this->current_room;
 }
 
+void Creature::set_id(int i){
+	id = i;
+}
 int Creature::get_id(){
-	return this->id;
+	return id;
 }
 

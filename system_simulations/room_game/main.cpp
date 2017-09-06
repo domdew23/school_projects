@@ -4,6 +4,7 @@
 #include <vector>
 #include "room.h"
 #include "creature.h"
+#include "animal.h"
 using namespace std;
 
 // rooms connected with doors, contain creatures
@@ -64,12 +65,19 @@ int main(int argc, char** argv){
 						//PC
 					} else if (creature_type == 1){
 						//animal
+						Animal* a = new Animal();
+						a->set_id(i);
+						creature_location = a->set_current_room(rooms, num_rooms, creature_location);
+						rooms[creature_location]->add_creature(a);
+						creatures.push_back(a);
+						cout << "Animal id: " << a->get_id() << endl;
 					} else if (creature_type == 2){
 						//NPC
 					} else {
 						//error
 					}
-					Creature* c = new Creature(i);
+					Creature* c = new Creature();
+					c->set_id(i);
 					creature_location = c->set_current_room(rooms, num_rooms, creature_location);
 					rooms[creature_location]->add_creature(c);
 					creatures.push_back(c);

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include "creature.h"
 #include "room.h"
 using namespace std;
 

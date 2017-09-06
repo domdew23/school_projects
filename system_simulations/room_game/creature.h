@@ -8,14 +8,16 @@ using namespace std;
 class Room;
 class Creature{
 	public:
-		Creature(int id);
+		Creature();
 		void look();
+		void set_id(int i);
 		int set_current_room(Room* r[], int num_rooms, int location);
 		Room* get_current_room();
 		int get_id();
-	private:
+	protected:
 		int id;
 		Room* current_room;
+	private:
 };
 
 #endif
