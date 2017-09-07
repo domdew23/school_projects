@@ -1,5 +1,8 @@
-output: room.o main.o creature.o animal.o pc.o npc.o
-	g++ room.o main.o creature.o animal.o pc.o npc.o -o game
+output: main.o room.o creature.o animal.o pc.o npc.o
+	g++ main.o room.o creature.o animal.o pc.o npc.o -o game
+
+main.o: main.cpp
+	g++ -c main.cpp
 
 room.o: room.cpp room.h
 	g++ -c room.cpp
@@ -15,9 +18,6 @@ pc.o: pc.cpp pc.h
 
 npc.o: npc.cpp npc.h
 	g++ -c npc.cpp
-
-main.o: main.cpp
-	g++ -c main.cpp
 
 clean:
 	rm *.o game

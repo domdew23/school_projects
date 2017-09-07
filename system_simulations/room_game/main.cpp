@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cstring>
 #include <string>
 #include <vector>
 #include "room.h"
@@ -81,6 +82,23 @@ int main(int argc, char** argv){
 	} else {
 		cout << "Unexpected amount of arguments" << endl;
 	}
+
+	char* input = new char[20];
+
+	do {	
+		cin >> input;
+		if (isdigit(input[0])){
+			//handle creature functions
+		} else {
+			// handle user functions
+		}
+		cout << "first char: " << input[0] << endl;
+		cout << "You entered: " << input << endl;
+	} while (strcmp(input, "quit") != 0);
+
+	cout << "you quit" << endl;
+	
+	/* //Tests:
 	for (int i = 0; i < num_rooms; i++){
 		rooms[i]->init_neighbors(rooms);
 	}
@@ -89,8 +107,7 @@ int main(int argc, char** argv){
 		creatures[i]->look();
 		//cout << "Creature id: " << creatures[i]->get_id() << endl;
 		//cout << "Room location: " << creatures[i]->get_room()->get_id() << endl;
-	}
-
+	}*/
 
 	return 0;
 }

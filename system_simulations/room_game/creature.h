@@ -9,9 +9,9 @@ using namespace std;
 class Room;
 class Creature{
 	public:
-		Creature(int id, Room* rooms[], int num_rooms, int location, string type);
+		Creature(int id, Room** rooms, int num_rooms, int location, string type);
 		void look();
-		int set_current_room(Room* r[], int num_rooms, int location);
+		int set_current_room(Room** r, int num_rooms, int location);
 		Room* get_current_room();
 		int get_id();
 		string get_type();

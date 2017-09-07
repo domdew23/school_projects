@@ -4,7 +4,7 @@
 #include "room.h"
 using namespace std;
 
-Creature::Creature(int id, Room* rooms[], int num_rooms, int location, string type){
+Creature::Creature(int id, Room** rooms, int num_rooms, int location, string type){
 	this->id = id;
 	this->type = type;
 	for (int i = 0; i < num_rooms; i++){
@@ -15,7 +15,7 @@ Creature::Creature(int id, Room* rooms[], int num_rooms, int location, string ty
 	}
 }
 
-int Creature::set_current_room(Room* rooms[], int num_rooms, int location){
+int Creature::set_current_room(Room** rooms, int num_rooms, int location){
 	for (int i = 0; i < num_rooms; i++){
 		if (location == rooms[i]->get_id()){
 			this->current_room = rooms[i];
