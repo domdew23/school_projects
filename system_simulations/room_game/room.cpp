@@ -36,8 +36,11 @@ void Room::init_neighbors(Room* rooms[]){
 }
 
 void Room::add_creature(Creature* c){
-	this->creatures.push_back(c);
-	cout << "Creature added!" << endl;
+	if (creatures.size() < 10){
+		this->creatures.push_back(c);
+	} else {
+		cout << "Creature " << c->get_id() << " denied entry, room full" << endl;
+	}
 }
 
 void Room::set_north(Room* r){
@@ -80,8 +83,20 @@ int Room::get_state(){
 	return this->state;
 }
 
-void Room::print_neighbors(){
-	cout << "Room #" << id << " has following neighbors:" << endl;
+void Room::print_description(){
+	string txt;
+	switch(this->state){
+		case 0:
+			txt = "Clean";
+			break;
+		case 1:
+			txt = "Half-dirty";
+			break;
+		case 2:
+			txt = "Dirty";
+			break;
+	}
+	cout << "Room #" << id << " is " << txt << " and has following neighbors: ";
 	for (int i = 0; i < 4; i++){
 		if (neighbors[i] != NULL){
 			string direction;
@@ -99,29 +114,13 @@ void Room::print_neighbors(){
 					direction = "West";
 					break;
 			}
-			cout << "Room #" << neighbors[i]->get_id() << " to the " << direction << " with state " << neighbors[i]->get_state() << endl;
+			cout << "room #" << neighbors[i]->get_id() << " to the " << direction << ", ";
 		}
+	}
+	cout << "and contains: " << endl;
+	for(int i = 0; i < this->creatures.size(); i++){
+		cout << creatures[i]->get_type() << ", id: " << creatures[i]->get_id() << endl;
 	}
 	cout << endl;
 }
 
-void Room::print_description(){
-	string txt;
-	switch(this->state){
-		case 0:
-			txt = "Clean";
-			break;
-		case 1:
-			txt = "Half-dirty";
-			break;
-		case 2:
-			txt = "Dirty";
-			break;
-	}
-
-	cout << "Room id: " << this->id << endl << "Room state: " << txt << endl << "Current creatures:" << endl;
-
-	for(int i = 0; i < this->creatures.size(); i++){
-		cout << "Creature id #" << creatures[i]->get_id() << " --- Creature type: <type goes here>" << endl;
-	}
-}

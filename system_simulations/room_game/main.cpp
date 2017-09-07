@@ -5,10 +5,10 @@
 #include "room.h"
 #include "creature.h"
 #include "animal.h"
+#include "pc.h"
+#include "npc.h"
 using namespace std;
 
-// rooms connected with doors, contain creatures
-// every room has at most 4 doors (North South East West) which stay in same place
 // every room has at most 10 creatures including PC - creatures will be denied with "Room Full"
 // creatures move between rooms (enter or leave)
 // when a creature leaves one room it has to enter antoher
@@ -42,8 +42,7 @@ using namespace std;
 
 int main(int argc, char** argv){
 	int respect = 40;
-	int num_rooms, num_creatures, state, north_id, south_id, east_id, west_id = 0;
-	int creature_type, creature_location = 0;
+	int num_rooms, num_creatures, type, loc, state, north_id, south_id, east_id, west_id = 0;
 	Room* rooms[3] = {};
 	vector<Creature*> creatures;
 
@@ -60,27 +59,22 @@ int main(int argc, char** argv){
 			}
 			file >> num_creatures;
 			for (int i = 0; i < num_creatures; ++i){
-				if (file >> creature_type >> creature_location){
-					if (creature_type == 0){
+				if (file >> type >> loc){
+					if (type == 0){
 						//PC
-					} else if (creature_type == 1){
+						PC* pc = new PC(i, rooms, num_rooms, loc, "PC");
+						creatures.push_back(pc);
+					} else if (type == 1){
 						//animal
-						Animal* a = new Animal();
-						a->set_id(i);
-						creature_location = a->set_current_room(rooms, num_rooms, creature_location);
-						rooms[creature_location]->add_creature(a);
+						Animal* a = new Animal(i, rooms, num_rooms, loc, "animal");
 						creatures.push_back(a);
-						cout << "Animal id: " << a->get_id() << endl;
-					} else if (creature_type == 2){
+					} else if (type == 2){
 						//NPC
+						NPC* npc = new NPC(i, rooms, num_rooms, loc, "NPC");
+						creatures.push_back(npc);
 					} else {
-						//error
+						cout << "Error parsing file.\nQuiting..." << endl;
 					}
-					Creature* c = new Creature();
-					c->set_id(i);
-					creature_location = c->set_current_room(rooms, num_rooms, creature_location);
-					rooms[creature_location]->add_creature(c);
-					creatures.push_back(c);
 				}
 			}
 		}
@@ -89,7 +83,6 @@ int main(int argc, char** argv){
 	}
 	for (int i = 0; i < num_rooms; i++){
 		rooms[i]->init_neighbors(rooms);
-		rooms[i]->print_neighbors();
 	}
 
 	for (int i = 0; i < num_creatures; i++){

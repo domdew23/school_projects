@@ -21,7 +21,6 @@ class Room {
 		Room get_west();
 		int get_id();
 		int get_state();
-		void print_neighbors();
 		void print_description();
 
 	private:
