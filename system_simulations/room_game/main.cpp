@@ -2,6 +2,8 @@
 #include <fstream>
 #include <cstring>
 #include <string>
+#include <cstring>
+#include <cstdlib>
 #include <vector>
 #include "room.h"
 #include "creature.h"
@@ -40,10 +42,27 @@ using namespace std;
 
 // room object (id, state, neighbors)
 // creature object -> subclasses: PC, NPC, animal
-
+bool handle_leave(string input, Creature* creature){
+	if (input == "north"){
+		//north
+		return true;
+	} else if (input == "south"){
+		//south
+		return true;
+	} else if (input == "east"){
+		//east
+		return true;
+	} else if (input == "west"){
+		//west
+		return true;
+	} else {
+		return false;
+	}
+}
 int main(int argc, char** argv){
 	int respect = 40;
-	int num_rooms, num_creatures, type, loc, state, north_id, south_id, east_id, west_id = 0;
+	int num_rooms, num_creatures, type, loc, pc_room, pc_id, state, north_id, south_id, east_id, west_id = 0;
+	PC* pc; 
 	Room* rooms[3] = {};
 	vector<Creature*> creatures;
 
@@ -63,7 +82,7 @@ int main(int argc, char** argv){
 				if (file >> type >> loc){
 					if (type == 0){
 						//PC
-						PC* pc = new PC(i, rooms, num_rooms, loc, "PC");
+						pc = new PC(i, rooms, num_rooms, loc, "PC");
 						creatures.push_back(pc);
 					} else if (type == 1){
 						//animal
@@ -83,31 +102,51 @@ int main(int argc, char** argv){
 		cout << "Unexpected amount of arguments" << endl;
 	}
 
-	char* input = new char[20];
-
-	do {	
-		cin >> input;
-		if (isdigit(input[0])){
-			//handle creature functions
-		} else {
-			// handle user functions
-		}
-		cout << "first char: " << input[0] << endl;
-		cout << "You entered: " << input << endl;
-	} while (strcmp(input, "quit") != 0);
-
-	cout << "you quit" << endl;
-	
-	/* //Tests:
 	for (int i = 0; i < num_rooms; i++){
 		rooms[i]->init_neighbors(rooms);
 	}
 
-	for (int i = 0; i < num_creatures; i++){
-		creatures[i]->look();
-		//cout << "Creature id: " << creatures[i]->get_id() << endl;
-		//cout << "Room location: " << creatures[i]->get_room()->get_id() << endl;
-	}*/
 
+	//char* input = new char[20];
+	string input = "";
+	int creat_id = 0;
+	Creature* creature = NULL;
+	while(true) {	
+		cin >> input;
+		if (isdigit(input[0])){
+			creat_id = atoi(input.substr(0, input.find(":")).c_str());
+			input = input.substr(input.find(":") + 1, input.length());
+			creature = creatures[creat_id];
+		} else {
+			creature = pc;
+		}
+
+		for (int i = 0; i < input.length(); i++){
+			input[i] = tolower(input[i]);
+		}
+
+		cout << "EDITED: " << input << endl;
+
+		if (!pc->get_current_room()->contains(creature)){
+			cout << "You can only apply commands to creatures in the your current room." << endl;
+			continue;
+		}
+
+		if (input == "look"){
+			creature->look();
+		} else if (input == "clean"){
+			//creature->clean();
+		} else if (input == "dirty"){
+			//creature->dirty();
+		} else {
+			if (!handle_leave(input, creature)){
+				if (input == "quit"){
+					break;
+				} else {
+					cout << "Please enter a valid command." << endl;
+				}
+			}
+		}
+	}
 	return 0;
 }

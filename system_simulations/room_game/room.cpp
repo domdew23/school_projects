@@ -7,6 +7,7 @@ using namespace std;
 Room::Room(int id, int state, int ids[]){
 	this->id = id;
 	this->state = state;
+	size = 0;
 	for (int i = 0; i < 4; i++){
 		neighbor_ids[i] = ids[i];
 	}
@@ -37,6 +38,7 @@ void Room::init_neighbors(Room* rooms[]){
 
 void Room::add_creature(Creature* c){
 	if (creatures.size() < 10){
+		size++;
 		this->creatures.push_back(c);
 	} else {
 		cout << "Creature " << c->get_id() << " denied entry, room full" << endl;
@@ -99,7 +101,7 @@ void Room::print_description(){
 	cout << "Room #" << id << " is " << txt << " and has following neighbors: ";
 	for (int i = 0; i < 4; i++){
 		if (neighbors[i] != NULL){
-			string direction;
+			string direction = "";
 			switch (i){
 				case 0: 
 					direction = "North";
@@ -124,3 +126,19 @@ void Room::print_description(){
 	cout << endl;
 }
 
+bool Room::is_full(){
+	if (size == 10){
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool Room::contains(Creature* c){
+	for (int i = 0; i < creatures.size(); i++){
+		if (creatures[i] == c){
+			return true;
+		}
+	}
+	return false;
+}

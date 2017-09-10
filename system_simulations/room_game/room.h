@@ -22,10 +22,12 @@ class Room {
 		int get_id();
 		int get_state();
 		void print_description();
+		bool is_full();
+		bool contains(Creature* c);
 
 	private:
 		// [0] = north, [1] = south, [2] = east, [3] = west
-		int id, state;
+		int id, state, size;
 		Room* neighbors[4];
 		int neighbor_ids[4];
 		vector<Creature*> creatures;	
