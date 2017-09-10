@@ -1,7 +1,6 @@
 #ifndef PC_H
 #define PC_H
-#include <string>
-#include "creature.h"
+using namespace std;
 
 class PC : public Creature{
 	public:

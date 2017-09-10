@@ -44,16 +44,16 @@ using namespace std;
 // creature object -> subclasses: PC, NPC, animal
 bool handle_leave(string input, Creature* creature){
 	if (input == "north"){
-		//north
+		creature->leave(0, input);
 		return true;
 	} else if (input == "south"){
-		//south
+		creature->leave(1, input);
 		return true;
 	} else if (input == "east"){
-		//east
+		creature->leave(2, input);
 		return true;
 	} else if (input == "west"){
-		//west
+		creature->leave(3, input);
 		return true;
 	} else {
 		return false;
@@ -61,7 +61,7 @@ bool handle_leave(string input, Creature* creature){
 }
 int main(int argc, char** argv){
 	int respect = 40;
-	int num_rooms, num_creatures, type, loc, pc_room, pc_id, state, north_id, south_id, east_id, west_id = 0;
+	int num_rooms, num_creatures, type, loc, state, north_id, south_id, east_id, west_id = 0;
 	PC* pc; 
 	Room* rooms[3] = {};
 	vector<Creature*> creatures;
@@ -135,6 +135,8 @@ int main(int argc, char** argv){
 		if (input == "look"){
 			creature->look();
 		} else if (input == "clean"){
+			cout << "Type: " << creature->get_type() << endl;
+			creature->react();
 			//creature->clean();
 		} else if (input == "dirty"){
 			//creature->dirty();

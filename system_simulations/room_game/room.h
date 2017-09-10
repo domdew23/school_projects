@@ -1,8 +1,5 @@
 #ifndef ROOM_H
 #define ROOM_H
-#include <iostream>
-#include <vector>
-#include "creature.h"
 using namespace std;
 
 class Creature;
@@ -10,7 +7,8 @@ class Room {
 	public:
 		Room(int id, int state, int neighbors_ids[]);
 		void init_neighbors(Room* rooms[]);
-		void add_creature(Creature* c);
+		bool add_creature(Creature* c);
+		bool remove_creature(Creature* c);
 		void set_north(Room* r);
 		void set_south(Room* r);
 		void set_east(Room* r);
@@ -24,6 +22,10 @@ class Room {
 		void print_description();
 		bool is_full();
 		bool contains(Creature* c);
+		Room** get_neighbors();
+		void clean();
+		void dirty();
+		~Room();
 
 	private:
 		// [0] = north, [1] = south, [2] = east, [3] = west

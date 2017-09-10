@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 #include "creature.h"
 #include "room.h"
 using namespace std;
@@ -36,13 +37,24 @@ void Room::init_neighbors(Room* rooms[]){
 	}
 }
 
-void Room::add_creature(Creature* c){
+bool Room::add_creature(Creature* c){
 	if (creatures.size() < 10){
 		size++;
 		this->creatures.push_back(c);
+		c->set_current_room(this);
 	} else {
 		cout << "Creature " << c->get_id() << " denied entry, room full" << endl;
 	}
+}
+
+bool Room::remove_creature(Creature* c){
+	for (int i = 0; i < creatures.size(); ++i){
+	 	if (creatures[i] == c){
+	 		creatures.erase(creatures.begin() + i);
+	 		return true;
+	 	}
+	 }
+	 return false; 
 }
 
 void Room::set_north(Room* r){
@@ -142,3 +154,20 @@ bool Room::contains(Creature* c){
 	}
 	return false;
 }
+
+Room** Room::get_neighbors(){
+	return neighbors;
+}
+
+void Room::clean(){
+
+}
+
+void Room::dirty(){
+
+}
+
+Room::~Room(){
+	
+}
+

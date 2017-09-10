@@ -1,7 +1,10 @@
 #include <iostream>
 #include <string>
-#include "creature.h"
+#include <vector>
 #include "room.h"
+#include "animal.h"
+#include "npc.h"
+#include "creature.h"
 using namespace std;
 
 Creature::Creature(int id, Room** rooms, int num_rooms, int location, string type){
@@ -15,14 +18,8 @@ Creature::Creature(int id, Room** rooms, int num_rooms, int location, string typ
 	}
 }
 
-int Creature::set_current_room(Room** rooms, int num_rooms, int location){
-	for (int i = 0; i < num_rooms; i++){
-		if (location == rooms[i]->get_id()){
-			this->current_room = rooms[i];
-			return i;
-		}
-	}
-	cout << "Error setting creature location" << endl;
+int Creature::set_current_room(Room* r){
+	current_room = r;
 }
 
 void Creature::look(){
@@ -41,3 +38,24 @@ string Creature::get_type(){
 	return type;
 }
 
+void Creature::clean(){
+	current_room->clean();
+}
+
+void Creature::dirty(){
+	current_room->dirty();
+}
+
+void Creature::leave(int i, string txt){
+	Room* room = current_room->get_neighbors()[i]; 
+	if (room != NULL){
+		current_room->remove_creature(this);
+		room->add_creature(this);
+	} else {
+		cout << "There is no neighbors to the " << txt << " of this room." << endl;
+	}
+}
+
+Creature::~Creature(){
+	cout << "deconstructing" << endl;
+}
