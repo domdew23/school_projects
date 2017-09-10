@@ -6,3 +6,6 @@
 #include "pc.h"
 using namespace std;
 
+void PC::react(){
+	cout << "PC reacting..." << endl;
+}

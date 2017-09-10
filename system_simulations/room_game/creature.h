@@ -14,8 +14,8 @@ class Creature{
 		void clean();
 		void dirty();
 		void leave(int i, string txt);
-		virtual void react();
-		virtual ~Creature();
+		virtual void react() = 0;
+		~Creature();
 	protected:
 		int id;
 		string type;
