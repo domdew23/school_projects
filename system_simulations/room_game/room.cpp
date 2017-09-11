@@ -48,9 +48,10 @@ bool Room::add_creature(Creature* c){
 }
 
 bool Room::remove_creature(Creature* c){
-	for (int i = 0; i < creatures.size(); ++i){
+	for (int i = 0; i < creatures.size(); i++){
 	 	if (creatures[i] == c){
 	 		creatures.erase(creatures.begin() + i);
+	 		size--;
 	 		return true;
 	 	}
 	 }
@@ -158,7 +159,11 @@ Room** Room::get_neighbors(){
 	return neighbors;
 }
 
-void Room::change_state(string change, Creature* creature, int* respect){
+void Room::change_state(string change, Creature* creature, int* respect, bool forced){
+	Creature* tmp[size];
+	for (int i = 0; i < size; i++){
+		tmp[i] = creatures[i];
+	}
 	bool cleaning = false;
 	switch (state){
 		case 0:
@@ -196,18 +201,22 @@ void Room::change_state(string change, Creature* creature, int* respect){
 			cout << "Something wrong with room state" << endl;
 	}
 
+	if (forced){
+		return;
+	}
+
 	bool this_creat = false;
-	for (int i = 0; i < creatures.size(); i++){
-		if (creatures[i]->get_type() != "PC"){
-			if (creature == creatures[i]){
+	for (int i = 0; i < size; i++){
+		if (tmp[i]->get_type() != "PC"){
+			if (creature == tmp[i]){
 				this_creat = true;
 			} else {
 				this_creat = false;
 			}
 			if (cleaning){
-				creatures[i]->react("clean", this_creat, respect);
+				tmp[i]->react("clean", this_creat, respect);
 			} else {
-				creatures[i]->react("dirty", this_creat, respect);
+				tmp[i]->react("dirty", this_creat, respect);
 			}
 		}
 	}

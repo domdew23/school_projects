@@ -42,18 +42,18 @@ using namespace std;
 
 // room object (id, state, neighbors)
 // creature object -> subclasses: PC, NPC, animal
-bool handle_leave(string input, Creature* creature){
+bool handle_leave(string input, Creature* creature, int* respect){
 	if (input == "north"){
-		creature->leave(0, input);
+		creature->leave(0, input, respect, false);
 		return true;
 	} else if (input == "south"){
-		creature->leave(1, input);
+		creature->leave(1, input, respect, false);
 		return true;
 	} else if (input == "east"){
-		creature->leave(2, input);
+		creature->leave(2, input, respect, false);
 		return true;
 	} else if (input == "west"){
-		creature->leave(3, input);
+		creature->leave(3, input, respect, false);
 		return true;
 	} else {
 		return false;
@@ -135,11 +135,11 @@ int main(int argc, char** argv){
 		if (input == "look"){
 			creature->look();
 		} else if (input == "clean"){
-			creature->clean(creature, respect);
+			creature->clean(creature, respect, false);
 		} else if (input == "dirty"){
-			creature->dirty(creature, respect);
+			creature->dirty(creature, respect, false);
 		} else {
-			if (!handle_leave(input, creature)){
+			if (!handle_leave(input, creature, respect)){
 				if (input == "quit"){
 					cout << "Quiting..." << endl;
 					break;

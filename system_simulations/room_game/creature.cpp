@@ -39,15 +39,15 @@ string Creature::get_type(){
 	return type;
 }
 
-void Creature::clean(Creature* creature, int* respect){
-	current_room->change_state("clean", creature, respect);
+void Creature::clean(Creature* creature, int* respect, bool forced){
+	current_room->change_state("clean", creature, respect, forced);
 }
 
-void Creature::dirty(Creature* creature, int* respect){
-	current_room->change_state("dirty", creature, respect);
+void Creature::dirty(Creature* creature, int* respect, bool forced){
+	current_room->change_state("dirty", creature, respect, forced);
 }
 
-void Creature::leave(int i, string txt){
+void Creature::leave(int i, string txt, int* respect, bool forced){
 	Room* room = current_room->get_neighbors()[i]; 
 	if (room != NULL){
 		current_room->remove_creature(this);
@@ -55,43 +55,54 @@ void Creature::leave(int i, string txt){
 		if (type == "PC"){
 			cout << "You leave to the " << txt << endl;
 		} else {
-			if (type == "NPC"){
-				if (room->get_state() == 0){
-					//current_room->change_state("clean", )
+			cout << id << " leaves to the " << txt << endl;			
+			if (forced){
+				if (type == "NPC" && get_current_room()->get_state() == 0){
+					dirty(this, respect, true);
+				} else if (type == "animal" && get_current_room()->get_state() == 2){
+					clean(this, respect, true);
 				}
 			}
-			cout << id << " leaves to the " << txt << endl;			
 		}
 	} else {
 		cout << "There is no neighbors to the " << txt << " of this room." << endl;
 	}
 }
 
-void Creature::check_status(){
+void Creature::check_status(int* respect){
 	int i = 0;
+	int iter = 0;
 	while(true){
 		i = rand() % 4;
-		if (current_room->get_neighbors()[i] != NULL){
-			string txt = "";
-			switch(i){
-				case 0:
-					txt = "north";
-					break;
-				case 1:
-					txt = "south";
-					break;
-				case 2:
-					txt = "east";
-					break;
-				case 3:
-					txt = "west";
-					break;
-				default:
-					cout << "Something went wrong in leaving room" << endl;
-			}
-			leave(i, txt);
-			return;
+		if (iter >= 500){
+			cout << "All rooms full. Deleting creature" << endl;
+			current_room->remove_creature(this);
+			return; 
 		}
+		if (current_room->get_neighbors()[i] != NULL){
+			if (!current_room->get_neighbors()[i]->is_full()){
+				string txt = "";
+				switch(i){
+					case 0:
+						txt = "north";
+						break;
+					case 1:
+						txt = "south";
+						break;
+					case 2:
+						txt = "east";
+						break;
+					case 3:
+						txt = "west";
+						break;
+					default:
+						cout << "Something went wrong in leaving room" << endl;
+				}
+				leave(i, txt, respect, true);
+				return;
+			}
+		}
+		iter++;
 	}
 }
 

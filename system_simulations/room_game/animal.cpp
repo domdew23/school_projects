@@ -10,7 +10,7 @@ void Animal::react(string action, bool this_creat, int* respect) {
 	int multiplier = 1;
 	string txt = "";	
 	if (this_creat){
-		txt = "a lot";
+		txt = " a lot";
 		multiplier = 3;
 	}
 
@@ -21,7 +21,7 @@ void Animal::react(string action, bool this_creat, int* respect) {
 		*respect -= multiplier;
 		cout << id << " growls" << txt << ". Respect is now " << *respect << endl;
 		if (current_room->get_state() == 2){
-			check_status();
+			check_status(respect);
 		}
 	} else {
 		//error
