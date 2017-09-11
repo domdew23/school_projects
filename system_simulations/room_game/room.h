@@ -23,8 +23,7 @@ class Room {
 		bool is_full();
 		bool contains(Creature* c);
 		Room** get_neighbors();
-		void clean();
-		void dirty();
+		void change_state(string change, Creature* creature, int* respect);
 		~Room();
 
 	private:

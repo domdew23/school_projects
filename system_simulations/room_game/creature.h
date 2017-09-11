@@ -11,10 +11,11 @@ class Creature{
 		Room* get_current_room();
 		int get_id();
 		string get_type();
-		void clean();
-		void dirty();
+		void clean(Creature* creature, int* respect);
+		void dirty(Creature* creature, int* respect);
 		void leave(int i, string txt);
-		virtual void react() = 0;
+		virtual void react(string action, bool this_creat, int* respect) = 0;
+		void check_status();
 		~Creature();
 	protected:
 		int id;

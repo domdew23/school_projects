@@ -60,7 +60,8 @@ bool handle_leave(string input, Creature* creature){
 	}
 }
 int main(int argc, char** argv){
-	int respect = 40;
+	int r = 40;
+	int* respect = &r;
 	int num_rooms, num_creatures, type, loc, state, north_id, south_id, east_id, west_id = 0;
 	PC* pc; 
 	Room* rooms[3] = {};
@@ -106,26 +107,25 @@ int main(int argc, char** argv){
 		rooms[i]->init_neighbors(rooms);
 	}
 
-
-	//char* input = new char[20];
 	string input = "";
 	int creat_id = 0;
 	Creature* creature = NULL;
+	bool is_creat = false;
 	while(true) {	
 		cin >> input;
 		if (isdigit(input[0])){
 			creat_id = atoi(input.substr(0, input.find(":")).c_str());
 			input = input.substr(input.find(":") + 1, input.length());
 			creature = creatures[creat_id];
+			is_creat = true;
 		} else {
+			is_creat = false;
 			creature = pc;
 		}
 
 		for (int i = 0; i < input.length(); i++){
 			input[i] = tolower(input[i]);
 		}
-
-		cout << "EDITED: " << input << endl;
 
 		if (!pc->get_current_room()->contains(creature)){
 			cout << "You can only apply commands to creatures in the your current room." << endl;
@@ -135,20 +135,20 @@ int main(int argc, char** argv){
 		if (input == "look"){
 			creature->look();
 		} else if (input == "clean"){
-			cout << "Type: " << creature->get_type() << endl;
-			creature->react();
-			//creature->clean();
+			creature->clean(creature, respect);
 		} else if (input == "dirty"){
-			//creature->dirty();
+			creature->dirty(creature, respect);
 		} else {
 			if (!handle_leave(input, creature)){
 				if (input == "quit"){
+					cout << "Quiting..." << endl;
 					break;
 				} else {
 					cout << "Please enter a valid command." << endl;
 				}
 			}
 		}
+		cout << endl;
 	}
 	return 0;
 }

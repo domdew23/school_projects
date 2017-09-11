@@ -6,6 +6,6 @@
 #include "pc.h"
 using namespace std;
 
-void PC::react(){
-	cout << "PC reacting..." << endl;
+void PC::react(string action, bool this_creat, int* respect){
+	cout << "ERROR: This should not be called." << endl;
 }

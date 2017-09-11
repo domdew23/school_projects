@@ -135,7 +135,6 @@ void Room::print_description(){
 	for(int i = 0; i < this->creatures.size(); i++){
 		cout << creatures[i]->get_type() << ", id: " << creatures[i]->get_id() << endl;
 	}
-	cout << endl;
 }
 
 bool Room::is_full(){
@@ -159,13 +158,61 @@ Room** Room::get_neighbors(){
 	return neighbors;
 }
 
-void Room::clean(){
+void Room::change_state(string change, Creature* creature, int* respect){
+	bool cleaning = false;
+	switch (state){
+		case 0:
+			if (change == "clean"){
+				cleaning = true;
+				cout << "This room is already clean." << endl;
+				return;
+			} else {
+				//cout << "Dirtying..." << endl;
+				state = 1;
+				break;
+			}
+		case 1:
+			if (change == "clean"){
+				cleaning = true;
+				//cout << "Cleaning..." << endl;
+				state = 0;
+				break;
+			} else {
+				//cout << "Dirtying..." << endl;
+				state = 2;
+				break;
+			}
+		case 2:
+			if (change == "clean"){
+				cleaning = true;
+				//cout << "Cleaning..." << endl;
+				state = 1;
+				break;				
+			} else  {
+				cout << "This room is already dirty." << endl;
+				return;	
+			}
+		default:
+			cout << "Something wrong with room state" << endl;
+	}
 
+	bool this_creat = false;
+	for (int i = 0; i < creatures.size(); i++){
+		if (creatures[i]->get_type() != "PC"){
+			if (creature == creatures[i]){
+				this_creat = true;
+			} else {
+				this_creat = false;
+			}
+			if (cleaning){
+				creatures[i]->react("clean", this_creat, respect);
+			} else {
+				creatures[i]->react("dirty", this_creat, respect);
+			}
+		}
+	}
 }
 
-void Room::dirty(){
-
-}
 
 Room::~Room(){
 	

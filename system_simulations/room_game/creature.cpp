@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <cstdlib>
 #include "room.h"
 #include "animal.h"
 #include "npc.h"
@@ -38,12 +39,12 @@ string Creature::get_type(){
 	return type;
 }
 
-void Creature::clean(){
-	current_room->clean();
+void Creature::clean(Creature* creature, int* respect){
+	current_room->change_state("clean", creature, respect);
 }
 
-void Creature::dirty(){
-	current_room->dirty();
+void Creature::dirty(Creature* creature, int* respect){
+	current_room->change_state("dirty", creature, respect);
 }
 
 void Creature::leave(int i, string txt){
@@ -51,8 +52,46 @@ void Creature::leave(int i, string txt){
 	if (room != NULL){
 		current_room->remove_creature(this);
 		room->add_creature(this);
+		if (type == "PC"){
+			cout << "You leave to the " << txt << endl;
+		} else {
+			if (type == "NPC"){
+				if (room->get_state() == 0){
+					//current_room->change_state("clean", )
+				}
+			}
+			cout << id << " leaves to the " << txt << endl;			
+		}
 	} else {
 		cout << "There is no neighbors to the " << txt << " of this room." << endl;
+	}
+}
+
+void Creature::check_status(){
+	int i = 0;
+	while(true){
+		i = rand() % 4;
+		if (current_room->get_neighbors()[i] != NULL){
+			string txt = "";
+			switch(i){
+				case 0:
+					txt = "north";
+					break;
+				case 1:
+					txt = "south";
+					break;
+				case 2:
+					txt = "east";
+					break;
+				case 3:
+					txt = "west";
+					break;
+				default:
+					cout << "Something went wrong in leaving room" << endl;
+			}
+			leave(i, txt);
+			return;
+		}
 	}
 }
 
