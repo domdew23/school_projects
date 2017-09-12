@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <time.h>
 #include "room.h"
 #include "animal.h"
 #include "npc.h"
@@ -11,6 +12,7 @@ using namespace std;
 Creature::Creature(int id, Room** rooms, int num_rooms, int location, string type){
 	this->id = id;
 	this->type = type;
+	this->remove = false;
 	for (int i = 0; i < num_rooms; i++){
 		if (location == rooms[i]->get_id()){
 			this->current_room = rooms[i];
@@ -72,10 +74,13 @@ void Creature::leave(int i, string txt, int* respect, bool forced){
 void Creature::check_status(int* respect){
 	int i = 0;
 	int iter = 0;
+	srand(time(NULL));
 	while(true){
 		i = rand() % 4;
+		cout << "i: " << i << " -- iter: " << iter << endl;
 		if (iter >= 500){
 			cout << "All rooms full. Deleting creature" << endl;
+			
 			current_room->remove_creature(this);
 			return; 
 		}

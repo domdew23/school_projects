@@ -21,6 +21,7 @@ class Creature{
 		int id;
 		string type;
 		Room* current_room;
+		bool remove;
 	private:
 };
 

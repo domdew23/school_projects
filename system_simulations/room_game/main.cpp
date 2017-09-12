@@ -20,7 +20,7 @@ using namespace std;
 // room states: dirty, half-dirty, clean
 // creatures have preferences on room cleanliness
 // NPCS - dirty/half-dirty, PC - doesn't care, animals - Clean/half-dirty
-// inital respect = 40 (smile/lickFace + 1 || grumble/growl - 1)
+// inital respect = 40 (sm, ile/lickFace + 1 || grumble/growl - 1)
 // NPCs, animals can perform actions when not in same room as PC
 // PC can clean or dirty a room or make creature do it in current room
 // creatures might have to leave to an adjacent room if room state changes and creature can't stay
@@ -42,6 +42,7 @@ using namespace std;
 
 // room object (id, state, neighbors)
 // creature object -> subclasses: PC, NPC, animal
+
 bool handle_leave(string input, Creature* creature, int* respect){
 	if (input == "north"){
 		creature->leave(0, input, respect, false);
@@ -59,6 +60,7 @@ bool handle_leave(string input, Creature* creature, int* respect){
 		return false;
 	}
 }
+
 int main(int argc, char** argv){
 	int r = 40;
 	int* respect = &r;
@@ -111,7 +113,15 @@ int main(int argc, char** argv){
 	int creat_id = 0;
 	Creature* creature = NULL;
 	bool is_creat = false;
-	while(true) {	
+	while(true) {
+		if (*respect >= 80){
+			cout << "You win! ";
+			break;
+		} else if (*respect <= 0){
+			cout << "You lose. ";
+			break;
+		}
+
 		cin >> input;
 		if (isdigit(input[0])){
 			creat_id = atoi(input.substr(0, input.find(":")).c_str());
@@ -140,7 +150,7 @@ int main(int argc, char** argv){
 			creature->dirty(creature, respect, false);
 		} else {
 			if (!handle_leave(input, creature, respect)){
-				if (input == "quit"){
+				if (input == "exit"){
 					cout << "Quiting..." << endl;
 					break;
 				} else {
@@ -150,5 +160,6 @@ int main(int argc, char** argv){
 		}
 		cout << endl;
 	}
+	cout << "You finished with a respect of " << *respect << endl;
 	return 0;
 }

@@ -63,7 +63,7 @@ void Room::set_north(Room* r){
 }
 
 void Room::set_south(Room* r){
-	neighbors[1] = r;
+	neighbors[1] = r; 
 }
 
 void Room::set_east(Room* r){
