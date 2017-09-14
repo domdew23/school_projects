@@ -7,7 +7,6 @@
 using namespace std;
 
 bool Animal::react(string action, bool this_creat, int* respect) {
-	cout << "reacting..." << endl;
 	int multiplier = 1;
 	happy = true;
 	string txt = "";	

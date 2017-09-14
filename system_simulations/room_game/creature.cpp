@@ -77,7 +77,7 @@ void Creature::forced_leave(int* respect){
 	while(true){
 		i = rand() % 4;
 		if (iter >= 500){
-			cout << "All rooms full. " << type << " " << id << " has buried a hole in the ground and left." << endl;
+			cout << "All rooms full. " << type << " " << id << " has drilled a hole in the ceiling and left the simulation." << endl;
 			current_room->remove_creature(this);
 			delete this;
 			return; 

@@ -138,10 +138,11 @@ Room** Room::get_neighbors(){
 }
 
 void Room::change_state(string change, Creature* creature, int* respect, bool forced){
-	Creature* tmp[size];
-	for (int i = 0; i < size; i++){
+	vector<Creature*> tmp = creatures;
+
+	/*for (int i = 0; i < size; i++){
 		tmp[i] = creatures[i];
-	}
+	}*/
 	
 	bool cleaning = false;
 	switch (state){
@@ -182,7 +183,7 @@ void Room::change_state(string change, Creature* creature, int* respect, bool fo
 
 	bool this_creat = false;
 	bool needs_to_leave = false;
-	for (int i = 0; i < size; i++){
+	for (int i = 0; i < tmp.size(); i++){
 		if (tmp[i]->get_type() != "PC"){
 			if (creature == tmp[i]){
 				this_creat = true;
