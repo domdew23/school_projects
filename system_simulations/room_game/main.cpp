@@ -115,7 +115,7 @@ int main(int argc, char** argv){
 						NPC* npc = new NPC(i, rooms, num_rooms, loc, "NPC");
 						creatures.push_back(npc);
 					} else {
-						cout << "Error parsing file.\nQuiting..." << endl;
+						cout << "Error parsing file.\nQuiting now..." << endl;
 					}
 				}
 			}
