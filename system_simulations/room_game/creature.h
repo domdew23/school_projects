@@ -14,8 +14,8 @@ class Creature{
 		void clean(Creature* creature, int* respect, bool forced=false);
 		void dirty(Creature* creature, int* respect, bool forced=false);
 		void leave(int i, string txt, int* respect, bool forced=false);
-		virtual void react(string action, bool this_creat, int* respect) = 0;
-		void check_status(int* respect);
+		virtual bool react(string action, bool this_creat, int* respect) = 0;
+		void forced_leave(int* respect);
 		bool is_happy();
 		~Creature();
 	protected:

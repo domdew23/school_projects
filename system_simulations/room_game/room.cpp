@@ -42,6 +42,11 @@ bool Room::add_creature(Creature* c){
 		size++;
 		this->creatures.push_back(c);
 		c->set_current_room(this);
+		if (state == 2 && c->get_type() == "animal"){
+			state = 1;
+		} else if (state == 0 && c->get_type() == "NPC"){
+			state = 1;
+		}
 		return true;
 	} else {
 		return false;	
@@ -137,6 +142,7 @@ void Room::change_state(string change, Creature* creature, int* respect, bool fo
 	for (int i = 0; i < size; i++){
 		tmp[i] = creatures[i];
 	}
+	
 	bool cleaning = false;
 	switch (state){
 		case 0:
@@ -174,11 +180,8 @@ void Room::change_state(string change, Creature* creature, int* respect, bool fo
 			cout << "Something wrong with room state" << endl;
 	}
 
-	if (forced){
-		return;
-	}
-
 	bool this_creat = false;
+	bool needs_to_leave = false;
 	for (int i = 0; i < size; i++){
 		if (tmp[i]->get_type() != "PC"){
 			if (creature == tmp[i]){
@@ -187,17 +190,13 @@ void Room::change_state(string change, Creature* creature, int* respect, bool fo
 				this_creat = false;
 			}
 			if (cleaning){
-				tmp[i]->react("clean", this_creat, respect);
+				needs_to_leave = tmp[i]->react("clean", this_creat, respect);
 			} else {
-				tmp[i]->react("dirty", this_creat, respect);
+				needs_to_leave = tmp[i]->react("dirty", this_creat, respect);
 			}
-		}
-	}
-
-	for (int i = 0; i < size; i++){
-		Creature* c = tmp[i];
-		if (!c->is_happy()){
-			c->check_status(respect);
+			if (needs_to_leave){
+				tmp[i]->forced_leave(respect);
+			}
 		}
 	}
 }

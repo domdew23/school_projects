@@ -56,7 +56,7 @@ void Creature::leave(int i, string txt, int* respect, bool forced){
 			cout << "Room full." << endl;
 			return;
 		}
-		
+
 		current_room->remove_creature(this);
 		room->add_creature(this);
 
@@ -64,20 +64,13 @@ void Creature::leave(int i, string txt, int* respect, bool forced){
 			cout << "You leave to the " << txt << endl;
 		} else {
 			cout << id << " leaves to the " << txt << endl;			
-			if (forced){
-				if (type == "NPC" && get_current_room()->get_state() == 0){
-					dirty(this, respect, true);
-				} else if (type == "animal" && get_current_room()->get_state() == 2){
-					clean(this, respect, true);
-				}
-			}
 		}
 	} else {
 		cout << "There is no neighbors to the " << txt << " of this room." << endl;
 	}
 }
 
-void Creature::check_status(int* respect){
+void Creature::forced_leave(int* respect){
 	int i = 0;
 	int iter = 0;
 	srand(time(NULL));

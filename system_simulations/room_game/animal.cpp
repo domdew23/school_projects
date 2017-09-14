@@ -6,7 +6,7 @@
 #include "animal.h"
 using namespace std;
 
-void Animal::react(string action, bool this_creat, int* respect) {
+bool Animal::react(string action, bool this_creat, int* respect) {
 	cout << "reacting..." << endl;
 	int multiplier = 1;
 	happy = true;
@@ -19,12 +19,14 @@ void Animal::react(string action, bool this_creat, int* respect) {
 	if (action == "clean"){
 		*respect += multiplier;
 		cout << id << " licks your face" << txt << ". Respect is now " << *respect << endl;
+		return false;
 	} else if (action == "dirty"){
 		*respect -= multiplier;
 		cout << id << " growls" << txt << ". Respect is now " << *respect << endl;
 		if (current_room->get_state() == 2){
-			happy = false;
+			return true;
 		}
+		return false;
 	} else {
 		//error
 	}
