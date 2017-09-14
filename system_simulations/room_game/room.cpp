@@ -139,11 +139,6 @@ Room** Room::get_neighbors(){
 
 void Room::change_state(string change, Creature* creature, int* respect, bool forced){
 	vector<Creature*> tmp = creatures;
-
-	/*for (int i = 0; i < size; i++){
-		tmp[i] = creatures[i];
-	}*/
-	
 	bool cleaning = false;
 	switch (state){
 		case 0:

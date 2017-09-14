@@ -8,7 +8,6 @@ using namespace std;
 
 bool Animal::react(string action, bool this_creat, int* respect) {
 	int multiplier = 1;
-	happy = true;
 	string txt = "";	
 	if (this_creat){
 		txt = " a lot";
@@ -25,8 +24,8 @@ bool Animal::react(string action, bool this_creat, int* respect) {
 		if (current_room->get_state() == 2){
 			return true;
 		}
-		return false;
 	} else {
 		//error
 	}
+	return false;
 }

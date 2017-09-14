@@ -7,7 +7,7 @@ class Creature{
 	public:
 		Creature(int id, Room** rooms, int num_rooms, int location, string type);
 		void look();
-		int set_current_room(Room* r);
+		void set_current_room(Room* r);
 		Room* get_current_room();
 		int get_id();
 		string get_type();
@@ -23,7 +23,6 @@ class Creature{
 		string type;
 		Room* current_room;
 		bool remove;
-		bool happy;
 	private:
 };
 

@@ -21,7 +21,7 @@ Creature::Creature(int id, Room** rooms, int num_rooms, int location, string typ
 	}
 }
 
-int Creature::set_current_room(Room* r){
+void Creature::set_current_room(Room* r){
 	current_room = r;
 }
 
@@ -107,13 +107,6 @@ void Creature::forced_leave(int* respect){
 		}
 		iter++;
 	}
-}
-
-bool Creature::is_happy(){
-	if (happy){
-		return true;
-	}
-	return false;
 }
 
 Creature::~Creature(){
