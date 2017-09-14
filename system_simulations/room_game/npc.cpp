@@ -8,6 +8,7 @@ using namespace std;
 
 void NPC::react(string action, bool this_creat, int* respect){
 	int multiplier = 1;
+	happy = true;
 	string txt = "";
 	if (this_creat){
 		txt = " a lot";
@@ -21,7 +22,7 @@ void NPC::react(string action, bool this_creat, int* respect){
 		*respect -= multiplier;
 		cout << id << " grumbles" << txt << ". Respect is now " << *respect << endl;
 		if (current_room->get_state() == 0){
-			check_status(respect);
+			happy = false;
 		}
 	} else {
 		//error

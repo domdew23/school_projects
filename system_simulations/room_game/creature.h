@@ -16,12 +16,14 @@ class Creature{
 		void leave(int i, string txt, int* respect, bool forced=false);
 		virtual void react(string action, bool this_creat, int* respect) = 0;
 		void check_status(int* respect);
+		bool is_happy();
 		~Creature();
 	protected:
 		int id;
 		string type;
 		Room* current_room;
 		bool remove;
+		bool happy;
 	private:
 };
 

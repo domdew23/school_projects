@@ -9,14 +9,6 @@ class Room {
 		void init_neighbors(Room* rooms[]);
 		bool add_creature(Creature* c);
 		bool remove_creature(Creature* c);
-		void set_north(Room* r);
-		void set_south(Room* r);
-		void set_east(Room* r);
-		void set_west(Room* r);
-		Room get_north();
-		Room get_south();
-		Room get_east();
-		Room get_west();
 		int get_id();
 		int get_state();
 		void print_description();

@@ -16,22 +16,22 @@ Room::Room(int id, int state, int ids[]){
 
 void Room::init_neighbors(Room* rooms[]){
 	if (neighbor_ids[0] != -1){
-		set_north(rooms[neighbor_ids[0]]);
+		neighbors[0] = rooms[neighbor_ids[0]];
 	} else {
 		neighbors[0] = NULL;
 	}
 	if (neighbor_ids[1] != -1){
-		set_south(rooms[neighbor_ids[1]]);
+		neighbors[1] = rooms[neighbor_ids[1]];
 	} else {
 		neighbors[1] = NULL;
 	}
 	if (neighbor_ids[2] != -1){
-		set_east(rooms[neighbor_ids[2]]);
+		neighbors[2] = rooms[neighbor_ids[2]];
 	} else {
 		neighbors[2] = NULL;
 	}
 	if (neighbor_ids[3] != -1){
-		set_west(rooms[neighbor_ids[3]]);
+		neighbors[3] = rooms[neighbor_ids[3]];
 	} else {
 		neighbors[3] = NULL;
 	}
@@ -59,37 +59,6 @@ bool Room::remove_creature(Creature* c){
 	 return false; 
 }
 
-void Room::set_north(Room* r){
-	neighbors[0] = r;
-}
-
-void Room::set_south(Room* r){
-	neighbors[1] = r; 
-}
-
-void Room::set_east(Room* r){
-	neighbors[2] = r;
-}
-
-void Room::set_west(Room* r){
-	neighbors[3] = r;
-}
-
-Room Room::get_north(){
-	return *neighbors[0];
-}
-
-Room Room::get_south(){
-	return *neighbors[1];
-}
-
-Room Room::get_east(){
-	return *neighbors[2];
-}
-
-Room Room::get_west(){
-	return *neighbors[3];
-}
 
 int Room::get_id(){
 	return this->id;
@@ -222,6 +191,13 @@ void Room::change_state(string change, Creature* creature, int* respect, bool fo
 			} else {
 				tmp[i]->react("dirty", this_creat, respect);
 			}
+		}
+	}
+
+	for (int i = 0; i < size; i++){
+		Creature* c = tmp[i];
+		if (!c->is_happy()){
+			c->check_status(respect);
 		}
 	}
 }

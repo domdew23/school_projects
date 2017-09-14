@@ -56,6 +56,7 @@ void Creature::leave(int i, string txt, int* respect, bool forced){
 			cout << "Room full." << endl;
 			return;
 		}
+		
 		current_room->remove_creature(this);
 		room->add_creature(this);
 
@@ -113,6 +114,13 @@ void Creature::check_status(int* respect){
 		}
 		iter++;
 	}
+}
+
+bool Creature::is_happy(){
+	if (happy){
+		return true;
+	}
+	return false;
 }
 
 Creature::~Creature(){

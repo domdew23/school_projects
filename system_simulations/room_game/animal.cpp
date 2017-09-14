@@ -7,7 +7,9 @@
 using namespace std;
 
 void Animal::react(string action, bool this_creat, int* respect) {
+	cout << "reacting..." << endl;
 	int multiplier = 1;
+	happy = true;
 	string txt = "";	
 	if (this_creat){
 		txt = " a lot";
@@ -21,7 +23,7 @@ void Animal::react(string action, bool this_creat, int* respect) {
 		*respect -= multiplier;
 		cout << id << " growls" << txt << ". Respect is now " << *respect << endl;
 		if (current_room->get_state() == 2){
-			check_status(respect);
+			happy = false;
 		}
 	} else {
 		//error
