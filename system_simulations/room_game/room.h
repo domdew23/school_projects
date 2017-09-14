@@ -21,6 +21,8 @@ class Room {
 		int get_state();
 		void print_description();
 		bool is_full();
+		int get_size();
+		vector<Creature*> get_creatures();
 		bool contains(Creature* c);
 		Room** get_neighbors();
 		void change_state(string change, Creature* creature, int* respect, bool forced=false);

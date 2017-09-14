@@ -43,6 +43,17 @@ using namespace std;
 // room object (id, state, neighbors)
 // creature object -> subclasses: PC, NPC, animal
 
+void garbage_collection(Room* rooms[], vector<Creature*> creatures, int num_rooms){
+	for (int i = 0; i < num_rooms; i++){
+		for (int j = 0; j < rooms[i]->get_size(); j++){
+			int id = 0;
+			id = rooms[i]->get_creatures()[j]->get_id();
+			delete creatures[id];
+		}
+		delete rooms[i];
+	}
+}
+
 bool handle_leave(string input, Creature* creature, int* respect){
 	if (input == "north"){
 		creature->leave(0, input, respect, false);
@@ -66,13 +77,17 @@ int main(int argc, char** argv){
 	int* respect = &r;
 	int num_rooms, num_creatures, type, loc, state, north_id, south_id, east_id, west_id = 0;
 	PC* pc; 
-	Room* rooms[3] = {};
+	Room* rooms[10] = {};
 	vector<Creature*> creatures;
 
 	if (argc == 2){
 		ifstream file(argv[1]);
 		if (file.is_open()){
 			file >> num_rooms;
+			if (num_rooms > 10){
+				cout << "There can not be more than 10 rooms, please try again." << endl;
+				exit(0);
+			}
 			for (int i = 0; i < num_rooms; i++){
 				if (file >> state >> north_id >> south_id >> east_id >> west_id){
 					int neighbor_ids[4] = {north_id, south_id, east_id, west_id};
@@ -81,7 +96,11 @@ int main(int argc, char** argv){
 				}
 			}
 			file >> num_creatures;
-			for (int i = 0; i < num_creatures; ++i){
+			if (num_creatures > 100){
+				cout << "There can not be more than 100 creatures, please try again." << endl;
+				exit(1);
+			}
+			for (int i = 0; i < num_creatures; i++){
 				if (file >> type >> loc){
 					if (type == 0){
 						//PC
@@ -151,7 +170,6 @@ int main(int argc, char** argv){
 		} else {
 			if (!handle_leave(input, creature, respect)){
 				if (input == "exit"){
-					cout << "Quiting..." << endl;
 					break;
 				} else {
 					cout << "Please enter a valid command." << endl;
@@ -161,5 +179,7 @@ int main(int argc, char** argv){
 		cout << endl;
 	}
 	cout << "You finished with a respect of " << *respect << endl;
+
+	garbage_collection(rooms, creatures, num_rooms);
 	return 0;
 }

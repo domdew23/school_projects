@@ -38,12 +38,13 @@ void Room::init_neighbors(Room* rooms[]){
 }
 
 bool Room::add_creature(Creature* c){
-	if (creatures.size() < 10){
+	if (!is_full()){
 		size++;
 		this->creatures.push_back(c);
 		c->set_current_room(this);
+		return true;
 	} else {
-		cout << "Creature " << c->get_id() << " denied entry, room full" << endl;
+		return false;	
 	}
 }
 
@@ -98,6 +99,10 @@ int Room::get_state(){
 	return this->state;
 }
 
+vector<Creature*> Room::get_creatures(){
+	return creatures;
+}
+
 void Room::print_description(){
 	string txt;
 	switch(this->state){
@@ -139,11 +144,10 @@ void Room::print_description(){
 }
 
 bool Room::is_full(){
-	if (size == 10){
+	if (size >= 10){
 		return true;
-	} else {
-		return false;
 	}
+	return false;
 }
 
 bool Room::contains(Creature* c){
@@ -222,8 +226,10 @@ void Room::change_state(string change, Creature* creature, int* respect, bool fo
 	}
 }
 
+int Room::get_size(){
+	return size;
+}
 
 Room::~Room(){
-	
 }
 

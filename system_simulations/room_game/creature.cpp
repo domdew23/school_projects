@@ -52,8 +52,13 @@ void Creature::dirty(Creature* creature, int* respect, bool forced){
 void Creature::leave(int i, string txt, int* respect, bool forced){
 	Room* room = current_room->get_neighbors()[i]; 
 	if (room != NULL){
+		if (room->is_full()){
+			cout << "Room full." << endl;
+			return;
+		}
 		current_room->remove_creature(this);
 		room->add_creature(this);
+
 		if (type == "PC"){
 			cout << "You leave to the " << txt << endl;
 		} else {
@@ -77,11 +82,10 @@ void Creature::check_status(int* respect){
 	srand(time(NULL));
 	while(true){
 		i = rand() % 4;
-		cout << "i: " << i << " -- iter: " << iter << endl;
 		if (iter >= 500){
-			cout << "All rooms full. Deleting creature" << endl;
-			
+			cout << "All rooms full. " << type << " " << id << " has buried a hole in the ground and left." << endl;
 			current_room->remove_creature(this);
+			delete this;
 			return; 
 		}
 		if (current_room->get_neighbors()[i] != NULL){
@@ -112,5 +116,4 @@ void Creature::check_status(int* respect){
 }
 
 Creature::~Creature(){
-	cout << "deconstructing" << endl;
 }
