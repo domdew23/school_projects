@@ -1,0 +1,129 @@
+<html>
+	<head>
+		<title>Triangle 2</title>
+	</head>
+	<body>
+		<canvas width="800" height="800" id="main_canvas"></canvas>
+		<script>
+			function main(){
+				// Configure the canvas to use WebGl
+				var gl;
+				var canvas = document.getElementById('main_canvas');
+				try {
+					gl = canvas.getContext('webgl');
+				} catch (e){
+					try {
+						gl = canvas.getContext('experimental-webgl');
+					} catch (ex){
+						throw new Error('no WebGL found');
+					}
+				}
+				var pos = (1/3);
+				var neg = pos * -1;
+				// Copy an array of data points forming triangle to GPU
+				var vertices_1 = [
+					//X  Y	
+					pos,pos,
+					neg,pos,
+					neg,neg,
+					pos,neg
+				]
+				var vertices = [];
+				for (i = 0; i < vertices_1.length; i++){
+					if (i % 2 == 0){
+						console.log("X: " + vertices[i]);
+					} else {
+						console.log("Y: " + vertices[i]);
+					}
+					y = vertices[i] / 3;
+					x = y - (2/3);
+					vertices.push(x);
+					/*if (i % 2 == 0){
+						//X
+						vertices.push(x);
+						console.log("Vertex: " + i + "\nX: " + x);
+					} else {
+						//Y
+						tmp = x + (Math.abs(2 * y) + Math.abs(vertices[i])); 
+						vertices.push(tmp);
+						console.log("Y: " + tmp);
+					}*/
+				}	
+				var size = vertices.length / 2;
+				console.log("Vertices length: " + vertices.length);
+				// create buffer and load vertices into buffer
+				var buffer = gl.createBuffer(); // set aside memory on GPU for data
+				gl.bindBuffer(gl.ARRAY_BUFFER, buffer); // select this buffer as something to manipulate
+				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW); // copy triangle data 
+				//to buffer
+				// Create simple vertex shader
+				var vertCode = 
+					'attribute vec2 coordinates;' + 
+					'void main() {' +
+					' gl_Position = vec4(coordinates, 0.0, 1.0);' +
+					'}';
+				// vec4(x, y, z, 1);
+				var vertShader = gl.createShader(gl.VERTEX_SHADER);
+				gl.shaderSource(vertShader, vertCode);
+				gl.compileShader(vertShader);
+				
+				// check if everything compiled correctly
+				if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)){
+					throw new Error(gl.getShaderInfoLog(vertShader));
+				}
+
+				// Create simple fragment shader (R, G, B, alpha)
+				var fragCode = 
+					'precision mediump float;' +
+					'void main() {' +
+
+					'   gl_FragColor = vec4(0.1, 0.6, 0.9, 1.0);' +
+					'}';
+				
+				var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+				gl.shaderSource(fragShader, fragCode);
+				gl.compileShader(fragShader);
+				// check if everything compiled correctly
+				if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)){
+					throw new Error(gl.getShaderInfoLog(fragShader));
+				}
+
+				// Put vertex and fragment shaders together into complete program
+				var program = gl.createProgram();
+				gl.attachShader(program, vertShader);
+				gl.attachShader(program, fragShader);
+				gl.linkProgram(program);
+				// make sure program was created correctly
+				if (!gl.getProgramParameter(program, gl.LINK_STATUS)){
+					throw new Error(gl.getProgramInfoLog(program));
+				}
+
+				// Everything is now on the GPU, now draw things to the screen
+				// Clear drawing surface (background) (r,g,b,alpha)
+				gl.clearColor(0.0, 0.0, 0.0, 1.0);
+				gl.clear(gl.COLOR_BUFFER_BIT);
+				// tell WebGL which shader program to use
+				gl.useProgram(program);
+				// tell WebGL that the data from the array of triangle
+				// coordinates that are on the GPU should be fed to the 
+				// vertex shader as the parameter "coordinates"
+				var coordinatesVar = gl.getAttribLocation(program, "coordinates");
+				gl.enableVertexAttribArray(coordinatesVar);
+				gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+				gl.vertexAttribPointer(coordinatesVar, 2, gl.FLOAT, false, 0, 0);
+				//groups of 2 floating point nums into 'coordinates' variable
+				console.log("size: " + size + " size+1: " +  (size+1) + " size*2: " + size*2);
+				gl.drawArrays(gl.TRIANGLE_FAN, 0, size);
+			}
+			
+			window.onload = main;
+		</script>
+	</body>
+</html>		
+
+
+
+
+
+
+
