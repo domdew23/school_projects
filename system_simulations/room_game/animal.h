@@ -1,6 +1,5 @@
 #ifndef ANIMAL_H
 #define ANIMAL_H
-#include "creature.h"
 using namespace std;
 
 class Creature;

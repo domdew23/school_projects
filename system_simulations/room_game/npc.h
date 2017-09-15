@@ -1,6 +1,5 @@
 #ifndef NPC_H
 #define NPC_H
-#include "creature.h"
 using namespace std;
 
 class Creature;
