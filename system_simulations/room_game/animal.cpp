@@ -25,7 +25,8 @@ bool Animal::react(string action, bool this_creat, int* respect) {
 			return true;
 		}
 	} else {
-		//error
+		cout << "Error in Animal react..." << endl;
+		exit(1);
 	}
 	return false;
 }

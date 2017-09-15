@@ -12,7 +12,6 @@ using namespace std;
 Creature::Creature(int id, Room** rooms, int num_rooms, int location, string type){
 	this->id = id;
 	this->type = type;
-	this->remove = false;
 	for (int i = 0; i < num_rooms; i++){
 		if (location == rooms[i]->get_id()){
 			this->current_room = rooms[i];

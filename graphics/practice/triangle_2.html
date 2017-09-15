@@ -5,9 +5,9 @@
 	<body>
 		<canvas width="800" height="800" id="main_canvas"></canvas>
 		<script>
+			var gl;
 			function main(){
 				// Configure the canvas to use WebGl
-				var gl;
 				var canvas = document.getElementById('main_canvas');
 				try {
 					gl = canvas.getContext('webgl');
@@ -21,23 +21,24 @@
 				var pos = (1/3);
 				var neg = pos * -1;
 				// Copy an array of data points forming triangle to GPU
-				var vertices_1 = [
+				var vertices = [
 					//X  Y	
-					pos,pos,
-					neg,pos,
 					neg,neg,
+					neg,pos,
+					pos,pos,
 					pos,neg
 				]
-				var vertices = [];
-				for (i = 0; i < vertices_1.length; i++){
-					if (i % 2 == 0){
-						console.log("X: " + vertices[i]);
-					} else {
-						console.log("Y: " + vertices[i]);
-					}
+				var verts = [];
+				var length = vertices.length;
+				for (i = 0; i < length; i++){
 					y = vertices[i] / 3;
 					x = y - (2/3);
 					vertices.push(x);
+					if (i % 2 == 0){
+						//console.log("X1: " + vertices[i] + " -- X2: " + x);
+					} else {
+						//console.log("Y1: " + vertices[i] + " -- Y2: " + x);
+					}/*
 					/*if (i % 2 == 0){
 						//X
 						vertices.push(x);
@@ -48,19 +49,16 @@
 						vertices.push(tmp);
 						console.log("Y: " + tmp);
 					}*/
-				}	
+				}
+				console.log(vertices);
 				var size = vertices.length / 2;
 				console.log("Vertices length: " + vertices.length);
-				// create buffer and load vertices into buffer
-				var buffer = gl.createBuffer(); // set aside memory on GPU for data
-				gl.bindBuffer(gl.ARRAY_BUFFER, buffer); // select this buffer as something to manipulate
-				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW); // copy triangle data 
-				//to buffer
+
 				// Create simple vertex shader
 				var vertCode = 
-					'attribute vec2 coordinates;' + 
+					'attribute vec4 coordinates;' + 
 					'void main() {' +
-					' gl_Position = vec4(coordinates, 0.0, 1.0);' +
+					' gl_Position = coordinates;' +
 					'}';
 				// vec4(x, y, z, 1);
 				var vertShader = gl.createShader(gl.VERTEX_SHADER);
@@ -76,7 +74,6 @@
 				var fragCode = 
 					'precision mediump float;' +
 					'void main() {' +
-
 					'   gl_FragColor = vec4(0.1, 0.6, 0.9, 1.0);' +
 					'}';
 				
@@ -100,23 +97,55 @@
 
 				// Everything is now on the GPU, now draw things to the screen
 				// Clear drawing surface (background) (r,g,b,alpha)
+				gl.viewport(0, 0, canvas.width, canvas.height);
 				gl.clearColor(0.0, 0.0, 0.0, 1.0);
-				gl.clear(gl.COLOR_BUFFER_BIT);
 				// tell WebGL which shader program to use
 				gl.useProgram(program);
 				// tell WebGL that the data from the array of triangle
 				// coordinates that are on the GPU should be fed to the 
 				// vertex shader as the parameter "coordinates"
+
+				// create buffer and load vertices into buffer
+				var buffer = gl.createBuffer(); // set aside memory on GPU for data
+				gl.bindBuffer(gl.ARRAY_BUFFER, buffer); // select this buffer as something to manipulate
+				gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW); //copy triangle data to buffer
+				var v1_size = vertices.length * Float32Array.BYTES_PER_ELEMENT;
+				var v2_size = verts.length * Float32Array.BYTES_PER_ELEMENT;
+
+				/*gl.bufferData(gl.ARRAY_BUFFER, v1_size + v2_size, gl.STATIC_DRAW);
+				gl.bufferSubData(gl.ARRAY_BUFFER, 0, new Float32Array(vertices));
+				gl.bufferSubData(gl.ARRAY_BUFFER, v1_size, new Float32Array(verts));
+				*/
 				var coordinatesVar = gl.getAttribLocation(program, "coordinates");
+				gl.vertexAttribPointer(
+					coordinatesVar, 
+					2, 
+					gl.FLOAT, 
+					false, 
+					0, //2 * Float32Array.BYTES_PER_ELEMENT, 
+					0);
+
+				/*gl.vertexAttribPointer(
+					coordinatesVar, 
+					2, 
+					gl.FLOAT, 
+					false, 
+					2 * Float32Array.BYTES_PER_ELEMENT, 
+					v1_size);
+				*/
 				gl.enableVertexAttribArray(coordinatesVar);
-				gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-				gl.vertexAttribPointer(coordinatesVar, 2, gl.FLOAT, false, 0, 0);
+				//gl.enableVertexAttribArray(1);
 				//groups of 2 floating point nums into 'coordinates' variable
 				console.log("size: " + size + " size+1: " +  (size+1) + " size*2: " + size*2);
-				gl.drawArrays(gl.TRIANGLE_FAN, 0, size);
+				render();
 			}
+
+		function render(){
+			gl.clear(gl.COLOR_BUFFER_BIT);
+			gl.drawArrays(gl.TRIANGLE_FAN, 0, 8);				
+		}
 			
-			window.onload = main;
+		window.onload = main;
 		</script>
 	</body>
 </html>		

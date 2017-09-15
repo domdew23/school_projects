@@ -16,14 +16,13 @@ class Creature{
 		void leave(int i, string txt, int* respect, bool forced=false);
 		virtual bool react(string action, bool this_creat, int* respect) = 0;
 		void forced_leave(int* respect);
-		bool is_happy();
 		~Creature();
+		
+	// protected because the derived classes need access to these variables
 	protected:
 		int id;
 		string type;
 		Room* current_room;
-		bool remove;
-	private:
 };
 
 #endif

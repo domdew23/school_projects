@@ -25,7 +25,8 @@ bool NPC::react(string action, bool this_creat, int* respect){
 			return true;
 		}
 	} else {
-		//error
+		cout << "Error in NPC react..." << endl;
+		exit(1);
 	}
 	return false;
 }
