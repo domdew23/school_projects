@@ -8,7 +8,7 @@
 			var gl;
 			var canvas;
 			var program;
-			var num_items = 1;
+			var num_items = 0;
 
 			function main(){
 				config();
@@ -66,29 +66,93 @@
 			}
 			count--;
 			var length = vertices.length;
+			var children = [];
+			var child = [];
 
 			for (i = 0; i < 8; i++){
+				var next = [];
+				var vert_to_add;
 				for (j = 0; j < length; j++){
-					y = vertices[j] / 3;
+					console.log("length: " + length + " j: " + j);
+					vert = vertices[j] / 3;
+					if (i < 3){
+						vert_to_add = vert - (3 * Math.abs(2 * vert));
+					} else if (i < 7 && i != 3){
+						vert_to_add = vert + (3 * Math.abs(2 * vert));
+					} else {
+						vert_to_add = vert;
+					}
+
 					switch (i){
 						case 0:
-							x = y - (2/3);
-							vertices.push(x);
+							// bottom_left
+							vertices.push(vert_to_add);
 							break;
 						case 1:
-							console.log("At i = 1");
+							// side left
+							if (j % 2 == 0){
+								// X
+								vertices.push(vert_to_add)
+							} else {
+								// Y
+								tmp = vert_to_add + (3 * (Math.abs(2 * vert))); 	
+								vertices.push(tmp);
+							}
 							break;
 						case 2:
+							// top left
+							if (j % 2 == 0){
+								// X
+								vertices.push(vert_to_add)
+							} else {
+								// Y
+								tmp = vert_to_add + (6 * (Math.abs(2 * vert))); 	
+								vertices.push(tmp);
+							}
 							break;
 						case 3:
+							// top middle
+							if (j % 2 == 0){
+								vertices.push(vert_to_add)
+							} else {
+								tmp = vert_to_add + (3 * (Math.abs(2 * vert)));
+								vertices.push(tmp); 	
+							}
 							break;
 						case 4:
+							//top_right
+							vertices.push(vert_to_add);
 							break;
 						case 5:
+							// side right
+							if (j % 2 == 0){
+								// X
+								vertices.push(vert_to_add)
+							} else {
+								// Y
+								tmp = vert_to_add - (3 * (Math.abs(2 * vert))); 	
+								vertices.push(tmp);
+							}
 							break;
 						case 6:
+							// bottom right
+							if (j % 2 == 0){
+								// X
+								vertices.push(vert_to_add)
+							} else {
+								// Y
+								tmp = vert_to_add - (6 * (Math.abs(2 * vert))); 	
+								vertices.push(tmp);
+							}
 							break;
 						case 7:
+							//bottom middle
+							if (j % 2 == 0){
+								vertices.push(vert_to_add)
+							} else {
+								tmp = vert_to_add - (3 * (Math.abs(2 * vert))); 
+								vertices.push(tmp);	
+							}
 							break;
 						default:
 							console.log("something went wrong");
@@ -99,6 +163,7 @@
 			console.log("length: " + vertices.length)
 			num_items++;
 			get_verts(vertices, count);
+			num_items = vertices.length / 8;
 		}
 
 		function render(){
