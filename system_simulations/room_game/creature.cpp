@@ -25,11 +25,11 @@ void Creature::set_current_room(Room* r){
 }
 
 void Creature::look(){
-	this->current_room->print_description();
+	current_room->print_description();
 }
 
 Room* Creature::get_current_room(){
-	return this->current_room;
+	return current_room;
 }
 
 int Creature::get_id(){
@@ -40,15 +40,15 @@ string Creature::get_type(){
 	return type;
 }
 
-void Creature::clean(Creature* creature, int* respect, bool forced){
-	current_room->change_state("clean", creature, respect, forced);
+void Creature::clean(Creature* creature, int* respect){
+	current_room->change_state("clean", creature, respect);
 }
 
-void Creature::dirty(Creature* creature, int* respect, bool forced){
-	current_room->change_state("dirty", creature, respect, forced);
+void Creature::dirty(Creature* creature, int* respect){
+	current_room->change_state("dirty", creature, respect);
 }
 
-void Creature::leave(int i, string txt, int* respect, bool forced){
+void Creature::leave(int i, string txt, int* respect){
 	Room* room = current_room->get_neighbors()[i]; 
 	if (room != NULL){
 		if (room->is_full()){
@@ -75,6 +75,7 @@ void Creature::forced_leave(int* respect){
 	srand(time(NULL));
 	while(true){
 		i = rand() % 4;
+		// after 500 attempts it is determined that all neighbors must be full
 		if (iter >= 500){
 			cout << "All rooms full. " << type << " " << id << " has drilled a hole in the ceiling and left the simulation." << endl;
 			current_room->remove_creature(this);
@@ -100,7 +101,7 @@ void Creature::forced_leave(int* respect){
 					default:
 						cout << "Something went wrong in leaving room" << endl;
 				}
-				leave(i, txt, respect, true);
+				leave(i, txt, respect);
 				return;
 			}
 		}

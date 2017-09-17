@@ -5,12 +5,12 @@
 #include "room.h"
 using namespace std;
 
-Room::Room(int id, int state, int ids[]){
+Room::Room(int id, int state, int neighbor_ids[]){
 	this->id = id;
 	this->state = state;
-	size = 0;
+	this->size = 0;
 	for (int i = 0; i < 4; i++){
-		neighbor_ids[i] = ids[i];
+		this->neighbor_ids[i] = neighbor_ids[i];
 	}
 }
 
@@ -40,7 +40,7 @@ void Room::init_neighbors(Room* rooms[]){
 bool Room::add_creature(Creature* c){
 	if (!is_full()){
 		size++;
-		this->creatures.push_back(c);
+		creatures.push_back(c);
 		c->set_current_room(this);
 		if (state == 2 && c->get_type() == "animal"){
 			state = 1;
@@ -66,11 +66,11 @@ bool Room::remove_creature(Creature* c){
 
 
 int Room::get_id(){
-	return this->id;
+	return id;
 }
 
 int Room::get_state(){
-	return this->state;
+	return state;
 }
 
 vector<Creature*> Room::get_creatures(){
@@ -79,7 +79,7 @@ vector<Creature*> Room::get_creatures(){
 
 void Room::print_description(){
 	string txt;
-	switch(this->state){
+	switch(state){
 		case 0:
 			txt = "Clean";
 			break;
@@ -112,7 +112,7 @@ void Room::print_description(){
 		}
 	}
 	cout << "and contains: " << endl;
-	for(int i = 0; i < this->creatures.size(); i++){
+	for(int i = 0; i < creatures.size(); i++){
 		cout << creatures[i]->get_type() << ", id: " << creatures[i]->get_id() << endl;
 	}
 }
@@ -137,8 +137,8 @@ Room** Room::get_neighbors(){
 	return neighbors;
 }
 
-void Room::change_state(string change, Creature* creature, int* respect, bool forced){
-	vector<Creature*> tmp = creatures;
+void Room::change_state(string change, Creature* creature, int* respect){
+	vector<Creature*> tmp = creatures; // hold a temporary vector of creatures b/c some might get removed throughout method
 	bool cleaning = false;
 	switch (state){
 		case 0:
@@ -177,7 +177,8 @@ void Room::change_state(string change, Creature* creature, int* respect, bool fo
 	}
 
 	bool this_creat = false;
-	bool needs_to_leave = false;
+	bool needs_to_leave = false; // check if the room is too dirty for creature to stay
+
 	for (int i = 0; i < tmp.size(); i++){
 		if (tmp[i]->get_type() != "PC"){
 			if (creature == tmp[i]){

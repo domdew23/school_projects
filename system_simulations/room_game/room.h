@@ -17,11 +17,11 @@ class Room {
 		vector<Creature*> get_creatures();
 		bool contains(Creature* c);
 		Room** get_neighbors();
-		void change_state(string change, Creature* creature, int* respect, bool forced=false);
+		void change_state(string change, Creature* creature, int* respect);
 		~Room();
 
 	private:
-		// [0] = north, [1] = south, [2] = east, [3] = west
+		// neighbors array: [0] = north, [1] = south, [2] = east, [3] = west
 		int id, state, size;
 		Room* neighbors[4];
 		int neighbor_ids[4];

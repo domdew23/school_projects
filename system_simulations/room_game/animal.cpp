@@ -10,6 +10,7 @@ bool Animal::react(string action, bool this_creat, int* respect) {
 	int multiplier = 1;
 	string txt = "";	
 	if (this_creat){
+		// user wanted this animal to perform the action
 		txt = " a lot";
 		multiplier = 3;
 	}
@@ -26,7 +27,6 @@ bool Animal::react(string action, bool this_creat, int* respect) {
 		}
 	} else {
 		cout << "Error in Animal react..." << endl;
-		exit(1);
 	}
 	return false;
 }

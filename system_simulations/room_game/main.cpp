@@ -12,37 +12,6 @@
 #include "npc.h"
 using namespace std;
 
-// every room has at most 10 creatures including PC - creatures will be denied with "Room Full"
-// creatures move between rooms (enter or leave)
-// when a creature leaves one room it has to enter antoher
-// 3 types of creatures: Player(PC), non-player(NPC), animals
-// each creature has 'look' command which shows name, state, description of room as well as creatures in room
-// room states: dirty, half-dirty, clean
-// creatures have preferences on room cleanliness
-// NPCS - dirty/half-dirty, PC - doesn't care, animals - Clean/half-dirty
-// inital respect = 40 (sm, ile/lickFace + 1 || grumble/growl - 1)
-// NPCs, animals can perform actions when not in same room as PC
-// PC can clean or dirty a room or make creature do it in current room
-// creatures might have to leave to an adjacent room if room state changes and creature can't stay
-// adjacent room must be fit, if not creature will change state it make it fit
-// if all adjacent rooms are full creature will drill a hole and leave house (disappear from simulation)
-// every creature in room with PC will grumble or growl once or smile and lickFace
-// PC can make creature leave room in their choice of direction
-// if creature can't be moved the creature will stay and growl or grumble
-// NPCs - smile or grumble
-// animals - lickFace or growl
-// creatures that leave the room react before they leave
-// if PC makes creature clean/dirty room, creatures reacts three times to state change (smile or lick 3 times)
-// respect below 0 means PC loses, respect above 80 means PC wins
-
-// upon start up user provides input file with info about world (rooms and creatures)
-// parse file and create rooms/creatures and PC
-// present user with list of commands - output then prompt for input
-// commands: look, clean, dirty, <creature> clean, <creature dirty>, exit 
-
-// room object (id, state, neighbors)
-// creature object -> subclasses: PC, NPC, animal
-
 void garbage_collection(Room* rooms[], vector<Creature*> creatures, int num_rooms){
 	for (int i = 0; i < num_rooms; i++){
 		for (int j = 0; j < rooms[i]->get_size(); j++){
@@ -56,16 +25,16 @@ void garbage_collection(Room* rooms[], vector<Creature*> creatures, int num_room
 
 bool handle_leave(string input, Creature* creature, int* respect){
 	if (input == "north"){
-		creature->leave(0, input, respect, false);
+		creature->leave(0, input, respect);
 		return true;
 	} else if (input == "south"){
-		creature->leave(1, input, respect, false);
+		creature->leave(1, input, respect);
 		return true;
 	} else if (input == "east"){
-		creature->leave(2, input, respect, false);
+		creature->leave(2, input, respect);
 		return true;
 	} else if (input == "west"){
-		creature->leave(3, input, respect, false);
+		creature->leave(3, input, respect);
 		return true;
 	} else {
 		return false;
@@ -91,7 +60,7 @@ int main(int argc, char** argv){
 			for (int i = 0; i < num_rooms; i++){
 				if (file >> state >> north_id >> south_id >> east_id >> west_id){
 					int neighbor_ids[4] = {north_id, south_id, east_id, west_id};
-					Room* room = new Room(i, state, neighbor_ids);
+					Room* room = new Room(i, state, neighbor_ids); // i is the room's id #
 					rooms[i] = room;
 				}
 			}
@@ -125,6 +94,7 @@ int main(int argc, char** argv){
 	}
 
 	for (int i = 0; i < num_rooms; i++){
+		// initialize neighbhors for every room added
 		rooms[i]->init_neighbors(rooms);
 	}
 
@@ -132,6 +102,7 @@ int main(int argc, char** argv){
 	int creat_id = 0;
 	Creature* creature = NULL;
 	bool is_creat = false;
+
 	while(true) {
 		if (*respect >= 80){
 			cout << "You win! ";
@@ -146,9 +117,9 @@ int main(int argc, char** argv){
 			creat_id = atoi(input.substr(0, input.find(":")).c_str());
 			input = input.substr(input.find(":") + 1, input.length());
 			creature = creatures[creat_id];
-			is_creat = true;
-		} else {
-			is_creat = false;
+			is_creat = true; // checks if the user wants a creature to perform an action
+		} else { 
+			is_creat = false; // if not the pc is the one performing the action
 			creature = pc;
 		}
 
@@ -164,9 +135,9 @@ int main(int argc, char** argv){
 		if (input == "look"){
 			creature->look();
 		} else if (input == "clean"){
-			creature->clean(creature, respect, false);
+			creature->clean(creature, respect);
 		} else if (input == "dirty"){
-			creature->dirty(creature, respect, false);
+			creature->dirty(creature, respect);
 		} else {
 			if (!handle_leave(input, creature, respect)){
 				if (input == "exit"){
