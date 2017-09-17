@@ -14,11 +14,22 @@ var fragmentShaderText =
 	'void main() {' +
 		'gl_FragColor = vec4(fragColor, 1.0);' +
 	'}';
-
+function get_verts(parent){
+	pos = 1/3;
+	neg = -1 * pos;
+	parent.push(neg,neg,
+				neg,pos,
+				pos,pos,
+				pos,neg);
+	console.log("par size: " + parent.length);
+}
 var initDemo = function(){
 	// want to clump information together to send to GPU
 	// 3d cube (one corner is (-1,-1,-1) opposite corner is (1, 1, 1)
 	// vertex shaders minimize communication between CPU and GPU
+	var parent = [];
+	get_verts(parent);
+	console.log("PARENT: " + parent.length);
 	var canvas = document.getElementById('surface');
 	var gl = canvas.getContext('webgl');
 	
