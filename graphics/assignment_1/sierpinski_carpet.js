@@ -1,37 +1,39 @@
 var layers;
 
 function main(){
-	run();
-}
-
-function run(){
 	var gl;
 	layers = [];
 	var canvas = document.getElementById('main_canvas');
 	var program;
 	var num_items = 0;
-	var children = [];
+	var parent = [];
+	var vertices = [];
+	var depth = document.getElementById("depth").value;
+	var is_base = true;
 
 	gl = config(canvas);
 	program = create_program(gl, canvas);
 
-	var depth = document.getElementById("depth").value;
 	console.log("depth: " + depth);
-	var is_base = true;
-	var children = [];
-	get_verts(children, depth, is_base);
+	get_verts(parent, depth, is_base);
+	fill(vertices);
+	num_items = vertices.length / 8;
+	create_buffer(gl, vertices, program);
+	render(gl, num_items);
+}
 
-	var vertices = [];
+
+function fill(vertices){
 	for (i = 0; i < layers.length; i++){
 		vertices = vertices.concat(layers[i]);
 	}
+	console.log("Vertices length: " + vertices.length + " -- num_items: " + vertices.length / 8);
 
-	num_items = vertices.length / 8;
-	console.log("Vertices length: " + vertices.length + " -- children[0] length: " + layers[0].length + " -- children length: " + layers.length);
-
+}
+function create_buffer(gl, vertices, program){
 	var buffer = gl.createBuffer(); // set aside memory on GPU for data
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffer); // select this buffer as something to manipulate
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW); //copy triangle data to buffer
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW); //copy data to buffer
 
 	var coordinatesVar = gl.getAttribLocation(program, "coordinates");
 	gl.vertexAttribPointer(
@@ -39,14 +41,13 @@ function run(){
 		2, 
 		gl.FLOAT, 
 		false, 
-		0, //2 * Float32Array.BYTES_PER_ELEMENT, 
+		0, 
 		0);
 
 	gl.enableVertexAttribArray(coordinatesVar);
-	render(gl, num_items);
 }
 
-function get_verts(children, depth, is_base=false){
+function get_verts(parent, depth, is_base=false){
 	if (is_base){
 		var pos = (1/3);
 		var neg = pos * -1;
@@ -57,24 +58,22 @@ function get_verts(children, depth, is_base=false){
 			pos,pos,
 			pos,neg
 		];
-		children.push(t);
+		parent.push(t);
 		layers.push(t);
-		console.log(t);
+		//console.log(t);
 	}
 
 	if (depth == 0){
 		return;
 	}
 
-	console.log("layers len: " + layers.length);
-	var new_children = [];
-	for (k = 0; k < children.length; k++){
+	var children = [];
+	for (k = 0; k < parent.length; k++){
 		for (i = 0; i < 8; i++){
 			var child = [];
 			var vert_to_add;
-			for (j = 0; j < children[k].length; j++){
-				vert = children[k][j] / 3;
-
+			for (j = 0; j < parent[k].length; j++){
+				vert = parent[k][j] / 3;
 				switch (i){
 					case 0:
 						// bottom_left
@@ -89,7 +88,6 @@ function get_verts(children, depth, is_base=false){
 							child.push(vert_to_add)
 						} else {
 							// Y
-							//tmp = vert_to_add + (3 * (Math.abs(2 * vert))); 	
 							child.push(vert);
 						}
 						break;
@@ -101,7 +99,6 @@ function get_verts(children, depth, is_base=false){
 							child.push(vert_to_add)
 						} else {
 							// Y
-							//tmp = vert_to_add + (6 * (Math.abs(2 * vert))); 
 							vert_to_add = vert + (2/3);	
 							child.push(vert_to_add);
 						}
@@ -156,18 +153,19 @@ function get_verts(children, depth, is_base=false){
 						console.log("something went wrong");
 				}
 			}
-			console.log(child);
-			new_children.push(child);
+			//console.log(child);
+			children.push(child);
 			layers.push(child);
 		}
 	}
 
 	depth--;
-	get_verts(new_children, depth, false);
+	get_verts(children, depth, false);
 	return;
 }
 
 function render(gl, num_items){
+	// draw to the screen
 	gl.clear(gl.COLOR_BUFFER_BIT);
 	var offset = 0;
 	for (i = 0; i < num_items; i++){
@@ -237,5 +235,3 @@ function create_program(gl, canvas){
 	gl.useProgram(program);
 	return program;
 }
-
-//window.onload = main;
