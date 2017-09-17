@@ -13,10 +13,8 @@ function main(){
 
 	gl = config(canvas);
 	program = create_program(gl, canvas);
-
-	console.log("depth: " + depth);
 	get_verts(parent, depth, is_base);
-	fill(vertices);
+	vertices = fill(vertices);
 	num_items = vertices.length / 8;
 	create_buffer(gl, vertices, program);
 	render(gl, num_items);
@@ -28,7 +26,7 @@ function fill(vertices){
 		vertices = vertices.concat(layers[i]);
 	}
 	console.log("Vertices length: " + vertices.length + " -- num_items: " + vertices.length / 8);
-
+	return vertices;
 }
 function create_buffer(gl, vertices, program){
 	var buffer = gl.createBuffer(); // set aside memory on GPU for data
