@@ -4,6 +4,7 @@
 	</head>
 	<body>
 		<canvas width="800" height="800" id="main_canvas"></canvas>
+		<input type="range" id="depth" max="5" step="1" value="0" onchange="run()">
 		<script>
 			var gl;
 			var canvas;
@@ -13,10 +14,16 @@
 			var layers = [];
 
 			function main(){
+				run();
+			}
+			function run(){
 				config();
 				program = create_program();
-				var depth = 4;
-
+				//var depth = 2;
+				gl.clearColor(0.0, 0.0, 0.0, 1.0);
+				var s = document.getElementById("depth");
+				var depth = s.value;
+				console.log("depth: " + depth);
 				var is_base = true;
 				var children = [];
 				get_verts(children, depth, is_base);
