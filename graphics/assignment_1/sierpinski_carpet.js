@@ -8,7 +8,7 @@ function main(){
 	var num_items = 0;
 	var parent = [];
 	var vertices = [];
-	var depth = document.getElementById("depth").value;
+	var depth = document.getElementById("depth").value; // starts to lag at depth = 5
 	var is_base = true;
 
 	gl = config(canvas);
@@ -25,7 +25,6 @@ function fill(vertices){
 	for (i = 0; i < layers.length; i++){
 		vertices = vertices.concat(layers[i]);
 	}
-	console.log("Vertices length: " + vertices.length + " -- num_items: " + vertices.length / 8);
 	return vertices;
 }
 function create_buffer(gl, vertices, program){
@@ -58,7 +57,6 @@ function get_verts(parent, depth, is_base=false){
 		];
 		parent.push(t);
 		layers.push(t);
-		//console.log(t);
 	}
 
 	if (depth == 0){
@@ -151,7 +149,6 @@ function get_verts(parent, depth, is_base=false){
 						console.log("something went wrong");
 				}
 			}
-			//console.log(child);
 			children.push(child);
 			layers.push(child);
 		}
@@ -207,7 +204,7 @@ function create_program(gl, canvas){
 	var fragCode = 
 		'precision mediump float;' +
 		'void main() {' +
-		'   gl_FragColor = vec4(0.1, 0.6, 0.9, 1.0);' +
+		'   gl_FragColor = vec4(0.0, 0.85, 0.49, 1.0);' +
 		'}';
 	
 	var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
