@@ -1,4 +1,6 @@
 var layers;
+const BASE = 1/3;
+const SHIFT = 2/3;
 
 function main(){
 	var gl;
@@ -46,17 +48,15 @@ function create_buffer(gl, vertices, program){
 
 function get_verts(parent, depth, is_base=false){
 	if (is_base){
-		var pos = (1/3);
-		var neg = pos * -1;
-		var t = [
+		var base = [
 			//X  Y	
-			neg,neg,
-			neg,pos,
-			pos,pos,
-			pos,neg
+			-BASE,-BASE,
+			-BASE,BASE,
+			BASE,BASE,
+			BASE,-BASE
 		];
-		parent.push(t);
-		layers.push(t);
+		parent.push(base);
+		layers.push(base);
 	}
 
 	if (depth == 0){
@@ -73,14 +73,14 @@ function get_verts(parent, depth, is_base=false){
 				switch (i){
 					case 0:
 						// bottom_left
-						vert_to_add = vert - (2/3);
+						vert_to_add = vert - SHIFT;
 						child.push(vert_to_add);
 						break;
 					case 1:
 						// side left
 						if (j % 2 == 0){
 							// X
-							vert_to_add = vert - (2/3);
+							vert_to_add = vert - SHIFT;
 							child.push(vert_to_add)
 						} else {
 							// Y
@@ -91,11 +91,11 @@ function get_verts(parent, depth, is_base=false){
 						// top left
 						if (j % 2 == 0){
 							// X
-							vert_to_add = vert - (2/3);
+							vert_to_add = vert - SHIFT;
 							child.push(vert_to_add)
 						} else {
 							// Y
-							vert_to_add = vert + (2/3);	
+							vert_to_add = vert + SHIFT;	
 							child.push(vert_to_add);
 						}
 						break;
@@ -104,20 +104,20 @@ function get_verts(parent, depth, is_base=false){
 						if (j % 2 == 0){
 							child.push(vert)
 						} else {
-							vert_to_add = vert + (2/3);
+							vert_to_add = vert + SHIFT;
 							child.push(vert_to_add); 	
 						}
 						break;
 					case 4:
 						//top_right
-						vert_to_add = vert + (2/3);
+						vert_to_add = vert + SHIFT;
 						child.push(vert_to_add);
 						break;
 					case 5:
 						// side right
 						if (j % 2 == 0){
 							// X
-							vert_to_add = vert + (2/3);
+							vert_to_add = vert + SHIFT;
 							child.push(vert_to_add)
 						} else {
 							// Y
@@ -128,11 +128,11 @@ function get_verts(parent, depth, is_base=false){
 						// bottom right
 						if (j % 2 == 0){
 							// X
-							vert_to_add = vert + (2/3);
+							vert_to_add = vert + SHIFT;
 							child.push(vert_to_add)
 						} else {
 							// Y
-							vert_to_add = vert - (2/3); 	
+							vert_to_add = vert - SHIFT; 	
 							child.push(vert_to_add);
 						}
 						break;
@@ -141,7 +141,7 @@ function get_verts(parent, depth, is_base=false){
 						if (j % 2 == 0){
 							child.push(vert)
 						} else {
-							vert_to_add = vert - (2/3);
+							vert_to_add = vert - SHIFT;
 							child.push(vert_to_add);	
 						}
 						break;
