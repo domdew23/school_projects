@@ -29,6 +29,8 @@ function fill(vertices){
 	}
 	return vertices;
 }
+
+
 function create_buffer(gl, vertices, program){
 	var buffer = gl.createBuffer(); // set aside memory on GPU for data
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffer); // select this buffer as something to manipulate
@@ -46,6 +48,7 @@ function create_buffer(gl, vertices, program){
 	gl.enableVertexAttribArray(coordinatesVar);
 }
 
+
 function get_verts(parent, depth, is_base=false){
 	if (is_base){
 		var base = [
@@ -62,7 +65,8 @@ function get_verts(parent, depth, is_base=false){
 	if (depth == 0){
 		return;
 	}
-
+	
+	// parent length is 8^layer#
 	var children = [];
 	for (k = 0; k < parent.length; k++){
 		for (i = 0; i < 8; i++){
@@ -159,6 +163,7 @@ function get_verts(parent, depth, is_base=false){
 	return;
 }
 
+
 function render(gl, num_items){
 	// draw to the screen
 	gl.clear(gl.COLOR_BUFFER_BIT);
@@ -169,6 +174,7 @@ function render(gl, num_items){
 	}
 }
 	
+
 function config(canvas){
 	// Configure the canvas to use WebGl
 	try {
@@ -182,6 +188,7 @@ function config(canvas){
 	}
 	return gl;		
 }
+
 
 function create_program(gl, canvas){
 	// Create simple vertex shader
@@ -210,6 +217,7 @@ function create_program(gl, canvas){
 	var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
 	gl.shaderSource(fragShader, fragCode);
 	gl.compileShader(fragShader);
+	
 	// check if everything compiled correctly
 	if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)){
 		throw new Error(gl.getShaderInfoLog(fragShader));
@@ -220,6 +228,7 @@ function create_program(gl, canvas){
 	gl.attachShader(program, vertShader);
 	gl.attachShader(program, fragShader);
 	gl.linkProgram(program);
+	
 	// make sure program was created correctly
 	if (!gl.getProgramParameter(program, gl.LINK_STATUS)){
 		throw new Error(gl.getProgramInfoLog(program));
