@@ -11,10 +11,11 @@ class main{
 	public static final double MUTATION_RATE = 0.05;
 
 	public static void main(String[] args){
-		Person population[] = new Person[POP_SIZE];
+		/*Person population[] = new Person[POP_SIZE];
 		init_population(population);
-		run(population); 
+		run(population); */
 	}
+
 
 	public static void run(Person[] population){
 		int gen = 0;
