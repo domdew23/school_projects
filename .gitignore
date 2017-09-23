@@ -1,3 +1,7 @@
 *.o
 game
 *.exe
+*.jar
+*.classpath
+*.project
+*.class
