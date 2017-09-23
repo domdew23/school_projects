@@ -1,63 +1,104 @@
 package assignment_1;
 
 import java.util.Arrays;
+import processing.core.PImage;
 
-public class Member {
-	int[] pixels;
-	float fitness;
-	int width, height;
-	int id = 0;
+public class Member{
+	int x=0, y=0; 
+	int[] edges;
+	Member[] neighbors; // [0] left, [1] top, [2] right, [3] bottom
+	int count;
+	double fitness;
+	PImage img;
+	boolean needs_to_swap = false;
 	
-	Member(int id, int[] pixels, int width, int height){
-		this.pixels = pixels;
-		this.width = width;
-		this.height = height;
-		set_fitness();
-		this.id = id;
+	Member(int x, int y, int[] edges, PImage img){
+		this.x = x;
+		this.y = y;
+		this.edges = edges;
+		this.fitness = 0;
+		this.img = img;
+		neighbors = new Member[4];
+		count = 0;
 	}
 	
-	public void print_first_ten(){
-		System.out.println("Member #" + id + ":");
-		for (int i = 0; i < 10; i++){
-			System.out.println(pixels[i]);
-		}
-		System.out.println("---------");
-	}
-	
-	public void set_fitness(){
-		for (int x = 0; x < width; x++){
-			for (int y = 0; y < height; y++){
-				  int[] neighbors = new int[8];
-				  int loc = x + (y * width);
-			      neighbors[0] = get_neighbor(x, y, -1, 1); //bottom left   
-			      neighbors[1] = get_neighbor(x, y, -1, 0); //left
-			      neighbors[2] = get_neighbor(x, y, -1, -1); //top left   
-			      neighbors[3] = get_neighbor(x, y, 0, -1); //top   
-			      neighbors[4] = get_neighbor(x, y, 1, -1); //top right   
-			      neighbors[5] =  get_neighbor(x, y, 1, 0); //right   
-			      neighbors[6] = get_neighbor(x, y, -1, 1); //bottom right   
-			      neighbors[7] = get_neighbor(x, y, 0, 1); //bottom
-			      for (int i = 0; i < neighbors.length; i++){
-				      float diff = Math.abs(pixels[loc] - neighbors[i]);
-				      fitness += diff;
-			      }
+	public void evaluate_fitness(){
+		img.loadPixels();
+		int left_count = 0;
+		int top_count = 0;
+		int right_count = 0;
+		int bottom_count = 0;
+		double total_diff = 0.0;
+		double diff = 0.0;
+		for (int i = 0; i < edges.length; i++){
+			if (i < 200){
+				// left edge
+				if (neighbors[0] != null){
+					neighbors[0].img.loadPixels();
+					diff = Math.abs(edges[i] - neighbors[0].edges[i]);
+					total_diff += diff;
+					if (edges[i] == neighbors[0].edges[i]){
+						left_count++;
+					}
+				}else {
+					//left_count+=30;
+				}
+			} else if (i > 200 && i < 400){
+				//top
+				if (neighbors[1] != null){
+					neighbors[1].img.loadPixels();
+					diff = Math.abs(edges[i] - neighbors[1].edges[i]);
+					total_diff += diff;
+					if (edges[i] == neighbors[1].edges[i]){
+						top_count++;
+					} 
+				}else {
+					//top_count+=30;
+				}
+			} else if (i > 400 && i < 600){
+				//right
+				if (neighbors[2] != null){
+					neighbors[2].img.loadPixels();
+					diff = Math.abs(edges[i] - neighbors[2].edges[i]);
+					total_diff += diff;
+					if (edges[i] == neighbors[2].edges[i]){
+						right_count++;
+					}
+				} else {
+					//right_count+=30;
+				}
+			} else {
+				//bottom
+				if (neighbors[3] != null){
+					neighbors[3].img.loadPixels();
+					diff = Math.abs(edges[i] - neighbors[3].edges[i]);
+					total_diff += diff;
+					if (edges[i] == neighbors[3].edges[i]){
+						bottom_count++;
+					}
+				} else {
+					//bottom_count+=30;
+				}
 			}
 		}
-		fitness = (fitness/pixels.length);
+		
+		int total = left_count + top_count + right_count + bottom_count;
+		double f = ((double)total) / (double) (edges.length/2);
+		double avg_diff = total_diff/edges.length;
+		System.out.println("total diff: " + total_diff + " || total: " + total);
+		//System.out.println("total: " + total + " || edges len: " + edges.length/2 + " = " + f);
+		this.fitness = f * 100;
+		System.out.println(fitness);
 	}
 	
-	private int get_neighbor(int x, int y, int x_shift, int y_shift){
-	  x += x_shift;
-	  y += y_shift;
-	  int loc = x + (y * width);
-	  try{
-		    return pixels[loc];
-		  } catch (Exception e){
-		    x -= x_shift;
-		    y -= y_shift;
-		    loc = x + (y * width);
-		    return pixels[loc];
-		  }
+	public void add_neighbor(Member member){
+		neighbors[count] = member;
+		count++;
+	}
+	
+	public void reset(){
+		count = 0;
+		fitness = 0;
 	}
 
 }
