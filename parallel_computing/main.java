@@ -1,127 +1,110 @@
 import java.util.Random;
 import java.util.Arrays;
 import java.lang.Math;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import static java.util.concurrent.TimeUnit.*;
+import java.util.concurrent.atomic.*;
 
 class main{
 	
 	public static final String CHARS = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^&*()-_+=[]{}<>,.?/:;'\"\\";
-	public static final int POP_SIZE = 10000;
+	public static final int POP_SIZE = 400;
+	public static final int THREAD_COUNT = 4;
 	public static final String GOAL = "And chubby on sum, EMMM UMMM EMM UMM";
 	public static final int GOAL_SIZE = GOAL.length();
-	public static final double MUTATION_RATE = 0.05;
+	public static final double MUTATION_RATE = 0.03;
+	public static int generation = 0;
 
 	public static void main(String[] args){
-		/*Person population[] = new Person[POP_SIZE];
-		init_population(population);
-		run(population); */
-	}
+		Person population[];
+		Person best_member = new Person();
 
+		Thread[] threads = new Thread[THREAD_COUNT];
+		Worker[] workers = new Worker[THREAD_COUNT];
+		long start = System.currentTimeMillis();
 
-	public static void run(Person[] population){
-		int gen = 0;
-		while(true){
-			evaluate_fitness(population);
-			for (int i = 0; i < 4; i++){
-				System.out.println("Fitness: " + population[i].fitness + " ||  " + population[i].DNA);
-				if (population[i].fitness == 100){
-					return;
-				}
-			}
-			System.out.println("Generation #" + gen);	
-			create_mating_pool(population);
-			gen++;
-		}	
-	}
-
-	public static void init_population(Person population[]){
-		Random r = new Random();
-		String DNA;
-		int index = 0;
-		for (int i = 0; i < POP_SIZE; i++){
-			DNA = "";
-			for (int j = 0; j < GOAL_SIZE; j++){
-				index = r.nextInt(CHARS.length());
-				DNA += CHARS.charAt(index);
-			}
-
-			Person p = new Person(DNA);
-			population[i] = p;	
-			System.out.println(population[i].DNA);
+		for (int i = 0; i < THREAD_COUNT; i++){
+			population = init_population();
+			Worker w = new Worker(population, best_member);
+			Thread t = new Thread(w);
+			threads[i] = t;
+			workers[i] = w;
+			t.start();
 		}
-	}
-	
-	public static void evaluate_fitness(Person population[]){
-		int fitness;
-		int count;
-		for (int i = 0; i < POP_SIZE; i++){
-			count = 0;
-			fitness = 0;
-			for (int j = 0; j < GOAL_SIZE; j++){
-				if (population[i].DNA.charAt(j) == GOAL.charAt(j)){
-					count++;	
+
+		try {
+			threads[0].join();
+			threads[1].join();
+			threads[2].join();
+			generation++;
+		} catch (InterruptedException e){
+
+		}
+
+		Random r = new Random();
+		best_member = workers[0].best_member.get();	
+		while (best_member.fitness != 100){
+			Person[] old_pop = get_new_population(workers[0].new_population);
+			//System.out.println("pop[0]: " + workers[0].new_population.get(0).DNA + " || size: " + workers[0].new_population.length());
+			//System.out.println("old_pop[0]: " + old_pop[0].DNA + " || size: " + old_pop.length);
+			for (int i = 0; i < THREAD_COUNT; i++){
+				Person[] new_pop = new Person[POP_SIZE];
+				for (int j = 0; j < POP_SIZE; j++){
+					int rand = r.nextInt(POP_SIZE);
+					int rand2 = r.nextInt(POP_SIZE);
+					new_pop[j] = combine(old_pop[rand], old_pop[rand2]);
 				}
+				Worker w = new Worker(new_pop, best_member);
+				Thread t = new Thread(w);
+				threads[i] = t;
+				workers[i] = w;
+				//t.start();
+			}
+
+			for (int i = 0; i < THREAD_COUNT; i++){
+				threads[i].start();
+			}
+			for (int i = 0; i < THREAD_COUNT; i++){
+				try {
+				threads[i].join();
+				} catch (InterruptedException e){}
 			}
 			
-			double f = ((double)count/(double)GOAL_SIZE);
-			fitness = (int) Math.round(f * 100);
-			population[i].set_fitness(fitness);
+			best_member = workers[0].best_member.get();	
+			System.out.println("Generation: " + generation + " || best fitness: " + best_member.fitness + " || DNA: " 
+				+ best_member.DNA);
+			generation++;
 		}
 
-		Arrays.sort(population, (a, b) -> b.fitness - a.fitness);			
+		/*for (int i = 0; i < POP_SIZE; i++){
+			System.out.println(workers[0].new_population.get(i).DNA);
+		}*/
+
+		long end = System.currentTimeMillis();
+		System.out.println("Time taken: {" + ((end - start)) + "} miliseconds");
 	}
 
-	public static boolean contains(int x, int arr[]){
-		for (int n : arr){
-			if (x == n){
-				return true;
-			}
+	public static Person[] get_new_population(AtomicReferenceArray<Person> old_population){
+		Person[] new_population = new Person[POP_SIZE];
+		for (int i = 0; i < POP_SIZE; i++){
+			new_population[i] = old_population.get(i);
 		}
-		return false;
+		return new_population;
 	}
 
-	public static void create_mating_pool(Person population[]){
-		Person mating_pool[] = new Person[POP_SIZE];
-		Random r = new Random();
-		int top_scores[] = {-1, -1, -1};
-		int count = 0;
-
-		for (int i = 0; i < POP_SIZE; i++){
-			if (population[i].fitness == 0 || count == 3){
-				break;
-			}
-
-			if (!contains(population[i].fitness, top_scores)){
-				top_scores[count] = population[i].fitness;
-				count++;
-				continue;
-			}
-		}
-
-		count = 0;
-		for (int i = 0; i < POP_SIZE; i++){
-				if (contains(population[i].fitness, top_scores)){
-					mating_pool[count] = population[i];
-					count++;
-					continue;
-				}
-		}
-
-		for (int i = 0; i < POP_SIZE; i++){
-			int rand = r.nextInt(count);
-			int rand2 = r.nextInt(count);
-			population[i] = combine(mating_pool[rand], mating_pool[rand2]);
-		}
-	}
-	
 	public static Person combine(Person one, Person two){
 		//System.out.println("one dna: " + one.DNA + " two dna: " + two.DNA);
 		Person child;
 		String DNA = "";
 		int rand = 0;
+		Random r = new Random();
 		for (int i = 0; i < GOAL_SIZE; i++){
 			if (i % 2 == 0){
+				//System.out.println("one dna: " + one.DNA + " || i: " + i);
 				DNA += one.DNA.charAt(i);
 			} else {
+				//System.out.println("two dna: " + one.DNA + " || i: " + i);
 				DNA += two.DNA.charAt(i);
 			}
 		}
@@ -142,8 +125,36 @@ class main{
 				tmp_dna[i] = c; 
 			}
 		}
-
 		String mutated = new String(tmp_dna);
 		return mutated;
+	}
+
+	public static String get_best(Person one, Person two){
+		String best = "";
+		if (one.fitness > two.fitness){
+			best = one.DNA;
+		} else {
+			best = two.DNA;
+		}
+		return best;
+	}
+
+	public static Person[] init_population(){
+		Person population[] = new Person[POP_SIZE];
+		Random r = new Random();
+		String DNA;
+		int index = 0;
+		for (int i = 0; i < POP_SIZE; i++){
+			DNA = "";
+			for (int j = 0; j < GOAL_SIZE; j++){
+				index = r.nextInt(CHARS.length());
+				DNA += CHARS.charAt(index);
+			}
+
+			Person p = new Person(DNA);
+			population[i] = p;	
+			//System.out.println(population[i].DNA);
+		}
+		return population;
 	}
 }

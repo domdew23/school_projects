@@ -80,6 +80,7 @@ public class Population {
 	}
 	
 	public Member[] create_new_generation(){
+		Random r = new Random();
 		ArrayList<Member> needs_to_swap = new ArrayList<Member>();
 		ArrayList<Member> stays = new ArrayList<Member>();
 
@@ -88,11 +89,17 @@ public class Population {
 		for (int i = 0; i < pop_size; i++){
 			double odds = (avg_fitness / 100.00);
 			//System.out.println("ODDS: " + odds+.6);
-			double new_odds = ((double) members[i].fitness / (double)100);
-			if (!(Math.random() <= new_odds+.15)){
-				needs_to_swap.add(members[i]);
-			} else {
+			//double new_odds = ((double) members[i].fitness / (double)100);
+			double fit = members[i].fitness;
+			if ((100 - fit) < 0){
+				fit = 100;
+			}
+			//int odds = (int) Math.abs((Math.round(100 - fit)));
+			//System.out.println("odds: " + odds);
+			if ((Math.random() <= odds+.095)){
 				stays.add(members[i]);
+			} else {
+				needs_to_swap.add(members[i]);
 			}
 		}
 		//System.out.println("TO SWAP: " + members[i].fitness);
