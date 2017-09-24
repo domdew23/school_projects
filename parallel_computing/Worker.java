@@ -5,7 +5,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.atomic.*;
 
 public class Worker implements Runnable {
-	private static final int POP_SIZE = 400;
+	private static final int POP_SIZE = 32;
 	private static final String GOAL = "And chubby on sum, EMMM UMMM EMM UMM";
 	private static final int GOAL_SIZE = GOAL.length();
 
@@ -66,7 +66,7 @@ public class Worker implements Runnable {
 	public void create_mating_pool(){
 		lock.lock();
 		try {
-			for (int i = 0; i < population.length/4; i++){
+			for (int i = 0; i < population.length/32; i++){
 				//System.out.println(Thread.currentThread().getName() + " adding " + population[i].fitness + " to new population");
 				new_population.set(index.getAndIncrement(), population[i]);
 			}

@@ -9,11 +9,11 @@ import java.util.concurrent.atomic.*;
 class main{
 	
 	public static final String CHARS = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^&*()-_+=[]{}<>,.?/:;'\"\\";
-	public static final int POP_SIZE = 400;
-	public static final int THREAD_COUNT = 4;
+	public static final int POP_SIZE = 32;
+	public static final int THREAD_COUNT = 32;
 	public static final String GOAL = "And chubby on sum, EMMM UMMM EMM UMM";
 	public static final int GOAL_SIZE = GOAL.length();
-	public static final double MUTATION_RATE = 0.03;
+	public static final double MUTATION_RATE = 0.02215;
 	public static int generation = 0;
 
 	public static void main(String[] args){
@@ -30,24 +30,24 @@ class main{
 			Thread t = new Thread(w);
 			threads[i] = t;
 			workers[i] = w;
-			t.start();
+			//t.start();
 		}
 
-		try {
-			threads[0].join();
-			threads[1].join();
-			threads[2].join();
-			generation++;
-		} catch (InterruptedException e){
-
+		for (int i = 0; i < THREAD_COUNT; i++){
+			threads[i].start();
 		}
+		for (int i = 0; i < THREAD_COUNT; i++){
+			try {
+				threads[i].join();
+			} catch (InterruptedException e){}	
+		}
+		System.out.println("Generation: " + generation);
+		generation++;
 
 		Random r = new Random();
 		best_member = workers[0].best_member.get();	
 		while (best_member.fitness != 100){
 			Person[] old_pop = get_new_population(workers[0].new_population);
-			//System.out.println("pop[0]: " + workers[0].new_population.get(0).DNA + " || size: " + workers[0].new_population.length());
-			//System.out.println("old_pop[0]: " + old_pop[0].DNA + " || size: " + old_pop.length);
 			for (int i = 0; i < THREAD_COUNT; i++){
 				Person[] new_pop = new Person[POP_SIZE];
 				for (int j = 0; j < POP_SIZE; j++){
@@ -64,6 +64,7 @@ class main{
 
 			for (int i = 0; i < THREAD_COUNT; i++){
 				threads[i].start();
+	
 			}
 			for (int i = 0; i < THREAD_COUNT; i++){
 				try {
