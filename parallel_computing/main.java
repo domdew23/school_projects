@@ -10,10 +10,10 @@ class main{
 	
 	public static final String CHARS = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890~!@#$%^&*()-_+=[]{}<>,.?/:;'\"\\";
 	public static final int POP_SIZE = 64;
-	public static final int THREAD_COUNT = 64;
+	public static final int THREAD_COUNT = 32;
 	public static final String GOAL = "And chubby on sum, EMMM UMMM EMM UMM";
 	public static final int GOAL_SIZE = GOAL.length();
-	public static final double MUTATION_RATE = 0.01215;
+	public static final double MUTATION_RATE = 0.024;
 	public static int generation = 0;
 
 	public static void main(String[] args){
