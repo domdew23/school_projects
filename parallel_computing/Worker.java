@@ -5,35 +5,38 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.atomic.*;
 
 public class Worker implements Runnable {
-	private static final int POP_SIZE = 64;
-	private static final int THREAD_COUNT = 32;
+	private static final int POP_SIZE = 40;
+	private static final int THREAD_COUNT = 4;
 	private static final String GOAL = "And chubby on sum, EMMM UMMM EMM UMM";
 	private static final int GOAL_SIZE = GOAL.length();
 
 	private Person[] population = new Person[POP_SIZE];
 	public static AtomicReferenceArray<Person> new_population; 
 	public static AtomicReference<Person> best_member;
-	private static AtomicInteger index;
+	private static AtomicInteger index = new AtomicInteger(0);
 	private Lock lock = new ReentrantLock();
 
-	public Worker(Person[] population, Person init_best_member){
+	public Worker(Person[] population, AtomicReference<Person> best_member, AtomicReferenceArray<Person> new_population){
 		this.population = population;
-		index = new AtomicInteger(0);
-		best_member = new AtomicReference<Person>(init_best_member);
-		new_population = new AtomicReferenceArray<Person>(POP_SIZE);
+		this.best_member = best_member;
+		this.new_population = new_population;
 	}
 
 	public void run(){
 		evaluate_fitness();
 		set_best();
-		//System.out.println(Thread.currentThread().getName() + " best fitness: " + population[0].DNA);
+		//System.out.println(Thread.currentThread().getName() + " best member: " + best_member.get().DNA + "|| fitness: "
+		//	+ best_member.get().fitness);
 		//print();
 		create_mating_pool();
+		System.out.println(Thread.currentThread().getName() + " fitness: " + population[0].DNA);
+
 	}
 
 	public void print(){
 		for (int i = 0; i < 5; i++){
-			System.out.println(Thread.currentThread().getName() + " fitness: " + population[i].DNA);
+			System.out.println(Thread.currentThread().getName() + " DNA: " + population[i].DNA + " || fitness: "
+			+ population[i].fitness);
 		}
 	}
 
@@ -65,14 +68,14 @@ public class Worker implements Runnable {
 	}
 
 	public void create_mating_pool(){
-		//lock.lock();
+		lock.lock();
 		try {
 			for (int i = 0; i < population.length/THREAD_COUNT; i++){
 				//System.out.println(Thread.currentThread().getName() + " adding " + population[i].fitness + " to new population");
 				new_population.set(index.getAndIncrement(), population[i]);
 			}
 		} finally{
-			//lock.unlock();
+			lock.unlock();
 		}
 	}
 }

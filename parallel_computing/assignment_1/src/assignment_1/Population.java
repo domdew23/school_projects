@@ -43,12 +43,25 @@ public class Population {
 				index = i;
 			}
 		}
-		double odds = mem.fitness;
-		//System.out.println("ODDS: " + odds+.1);
-		if (Math.random() > odds){
-			swap(mem, mem.neighbors[index]);
-		}
 		
+		double odds = mem.fitness;
+		Random r = new Random();
+		//System.out.println("ODDS: " + odds+.1);
+		//System.out.println("MATH.RANDOM: " + Math.random());
+		
+		//if (r.nextInt(100) > 0){
+			//if (r.nextInt(2) == 1){
+				//swap(mem, members[r.nextInt(members.length)]);
+			//} else {
+				swap(mem, mem.neighbors[index]);
+			//}
+		//}
+		
+		/*if (mem.fitness > mem.best_fitness){
+			mem.bestX = mem.x;
+			mem.bestY = mem.y;
+			mem.best_fitness = mem.fitness;
+		}*/
 	}
 		
 	private void swap(Member one, Member two){
@@ -73,10 +86,12 @@ public class Population {
 			one.evaluate_fitness();
 			two.evaluate_fitness();
 			if (one_tmp_fitness > one.fitness || two_tmp_fitness > two.fitness){
-				one.x = one_tmpX;
+				one.x = one_tmpX; 
 				one.y = one_tmpY;
 				two.x = two_tmpX;
 				two.y = two_tmpY;
+				one.fitness = one_tmp_fitness;
+				two.fitness = one_tmp_fitness;
 			}
 		}
 	
@@ -108,7 +123,7 @@ public class Population {
 			total += m.fitness;
 		}
 		this.avg_fitness = (double) total / (double) members.length;
-		System.out.println("Population avg fitness: " + avg_fitness);
+		//System.out.println("Population avg fitness: " + avg_fitness);
 	}
 	
 }
