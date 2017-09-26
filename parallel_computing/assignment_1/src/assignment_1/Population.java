@@ -9,14 +9,17 @@ public class Population {
 	int pop_size;
 	double avg_fitness = 0.0;
 	double MUTATION_RATE = 0.01;
-	
+	int width = 4;
+	int height = 8;
+	Member[][] new_members = new Member[width][height];
+
 	Population(int pop_size){
 		this.pop_size = pop_size;
 		members = new Member[pop_size];
 	}
 	
 	public void sort(){
-		Arrays.sort(members, (a, b) -> (int) b.fitness - (int) a.fitness);
+		//Arrays.sort(members, (a, b) -> (int) a.fitness - (int) b.fitness);
 	}
 	
 	public void add_member(Member member){
@@ -24,58 +27,75 @@ public class Population {
 		size++;
 	}
 	
-	public Member get_best_member(){
-		return members[0];
-	}
-	
 	public void print_fitnesses(){
 		for (int i = 0; i < pop_size; i++){
-			System.out.println("members["+i+"]" + " fitness: " + members[i].fitness);
+			for (int j = 0; j < 4; j++){
+				System.out.println("members["+i+"]" + " neighbors["+i+"] fitness: " + members[i].fitness);
+			}
 		}
 	}
 
 	public void check_swap(Member mem){
-		double worst_fitness = 0.0;
-		int index = 0;
-		for (int i = 0; i < mem.neighbor_fitnesses.length; i++){
-			if (mem.neighbor_fitnesses[i] > worst_fitness && mem.neighbor_fitnesses[i] != -1.0){
-				worst_fitness = mem.neighbor_fitnesses[i];
-				index = i;
-			}
+		if (mem.bestX != -1 && mem.bestY != -1){
+			return;
 		}
+		int neighbor_fitness = 0;
+
+		for (int i = 0; i < 4; i++){
+			if (mem.neighbors[i] == null){
+				neighbor_fitness = 100;
+			} else {
+				neighbor_fitness = mem.neighbors[i].id;
+			}
+			System.out.println("member: " + mem.id + "neighbor fit: " + neighbor_fitness + " || neighbors["+i+"] fitness: " + mem.neighbor_ids[i]);
+			if (mem.neighbor_ids[i] == neighbor_fitness || neighbor_fitness == 100){
+				continue;
+			}
+			swap(mem, mem.neighbors[i]);
+			return;
+		}
+		System.out.println("HERE -- x: " + mem.x + ", y: " + mem.y);
 		
-		double odds = mem.fitness;
+		mem.bestX = mem.x;
+		mem.bestY = mem.y;
+		
+		/*double odds = mem.fitness;
 		Random r = new Random();
 		//System.out.println("ODDS: " + odds+.1);
 		//System.out.println("MATH.RANDOM: " + Math.random());
 		
-		//if (r.nextInt(100) > 0){
+		if (r.nextInt(100) > odds){
 			//if (r.nextInt(2) == 1){
 				//swap(mem, members[r.nextInt(members.length)]);
 			//} else {
 				swap(mem, mem.neighbors[index]);
-			//}
-		//}
-		
-		/*if (mem.fitness > mem.best_fitness){
-			mem.bestX = mem.x;
-			mem.bestY = mem.y;
-			mem.best_fitness = mem.fitness;
-		}*/
-	}
-		
-	private void swap(Member one, Member two){
-			if (two == null){
-				return;
+			//}*/
+		}
+	
+	public void reset(){
+		for (int x = 0; x < width; x++){
+			for (int y = 0; y < height; y++){
+				new_members[x][y].reset();
 			}
-			
+		}
+	}
+	
+	public void swap(Member one, Member two){
+			/*if (two == null){
+				return;
+			}*/
+
 			int one_tmpX =  one.x;
 			int one_tmpY = one.y;
-			int two_tmpX =  two.x;
-			int two_tmpY = two.y;
+			Member tmp_one = new_members[one.x/100][one.y/100];
 			
-			double one_tmp_fitness = one.fitness;
-			double two_tmp_fitness = two.fitness;
+			new_members[one.x/100][one.y/100] = new_members[two.x/100][two.y/100];
+			new_members[two.x/100][two.y/100] = tmp_one;
+			//int two_tmpX =  two.x;
+			//int two_tmpY = two.y;
+			
+			//double one_tmp_fitness = one.fitness;
+			//double two_tmp_fitness = two.fitness;
 
 			one.x = two.x;
 			two.x = one_tmpX;
@@ -83,16 +103,16 @@ public class Population {
 			one.y = two.y;
 			two.y = one_tmpY;
 			
-			one.evaluate_fitness();
-			two.evaluate_fitness();
-			if (one_tmp_fitness > one.fitness || two_tmp_fitness > two.fitness){
+			//one.evaluate_fitness();
+			//two.evaluate_fitness();
+			/*if (one_tmp_fitness > one.fitness || two_tmp_fitness > two.fitness){
 				one.x = one_tmpX; 
 				one.y = one_tmpY;
 				two.x = two_tmpX;
 				two.y = two_tmpY;
 				one.fitness = one_tmp_fitness;
 				two.fitness = one_tmp_fitness;
-			}
+			}*/
 		}
 	
 	public int[] mutate(int[] pixels){

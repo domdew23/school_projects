@@ -3,7 +3,7 @@ import processing.core.PImage;
 
 public class Member{
 	int x=0, y=0; 
-	int bestX = 0, bestY = 0;
+	int bestX, bestY;
 	double best_fitness = 0.0;
 
 	double[] red_hist = new double[4];
@@ -14,7 +14,7 @@ public class Member{
 	Member[] neighbors; // [0] left, [1] top, [2] right, [3] bottom
 	int count;
 	double fitness;
-	double[] neighbor_fitnesses;
+	int[] neighbor_ids = {0, 0, 0, 0};
 	PImage img;
 	int id = 0;
 	
@@ -22,15 +22,19 @@ public class Member{
 		this.id = id;
 		this.x = x;
 		this.y = y;
-		this.bestX = x;
-		this.bestY = y;
+		this.bestX = -1;
+		this.bestY = -1;
 		this.fitness = 0;
 		this.img = img;
-		neighbor_fitnesses = new double[4];
 		neighbors = new Member[4];
 		count = 0;
 	}
 	
+	Member(){
+		this.id = -9999;
+		this.fitness = -1;
+	}
+	/*
 	public void evaluate_fitness(){
 		double total = 0.0;
 		for (int i = 0; i < neighbors.length; i++){
@@ -38,7 +42,7 @@ public class Member{
 				case 0:
 					//left
 					if (neighbors[i] == null){
-						neighbor_fitnesses[i]  = -1.0;
+						neighbor_ids[i]  = -1.0;
 						break;
 					}
 					
@@ -160,6 +164,8 @@ public class Member{
 		//System.out.println("Member# " + id + " || red_hist: " + red_hist[0]);
 	}
 	
+	*/
+
 	public void add_neighbor(Member member){
 		neighbors[count] = member;
 		count++;

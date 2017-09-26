@@ -18,7 +18,7 @@ public class Runner implements Runnable{
 		}
 		get_neighbors();
 		evaluation();
-		population.sort();
+		//population.sort();
 		population.set_avg_fitness();
 		
 		for (int i = 0; i < population.members.length; i++){
@@ -36,7 +36,7 @@ public class Runner implements Runnable{
 	
 	public void evaluation(){
 		for (int i = 0; i < POPULATION_SIZE; i++){
-			population.members[i].evaluate_fitness();
+			//population.members[i].evaluate_fitness();
 			//System.out.println("Member["+i+"] fitness: " + population.members[i].fitness);
 		}
 	}
@@ -74,6 +74,7 @@ public class Runner implements Runnable{
 				for (Member m : main_population.members){
 					if (m.img != population.members[i].img){
 						if (m.bestX == population.members[i].x && m.bestY == population.members[i].y){
+							if (m.best_fitness > 
 							return;
 						}
 					}

@@ -4,19 +4,21 @@ import processing.core.PApplet;
 import processing.core.PImage;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.*;
 
 public class main extends PApplet {
 	ArrayList<PImage> pics = new ArrayList<PImage>();
-	Population population;
 	Population main_population;
 	final int POPULATION_SIZE = 32;
 	final int THREAD_COUNT = 64;
 	int generation = 0;
-	boolean is_base = true;
+	Population population = new Population(POPULATION_SIZE);
 	
+	
+
 	public static void main(String[] args) {
 		PApplet.main("assignment_1.main");		
 	}
@@ -30,8 +32,10 @@ public class main extends PApplet {
 			PImage pic = loadImage("/images/pic_"+i+".jpg");
 			pics.add(pic);
 		}
+		
 		background(255);
-		main_population = new Population(POPULATION_SIZE);
+		init_population(true); // perfect solution	
+		shuffle();
 	}
 	
 	public void create_threads(){
@@ -40,7 +44,7 @@ public class main extends PApplet {
 		
 		for (int i = 0; i < THREAD_COUNT; i++){
 			Collections.shuffle(pics);
-			population = init_population();
+			init_population(false);
 			Runner r = new Runner(population, main_population);	
 			Thread t = new Thread(r);
 			threads[i] = t;
@@ -56,21 +60,51 @@ public class main extends PApplet {
 		main_population = runners[0].main_population;
 	}
 		
-	public void draw(){
-		create_threads();
-		
-		for (Member member : main_population.members){
-			member.evaluate_fitness();
-			image(member.img, member.x, member.y);
+	public void draw(){ 
+		//sleep(20);
+		//create_threads();
+		for (int x = 0; x < population.width; x++){
+			for (int y = 0; y < population.width; y++){
+				population.check_swap(population.new_members[x][y]);
+				population.reset();
+			}
 		}
 		
-		main_population.set_avg_fitness();
-		if (main_population.avg_fitness >= 97){
-			sleep(20);
-			System.exit(0);
+		for (int x = 0; x < population.width; x++){
+			for (int y = 0; y < population.width; y++){
+				Member member = population.new_members[x][y];
+				if (member.bestX != -1){
+					member.x = member.bestX;
+				}
+				if (member.bestY != -1){
+					member.y = member.bestY;
+				}
+				image(member.img, member.x, member.y);
+			
+			}
 		}
-		System.out.println("Generation #" + generation + " || avg fitness: " + main_population.avg_fitness);
+		get_neighbors(false);
+		//main_population.set_avg_fitness();
+		//if (main_population.avg_fitness >= 97){
+			//sleep(20);
+			//System.exit(0);
+		//}
+		//System.out.println("Generation #" + generation + " || avg fitness: " + main_population.avg_fitness);
 		generation++;
+	}
+	
+	void shuffle(){
+		Random r = new Random();
+		for (int i = 0; i < r.nextInt(1000); i++){
+			int rand1 = r.nextInt(population.width);
+			int rand2 = r.nextInt(population.height);
+			
+			int rand3 = r.nextInt(population.width);
+			int rand4 = r.nextInt(population.height);
+			population.swap(population.new_members[rand1][rand2], population.new_members[rand3][rand4]);
+		}
+		population.reset();
+		get_neighbors(false);
 	}
 	
 	public boolean is_edge(int x, int y, PImage pic){
@@ -144,11 +178,12 @@ public class main extends PApplet {
 		}
 	}
 		
-	public Population init_population(){
-		Population tmp = new Population(POPULATION_SIZE);
+	public void init_population(boolean is_base){
+		//Population tmp = new Population(POPULATION_SIZE);
+		PImage[] tmp_pics = pics.toArray(new PImage[pics.size()]);
 		int x = 0;
 		int y = 0;
-		for (int i = 0; i < pics.size(); i++){
+		for (int i = 0; i < tmp_pics.length; i++){
 			if (i % 8 == 0){
 				if (i != 0){
 					y+=100;
@@ -157,16 +192,54 @@ public class main extends PApplet {
 			} else {
 				x += 100;
 			}
-			Member member = new Member(i, x, y, pics.get(i));
-			fill_buckets(member);
-			tmp.add_member(member);
 			
-			if (is_base){
-				main_population.add_member(member);
+			Member member = new Member(i, x, y, tmp_pics[i]);
+			x = x/100;
+			y = y/100;
+			population.new_members[x][y] = member; 
+
+			//fill_buckets(member);
+			//System.out.println(x);
+			//population.add_member(member);
+		}
+		
+		get_neighbors(is_base);
+		//return population;
+	}
+	
+	public void set_neighbor(int x, int y, Member m, int index, boolean is_base){
+		Member member;
+		try {
+			member = population.new_members[x][y];
+			System.out.println("here");
+		} catch (Exception e){
+			member = new Member();
+		}
+		
+		m.neighbors[index] = member;
+
+		//System.out.println("in set neighbor...");
+		
+		if (!is_base){
+			return;
+		}
+		
+		if (member.id == -9999){
+			m.neighbor_ids[index] = 100;
+		} else {
+			m.neighbor_ids[index] = member.id;
+		}
+	}
+	
+	public void get_neighbors(boolean is_base){
+		for (int x = 0; x < population.width; x++){
+			for (int y = 0; y < population.height; y++){
+				set_neighbor(x-1, y, population.new_members[x][y], 0, is_base); // left
+				set_neighbor(x, y-1, population.new_members[x][y], 1,is_base); // top
+				set_neighbor(x+1, y, population.new_members[x][y], 2,is_base); // right
+				set_neighbor(x, y+1, population.new_members[x][y], 3,is_base); // bottom
 			}
-		} 
-		is_base = false;
-		return tmp;
+		}
 	}
 	
 	public int[] get_edges(PImage pic){
