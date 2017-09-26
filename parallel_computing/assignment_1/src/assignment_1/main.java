@@ -235,9 +235,9 @@ public class main extends PApplet {
 		for (int x = 0; x < population.width; x++){
 			for (int y = 0; y < population.height; y++){
 				set_neighbor(x-1, y, population.new_members[x][y], 0, is_base); // left
-				set_neighbor(x, y-1, population.new_members[x][y], 1,is_base); // top
-				set_neighbor(x+1, y, population.new_members[x][y], 2,is_base); // right
-				set_neighbor(x, y+1, population.new_members[x][y], 3,is_base); // bottom
+				set_neighbor(x, y-1, population.new_members[x][y], 1, is_base); // top
+				set_neighbor(x+1, y, population.new_members[x][y], 2, is_base); // right
+				set_neighbor(x, y+1, population.new_members[x][y], 3, is_base); // bottom
 			}
 		}
 	}

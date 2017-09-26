@@ -9,13 +9,14 @@ public class Population {
 	int pop_size;
 	double avg_fitness = 0.0;
 	double MUTATION_RATE = 0.01;
-	int width = 4;
-	int height = 8;
-	Member[][] new_members = new Member[width][height];
+	int width = 8;
+	int height = 4;
+	Member[][] new_members;
 
 	Population(int pop_size){
 		this.pop_size = pop_size;
 		members = new Member[pop_size];
+		new_members = new Member[width][height];
 	}
 	
 	public void sort(){
