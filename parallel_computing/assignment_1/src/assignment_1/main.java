@@ -35,7 +35,7 @@ public class main extends PApplet {
 		
 		background(255);
 		init_population(true); // perfect solution	
-		shuffle();
+		//shuffle();
 	}
 	
 	public void create_threads(){
@@ -61,17 +61,17 @@ public class main extends PApplet {
 	}
 		
 	public void draw(){ 
-		//sleep(20);
+		sleep(2);
 		//create_threads();
-		for (int x = 0; x < population.width; x++){
-			for (int y = 0; y < population.width; y++){
+		for (int y = 0; y < population.height; y++){
+			for (int x = 0; x < population.width; x++){
 				population.check_swap(population.new_members[x][y]);
 				population.reset();
 			}
 		}
 		
-		for (int x = 0; x < population.width; x++){
-			for (int y = 0; y < population.width; y++){
+		for (int y = 0; y < population.height; y++){
+			for (int x = 0; x < population.width; x++){
 				Member member = population.new_members[x][y];
 				if (member.bestX != -1){
 					member.x = member.bestX;
@@ -194,9 +194,9 @@ public class main extends PApplet {
 			}
 			
 			Member member = new Member(i, x, y, tmp_pics[i]);
-			x = x/100;
-			y = y/100;
-			population.new_members[x][y] = member; 
+			double tmp_x = (double) x/ 100.0;
+			double tmp_y = (double) y/100.0;
+			population.new_members[(int)tmp_x][(int)tmp_y] = member; 
 
 			//fill_buckets(member);
 			//System.out.println(x);
@@ -211,14 +211,11 @@ public class main extends PApplet {
 		Member member;
 		try {
 			member = population.new_members[x][y];
-			System.out.println("here");
 		} catch (Exception e){
 			member = new Member();
 		}
 		
 		m.neighbors[index] = member;
-
-		//System.out.println("in set neighbor...");
 		
 		if (!is_base){
 			return;
@@ -232,8 +229,8 @@ public class main extends PApplet {
 	}
 	
 	public void get_neighbors(boolean is_base){
-		for (int x = 0; x < population.width; x++){
-			for (int y = 0; y < population.height; y++){
+		for (int y = 0; y < population.height; y++){
+			for (int x = 0; x < population.width; x++){
 				set_neighbor(x-1, y, population.new_members[x][y], 0, is_base); // left
 				set_neighbor(x, y-1, population.new_members[x][y], 1, is_base); // top
 				set_neighbor(x+1, y, population.new_members[x][y], 2, is_base); // right
