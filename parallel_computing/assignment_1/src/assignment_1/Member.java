@@ -1,39 +1,47 @@
 package assignment_1;
+
 import processing.core.PImage;
 
 public class Member{
-	int x=0, y=0; 
+	int x,y; 
 	int bestX, bestY;
 	double best_fitness = 0.0;
 
-	double[] red_hist = new double[4];
-	double[] green_hist = new double[4];
-	double[] blue_hist = new double[4];
-	double[] weights = {.7, .4, .1, .01};
+	//double[] red_hist = new double[4];
+	//double[] green_hist = new double[4];
+	//double[] blue_hist = new double[4];
+	//double[] weights = {.7, .4, .1, .01};
 	
 	Member[] neighbors; // [0] left, [1] top, [2] right, [3] bottom
-	int count;
 	double fitness;
-	int[] neighbor_ids = {0, 0, 0, 0};
+	int[] neighbor_ids;
+	int[] new_neighbor_ids;
+	int[] affinites;
+	
 	PImage img;
-	int id = 0;
+	int id;
 	
 	Member(int id, int x, int y, PImage img){
 		this.id = id;
 		this.x = x;
 		this.y = y;
-		this.bestX = -1;
-		this.bestY = -1;
-		this.fitness = 0;
+		//this.bestX = -1;
+		//this.bestY = -1;
+		//this.fitness = 0;
 		this.img = img;
-		neighbors = new Member[4];
-		count = 0;
+		//this.neighbor_ids = new int[4];
+		//this.new_neighbor_ids = new int[4];
+		//neighbors = new Member[4];
+		this.affinites = new int[32];
 	}
 	
 	Member(){
 		this.id = -9999;
-		this.fitness = -1;
+		this.fitness = -9999;
+		this.x = -1;
+		this.y = -1;
 	}
+	
 	/*
 	public void evaluate_fitness(){
 		double total = 0.0;
@@ -165,15 +173,6 @@ public class Member{
 	}
 	
 	*/
-
-	public void add_neighbor(Member member){
-		neighbors[count] = member;
-		count++;
-	}
 	
-	public void reset(){
-		count = 0;
-		fitness = 0;
-	}
 
 }
