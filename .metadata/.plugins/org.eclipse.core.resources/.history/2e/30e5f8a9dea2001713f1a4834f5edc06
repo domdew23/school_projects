@@ -1,0 +1,157 @@
+
+import java.util.Arrays;
+import java.util.Random;
+
+public class Population {
+	int size = 0;
+	int pop_size;
+	double avg_fitness = 0.0;
+	double MUTATION_RATE = 0.01;
+	int width = 8;
+	int height = 4;
+	Member[][] members;
+
+	Population(int pop_size){
+		this.pop_size = pop_size;
+		members = new Member[width][height];
+	}
+	
+	public void sort(){
+		//Arrays.sort(members, (a, b) -> (int) a.fitness - (int) b.fitness);
+	}
+	
+	/*public void print_fitnesses(){
+		for (int i = 0; i < pop_size; i++){
+			for (int j = 0; j < 4; j++){
+				System.out.println("members["+i+"]" + " neighbors["+i+"] fitness: " + members[i].fitness);
+			}
+		}
+	}*/
+
+	public void check_swap(Member mem){
+		if (mem.bestX != -1 || mem.bestY != -1){
+			return;
+		}
+		
+		int neighbor_fitness = 0;
+		int count = 0;
+		Random r = new Random();
+		for (int i = 0; i < 4; i++){
+			neighbor_fitness = mem.neighbors[i].id;
+			System.out.println("member: " + mem.id + "neighbor["+i+"] fitness: " + neighbor_fitness + " || expected fitness: " + mem.neighbor_ids[i]);
+
+			if (mem.neighbor_ids[i] == neighbor_fitness || mem.neighbors[i].fitness == -9999){
+				count++;
+			}
+		}
+		System.out.println("count:" + count);
+
+		if (count != 4) {
+			swap(mem, mem.neighbors[r.nextInt(4)]);
+		} else {
+			mem.bestX = mem.x;
+			mem.bestY = mem.y;
+		}
+			
+			
+			
+			//return;
+		}
+		//System.out.println("HERE -- x: " + mem.x + ", y: " + mem.y);
+		
+
+		
+		/*double odds = mem.fitness;
+		Random r = new Random();
+		//System.out.println("ODDS: " + odds+.1);
+		//System.out.println("MATH.RANDOM: " + Math.random());
+		
+		if (r.nextInt(100) > odds){
+			//if (r.nextInt(2) == 1){
+				//swap(mem, members[r.nextInt(members.length)]);
+			//} else {
+				swap(mem, mem.neighbors[index]);
+			//}*/
+	
+	public void reset(){
+		for (int y = 0; y < height; y++){
+			for (int x = 0; x < width; x++){
+				members[x][y].reset();
+			}
+		}
+	}
+	
+	public void swap(Member one, Member two){
+			/*if (two == null){
+				return;
+			}*/
+
+			int one_tmpX =  one.x;
+			int one_tmpY = one.y;
+			
+			double tmp_x = (double) one.x/ 100.0;
+			double tmp_y = (double) one.y/100.0;
+			
+			double tmp_x2 = (double) one.x/ 100.0;
+			double tmp_y2 = (double) one.y/100.0;
+			
+			Member tmp_one = members[(int) tmp_x][(int) tmp_y];
+
+			members[(int) tmp_x][(int) tmp_y] = members[(int) tmp_x2][ (int) tmp_y2];
+			members[(int) tmp_x2][(int) tmp_y2] = tmp_one;
+			//int two_tmpX =  two.x;
+			//int two_tmpY = two.y;
+			
+			//double one_tmp_fitness = one.fitness;
+			//double two_tmp_fitness = two.fitness;
+
+			one.x = two.x;
+			two.x = one_tmpX;
+			
+			one.y = two.y;
+			two.y = one_tmpY;
+			
+			//one.evaluate_fitness();
+			//two.evaluate_fitness();
+			/*if (one_tmp_fitness > one.fitness || two_tmp_fitness > two.fitness){
+				one.x = one_tmpX; 
+				one.y = one_tmpY;
+				two.x = two_tmpX;
+				two.y = two_tmpY;
+				one.fitness = one_tmp_fitness;
+				two.fitness = one_tmp_fitness;
+			}*/
+		}
+	
+	public int[] mutate(int[] pixels){
+		for (int i = 0; i < pixels.length; i++){
+			Random r = new Random();
+			if (Math.random() <= MUTATION_RATE){
+				int rand = r.nextInt(pixels.length);
+				int temp = pixels[i];
+				pixels[i] = pixels[rand];
+				pixels[rand] = temp;
+			}
+		}
+		return pixels;
+	}
+	
+	public boolean contains(double value, double[] arr){
+		for (double n : arr){
+			if (value == n){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/*public void set_avg_fitness(){
+		int total = 0;
+		for (Member m : members){
+			total += m.fitness;
+		}
+		this.avg_fitness = (double) total / (double) members.length;
+		//System.out.println("Population avg fitness: " + avg_fitness);
+	}*/
+	
+}
