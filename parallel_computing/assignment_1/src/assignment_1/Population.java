@@ -11,10 +11,12 @@ public class Population {
 	int width = 8;
 	int height = 4;
 	Member[] members;
+	int id;
 
 	Population(int pop_size){
 		this.pop_size = pop_size;
 		members = new Member[pop_size];
+		this.fitness = 0.0;
 	}
 
 	/*public void check_swap(Member mem){

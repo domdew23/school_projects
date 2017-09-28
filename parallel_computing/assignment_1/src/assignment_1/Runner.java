@@ -1,6 +1,7 @@
 package assignment_1;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -10,26 +11,24 @@ public class Runner implements Runnable{
 	private final int POPULATION_SIZE = 32;
 	private final ThreadLocal<Population> local_population  = new ThreadLocal<Population>();
 	private final Population tmp_population;
-	private final ReentrantLock lock = new ReentrantLock();
-
-	public Runner(Population local_population, AtomicReference<Population> GLOBAL_POPULATION){
+	//private final ReentrantLock lock = new ReentrantLock();
+	
+	AtomicInteger best_pos = new AtomicInteger();
+	public Runner(Population local_population, AtomicReference<Population> GLOBAL_POPULATION, AtomicInteger best_pos){
 		this.tmp_population = local_population;
 		this.GLOBAL_POPULATION = GLOBAL_POPULATION;
+		this.best_pos = best_pos;
 	}
 	
 	public void run(){
 		this.local_population.set(tmp_population);
-		
-		//while(true){
-			evaluate_fitness();
-			eval();
-			update();
-			this.local_population.set(GLOBAL_POPULATION.get());
-		//}
-
+		mutate();
+		evaluate_fitness();
+		eval();
+		update();
 	}
 	
-	synchronized void eval(){
+	public void eval(){
 		int id = 0;
 		int total = 0;
 		for (int i = 0; i < POPULATION_SIZE; i++){
@@ -66,7 +65,6 @@ public class Runner implements Runnable{
 		}
 		
 		local_population.get().fitness = (double) total/100;
-		System.out.println(local_population.get().fitness);
 	}
 	
 	
@@ -152,8 +150,8 @@ public class Runner implements Runnable{
 			}
 		}
 
-		if (Math.random() < 0.3){
-			for (int i = 0; i < r.nextInt(5); i++){
+		if (Math.random() < local_population.get().fitness){
+			for (int i = 0; i < r.nextInt(12); i++){
 				int rand1 = r.nextInt(POPULATION_SIZE);
 				if (has_neighbor(rand1+shift)){
 					swap(local_population.get().members[rand1], local_population.get().members[rand1+shift], rand1, rand1+shift, false);
@@ -164,7 +162,7 @@ public class Runner implements Runnable{
 
 
 	public void swap(Member one, Member two, int index1, int index2, boolean is_base){
-		if (Math.random() <= local_population.get().fitness){
+		if (Math.random() <= GLOBAL_POPULATION.get().fitness*.05){
 			return;
 		}
 		
@@ -183,25 +181,26 @@ public class Runner implements Runnable{
 	}
 
 	private void update(){
-		lock.lock();
+		//lock.lock();
 		try{
 			//for (int i = 0; i < 32; i++){
 				//System.out.println("member id: " +local_population.get().members[i].id );
 			//}
-			System.out.println(Thread.currentThread().getName() + " best fitness: " + 
-			local_population.get().fitness + " -- global fitness: " + GLOBAL_POPULATION.get().fitness);
+			System.out.println(Thread.currentThread().getName() + " -- " + Thread.currentThread().getId() + " best fitness: " + 
+			local_population.get().fitness + " -- global fitness: " + GLOBAL_POPULATION.get().fitness + " || pop id: " +
+			local_population.get().id);
 			
-			if (local_population.get().fitness < GLOBAL_POPULATION.get().fitness){
-				
-			} else {
-				System.out.println("here");
+			if (local_population.get().fitness < GLOBAL_POPULATION.get().fitness){} 
+			else {
+				//System.out.println("here");
 				//GLOBAL_POPULATION.get().fitness = local_population.get().fitness; 
 				//GLOBAL_POPULATION.get().members = local_population.get().members;
-				if (GLOBAL_POPULATION.compareAndSet(GLOBAL_POPULATION.get(), local_population.get())){
-				}
+				//if (GLOBAL_POPULATION.compareAndSet(GLOBAL_POPULATION.get(), local_population.get())){}
+				//GLOBAL_POPULATION.set(local_population.get());
+				this.best_pos.set(local_population.get().id);
 			}
 		} finally {
-			lock.unlock();
+			//lock.unlock();
 		}
 	}
 }
