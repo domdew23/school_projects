@@ -9,5 +9,4 @@ public class Population {
 		this.members = new Member[pop_size];
 		this.fitness = 0.0;
 	}
-	
 }

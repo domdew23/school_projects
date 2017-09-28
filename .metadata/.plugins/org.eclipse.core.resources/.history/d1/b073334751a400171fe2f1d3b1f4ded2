@@ -1,0 +1,24 @@
+
+import processing.core.PImage;
+
+public class Member{
+	int x,y; 	
+	Member[] neighbors; // [0] left, [1] top, [2] right, [3] bottom
+	int[] affinites;
+	PImage img;
+	int id;
+	
+	Member(int id, int x, int y, PImage img){
+		this.id = id;
+		this.x = x;
+		this.y = y;
+		this.img = img;
+		this.affinites = new int[32];
+	}
+	
+	Member(){
+		this.id = -9999;
+		this.x = -1;
+		this.y = -1;
+	}
+}

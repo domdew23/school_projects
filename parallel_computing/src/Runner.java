@@ -2,7 +2,6 @@
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Runner implements Runnable{
 	
@@ -10,12 +9,10 @@ public class Runner implements Runnable{
 	private final int POPULATION_SIZE = 32;
 	private final ThreadLocal<Population> local_population  = new ThreadLocal<Population>();
 	private final Population tmp_population;
-	private final ReentrantLock lock = new ReentrantLock();
 	
 	AtomicInteger best_pos = new AtomicInteger();
 	public Runner(Population local_population, AtomicReference<Population> GLOBAL_POPULATION, AtomicInteger best_pos){
 		this.tmp_population = local_population;
-		//this.local_population.set(local_population);
 		this.GLOBAL_POPULATION = GLOBAL_POPULATION;
 		this.best_pos = best_pos;
 	}
@@ -66,7 +63,6 @@ public class Runner implements Runnable{
 		
 		local_population.get().fitness = (double) total/100;
 	}
-	
 	
 	public void evaluate_fitness(){
 		Random r = new Random();
@@ -150,16 +146,17 @@ public class Runner implements Runnable{
 			}
 		}
 
-		if (Math.random() > local_population.get().fitness){
-			for (int i = 0; i < r.nextInt(5); i++){
-				int rand1 = r.nextInt(POPULATION_SIZE);
-				if (has_neighbor(rand1+shift)){
-					swap(local_population.get().members[rand1], local_population.get().members[rand1+shift], rand1, rand1+shift, false);
-				}
+		int count = r.nextInt(3) * Math.abs(1000 -  (int) (local_population.get().fitness * 1000));
+		if (count <= 0) {
+			return;
+		}
+		for (int i = 0; i < r.nextInt(count); i++){
+			int rand1 = r.nextInt(POPULATION_SIZE);
+			if (has_neighbor(rand1+shift)){
+				swap(local_population.get().members[rand1], local_population.get().members[rand1+shift], rand1, rand1+shift, false);
 			}
 		}
 	}
-
 
 	public void swap(Member one, Member two, int index1, int index2, boolean is_base){
 		if (Math.random() <= local_population.get().fitness*1.2){
@@ -182,16 +179,12 @@ public class Runner implements Runnable{
 	
 	
 	private void update(){
-		lock.lock();
-		try{
 			System.out.println(Thread.currentThread().getName() + " -- " + Thread.currentThread().getId() + " best fitness: " + 
 			local_population.get().fitness + " -- global fitness: " + GLOBAL_POPULATION.get().fitness + " || pop id: " +
 			local_population.get().id);
+			
 			if (local_population.get().fitness > GLOBAL_POPULATION.get().fitness) {
 				this.best_pos.set(local_population.get().id);
 			}
-		} finally {
-			lock.unlock();
-		}
 	}
 }
