@@ -1,6 +1,11 @@
 public class VendingMachine{
 	private int quarters=0, nickels=0, dimes=0, value=0;
-	private boolean change = false;
+	private boolean cancel = false;
+	private boolean dispense_coffee = false;
+	private int count = 0;
+	private String coffee = "";
+	private int state = 0;
+	private String change = "";
 
 	public VendingMachine(int init_quarters, int init_nickels, int init_dimes){
 		this.quarters = init_quarters;
@@ -8,28 +13,112 @@ public class VendingMachine{
 		this.dimes = init_dimes;	
 	}
 	
-	public void insert_coins(int new_quarters, int new_nickels, int new_dimes){
+	public String lambda(){
+		return "State #" + state + " q: " + quarters + " || n: " + nickels
+		+ " || d: " + dimes + " || value: " + value + " || cancel: " + cancel + "\n" + coffee + change;
+	}
+
+	public void delta(String[] args){
+		state++;
+		cancel = false;
+		change = "";
+		coffee = "";
+		int new_quarters=0, new_nickels=0, new_dimes=0;
+		for (int i = 0; i < args.length; i++){
+			switch (args[i]){
+				case "q": new_quarters++; break;
+				case "n": new_nickels++; break;
+				case "d": new_dimes++; break;
+				case "c": this.cancel = true; break;
+				case " ": break;
+				default : System.out.println("Something went wrong");
+			}
+		}
+		value += (new_quarters*25) + (new_nickels*5) + (new_dimes*10);
 		quarters += new_quarters;
 		nickels += new_nickels;
 		dimes += new_dimes;
-		update_value(new_quarters, new_nickels, new_dimes);
+		check();
 	}
 
-	private void update_value(int q, int n, int d){
-		value += ((q*25) + (n*5) + d*10);
+	private void check(){
+		if (cancel){
+			try {
+				dispense_change();
+			} catch (NoChangeException e){
+				e.printStackTrace();
+				System.out.println("\nOUT OF ORDER...");
+				System.exit(0);
+			}
+			return;
+		}
+		count = 0;
+		if (value >= 100) {
+			count = value/100;
+			coffee = count + " coffee(s)";	
+		}
+		value = value % 100;
 	}
 
-
-	public void set_change(boolean new_change){
-		this.change = new_change;
+	private void dispense_change() throws NoChangeException{
+		int q_count=0, n_count=0, d_count=0;
+		boolean out_of_quarters=false, out_of_dimes=false, out_of_nickels=false;
+		if (value != 0){
+			while(value != 0){
+				while (value >= 25){
+					if (has_quarters()){
+						value -= 25;
+						quarters--;
+						q_count++;
+					} else {
+						out_of_quarters = true;
+						break;
+					}
+				}
+				while (value >= 10){
+					if (has_dimes()){
+						value -= 10;
+						dimes--;
+						d_count++;
+					} else {
+						break;
+					}
+				}
+				while (value >= 5){
+					if (has_nickels()){
+						value -= 5;
+						nickels--;
+						n_count++;
+					} else {
+						break;
+					}
+				}
+				if (value != 0){
+					throw new NoChangeException("Insufficent Change. Please call xxx-xxx-xxxx for more information");
+				}
+			}
+		}
+		change = "\nChange: " + q_count + " quarters -- " + n_count + " nickels -- " + d_count + " dimes.\n";
 	}
 
-	private void dispense_coffee(){
-		System.out.println("Dispensing coffee");
+	private boolean has_quarters(){
+		if (quarters == 0){
+			return false;
+		}
+		return true;
 	}
 
-	public String toString(){
-		return "q: " + quarters + " || n: " + " || d: " + dimes + " || value: " + value + " || change: " + change;
+	private boolean has_nickels(){
+		if (nickels == 0){
+			return false;
+		}
+		return true;
 	}
-	
+
+	private boolean has_dimes(){
+		if (dimes == 0){
+			return false;
+		}
+		return true;
+	}
 }

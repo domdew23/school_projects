@@ -7,17 +7,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class main extends PApplet {
-	Population main_population;
 	final int POPULATION_SIZE = 32;
-	final int THREAD_COUNT =32;
+	final int THREAD_COUNT = 32;
 	int generation = 0;
-	double fitness = 0;
 	Population population; 
-	//private Population GLOBAL_POPULATION = new Population(POPULATION_SIZE);
 	PImage[] pics = new PImage[POPULATION_SIZE];
-	Population tmp_pop = new Population(POPULATION_SIZE);
-	AtomicReference<Population> GLOBAL_POPULATION = new AtomicReference<Population>(tmp_pop);
+	AtomicReference<Population> GLOBAL_POPULATION = new AtomicReference<Population>(new Population(POPULATION_SIZE));
 	AtomicInteger best_pos = new AtomicInteger(0);
+	Thread[] threads = new Thread[THREAD_COUNT];
 
 	Population[] all = new Population[THREAD_COUNT];
 
@@ -31,21 +28,13 @@ public class main extends PApplet {
 	
 	public void setup(){
 		for (int i = 0; i < 32; i++){
-			PImage pic = loadImage("/images/pic_"+(i+1)+".jpg");
+			PImage pic = loadImage("images/pic_"+(i+1)+".jpg");
 			pics[i] = pic;
 		}
 		background(255);
-		//for (int i = 0; i < 32; i++){
-			//init_population();
-			//set_neighbors();
-			//shuffle();
-			//all[i] = population;
-		//}
 	}
 	
-	public void create_threads(){
-		Thread[] threads = new Thread[THREAD_COUNT];
-		
+	public void create_threads(){		
 		for (int i = 0; i < THREAD_COUNT; i++){
 			population = new Population(POPULATION_SIZE);
 			init_population();
@@ -66,23 +55,25 @@ public class main extends PApplet {
 	}
 		
 	public void draw(){
-		//sleep(1);
-		try {  Thread.sleep(600); } catch (InterruptedException e){}
+		loadPixels();
+		Random r = new Random();
+		for (int i = 0; i < pixels.length; i++){
+			set(r.nextInt(255), r.nextInt(255), r.nextInt(255));
+		}
+		updatePixels();
+		/*try {  Thread.sleep(500); } catch (InterruptedException e){}
 		
-		if (!(GLOBAL_POPULATION.get().fitness > 1.04)){
+		if (!(GLOBAL_POPULATION.get().fitness > 1.07)){
 			create_threads();
 		}
-		
-		//GLOBAL_POPULATION.get().fitness = all[best_pos.get()].fitness; 
-		//GLOBAL_POPULATION.get().members = all[best_pos.get()].members;
+
 		if(!(GLOBAL_POPULATION.compareAndSet(GLOBAL_POPULATION.get(), all[best_pos.get()]))){
 			return;
 		}
 
-		System.out.println(GLOBAL_POPULATION.get().fitness);
 		for (int i = 0; i < POPULATION_SIZE; i++){				
 			image(GLOBAL_POPULATION.get().members[i].img, (GLOBAL_POPULATION.get().members[i].x * 100), (GLOBAL_POPULATION.get().members[i].y * 100));
-		}
+		}*/
 	}
 		
 	public void init_population(){
@@ -107,19 +98,19 @@ public class main extends PApplet {
 			if (has_neighbor(i-1)){
 				population.members[i].affinites[i-1] = 100;
 			}
-			if (has_neighbor(i-population.width)){
-				population.members[i].affinites[i-population.width] = 100;
+			if (has_neighbor(i-population.WIDTH)){
+				population.members[i].affinites[i-population.WIDTH] = 100;
 			}
 			if (has_neighbor(i+1)) {
 				population.members[i].affinites[i+1] = 100;
 			}
-			if (has_neighbor(i+population.width)) {
-				population.members[i].affinites[i+population.width] = 100;
+			if (has_neighbor(i+population.WIDTH)) {
+				population.members[i].affinites[i+population.WIDTH] = 100;
 			}
 		}
 	}
 
-	public boolean has_neighbor (int neighbor_index){
+	public boolean has_neighbor(int neighbor_index){
 		if (neighbor_index < 0 || neighbor_index >= 32){
 			return false;
 		}
@@ -131,7 +122,11 @@ public class main extends PApplet {
 			return;
 		}
 		Random r = new Random();
-		for (int i = 0; i < r.nextInt(10000); i++){
+		int count = r.nextInt(5) * Math.abs(1000 -  (int) (GLOBAL_POPULATION.get().fitness * 1000) );
+		if (count <= 0) {
+			return;
+		}
+		for (int i = 0; i < r.nextInt(count); i++){
 			int rand1 = r.nextInt(POPULATION_SIZE);
 			int rand2 = r.nextInt(POPULATION_SIZE);
 			swap(population.members[rand1], population.members[rand2], rand1, rand2);
