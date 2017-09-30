@@ -9,15 +9,15 @@ public class main {
 		//output: {nickel,dime,quarter,coffee,nothing}
 		// apply output function before the state transition
 		//System.out.println(150%100);
+		System.out.println("\nOptions:\nq - Quarters || n - Nickels || d - Dimes || c - Cancel || quit - Quit || w - Wait\n");
 		start();
 	}
 
 	private static void start(){
-		VendingMachine VM = new VendingMachine(2, 0, 5);
+		VendingMachine VM = new VendingMachine(0, 0, 5);
 		Scanner sc = new Scanner(System.in);
 		String input = "";
 		while (true){
-			System.out.println("\nOptions:\nq - Quarters || n - Nickels || d - Dimes || c - Change || quit - Quit\n");
 			input = sc.nextLine();
 			String[] X = new String[input.length()];
 			if (!fill_bag(input, X)){
@@ -39,6 +39,7 @@ public class main {
 				case 'n': X[i] = "n"; break;
 				case 'd': X[i] = "d"; break;
 				case 'c': X[i] = "c"; break;
+				case 'w': X[i] = " "; break;
 				case ' ': X[i] = " "; break;
 				default:
 					System.out.println("Please enter valid input");

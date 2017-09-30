@@ -62,19 +62,22 @@ public class VendingMachine{
 
 	private void dispense_change() throws NoChangeException{
 		int q_count=0, n_count=0, d_count=0;
-		boolean out_of_quarters=false, out_of_dimes=false, out_of_nickels=false;
 		if (value != 0){
+			System.out.println("val:" + value + " || q: " + quarters + " || n: " + nickels + " || d:" + dimes);
 			while(value != 0){
 				while (value >= 25){
 					if (has_quarters()){
+						if (value < 50 && value % 25 != 0){
+							break;
+						}
 						value -= 25;
 						quarters--;
 						q_count++;
 					} else {
-						out_of_quarters = true;
 						break;
 					}
 				}
+
 				while (value >= 10){
 					if (has_dimes()){
 						value -= 10;
