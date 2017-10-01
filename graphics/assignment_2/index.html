@@ -5,10 +5,8 @@
 		<script id="vertex_shader" type="x-shader/x-vertex">
 			attribute vec4 coordinates;
 			uniform mat4 mWorld;
-			uniform mat4 mView;
-			uniform mat4 mProj;
 			void main(){
-				gl_Position = (mProj * mView * mWorld * coordinates);
+				gl_Position = (mWorld * coordinates);
 			}
 		</script>
 

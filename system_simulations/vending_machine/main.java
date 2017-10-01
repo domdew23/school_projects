@@ -8,7 +8,6 @@ public class main {
 		//input: {nickel, dime, quarter, cancel, wait}
 		//output: {nickel,dime,quarter,coffee,nothing}
 		// apply output function before the state transition
-		//System.out.println(150%100);
 		System.out.println("\nOptions:\nq - Quarters || n - Nickels || d - Dimes || c - Cancel || w - Wait || quit - Quit\n");
 		start();
 	}
@@ -41,7 +40,7 @@ public class main {
 				case 'd': X[i] = "d"; break;
 				case 'c': X[i] = "c"; break;
 				case 'w': X[i] = " "; break;
-				case ' ': X[i] =  " "; System.out.println("hi");break;
+				case ' ': X[i] =  " "; break;
 				default:
 					System.out.println("Please enter valid input");
 					return false;	

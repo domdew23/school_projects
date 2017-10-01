@@ -1,7 +1,6 @@
 public class VendingMachine{
 	private int quarters=0, nickels=0, dimes=0, value=0;
 	private boolean cancel = false;
-	private boolean dispense_coffee = false;
 	private int count = 0;
 	private String coffee = "";
 	private int state = 0;
@@ -33,7 +32,7 @@ public class VendingMachine{
 				case "q": new_quarters++; break;
 				case "n": new_nickels++; break;
 				case "d": new_dimes++; break;
-				case "c": this.cancel = true; break;
+				case "c": cancel = true; break;
 				case " ": break;
 				default : System.out.println("Something went wrong");
 			}
@@ -49,7 +48,7 @@ public class VendingMachine{
 		if (cancel){
 			try {
 				dispense_change();
-			} catch (NoChangeException e){
+			} catch (AtomicModelException e){
 				e.printStackTrace();
 				System.out.println("\nOUT OF ORDER...");
 				System.exit(0);
@@ -64,13 +63,13 @@ public class VendingMachine{
 		value = value % 100;
 	}
 
-	private void dispense_change() throws NoChangeException{
+	private void dispense_change() throws AtomicModelException{
 		int q_count=0, n_count=0, d_count=0;
 		if (value != 0){
 			while(value != 0){
 				while (value >= 25){
 					if (has_quarters()){
-						if (value < 50 && value % 25 != 0){
+						if (value < 50 && value % 10 == 0){
 							if (has_dimes()){
 								break;
 							}
@@ -102,9 +101,10 @@ public class VendingMachine{
 						break;
 					}
 				}
-			//System.out.println("val:" + value + " || q: " + q_count + " || n: " + n_count + " || d:" + d_count);
+
+			System.out.println("val:" + value + " || q: " + q_count + " || n: " + n_count + " || d:" + d_count);
 				if (value != 0){
-					throw new NoChangeException("Insufficent Change. Please call xxx-xxx-xxxx for more information");
+					throw new AtomicModelException("Insufficent Change. Please call xxx-xxx-xxxx for more information");
 				}
 			}
 		}

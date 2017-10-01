@@ -2,16 +2,11 @@ var layers = [];
 const BASE = 1/3;
 const SHIFT = 2/3;
 var direction = 1;
-var rotate = false;
+var is_rotating = false;
 var theta = 0;
 var new_time = 0;
 var old_time = 0;
-var time = 0;
-
-// translation matrix: move in space
-// rotation matrix: spin around
-// scale matrix: make bigger or smaller
-// projection matrix: apply 3d space to 2d space
+var delta = 0;
 
 window.onload = function main(){
 	run();
@@ -44,10 +39,10 @@ function change_direction(){
 }
 
 function change_rotation(){
-	if (rotate == false){
-		rotate = true;
+	if (is_rotating == false){
+		is_rotating = true;
 	} else {
-		rotate = false;
+		is_rotating = false;
 	}
 }
 
@@ -125,35 +120,26 @@ function create_buffer(gl, vertices, program, canvas, num_items, program){
 	gl.enableVertexAttribArray(coordinates_var);
 
 	var matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
-	var matViewUniformLocation = gl.getUniformLocation(program, 'mView');
-	var matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
-
 	var worldMatrix = new Float32Array(16);
-	var viewMatrix = new Float32Array(16);
-	var projMatrix = new Float32Array(16);
 	mat4.identity(worldMatrix);
-	mat4.lookAt(viewMatrix, [0, 0, -3], [0,0,0], [0,1,0]);
-	mat4.perspective(projMatrix, glMatrix.toRadian(45), canvas.width/canvas.height, 0.1, 1000.0);
 
 	// send to shader
 	gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
-	gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, viewMatrix);
-	gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, projMatrix);
 
 	var identityMatrix = new Float32Array(16);
 	mat4.identity(identityMatrix);
 		
-	move(gl, worldMatrix, identityMatrix, matWorldUniformLocation, num_items);
+	rotate(gl, worldMatrix, identityMatrix, matWorldUniformLocation, num_items);
 
 }
 
-function move(gl, worldMatrix, identityMatrix, matWorldUniformLocation, num_items) {
+function rotate(gl, worldMatrix, identityMatrix, matWorldUniformLocation, num_items) {
 	var loop = function(){
 		old_time = new_time;
 		new_time = performance.now();
-		time = new_time - old_time;
-		if (rotate){
-			theta += direction * (time / 1000 / 6 * 2 *  Math.PI); // miliseconds since window loaded
+		delta = new_time - old_time;
+		if (is_rotating){
+			theta += direction * (delta / 1000 / 6 * 2 *  Math.PI); // miliseconds since window loaded
 		}
 		mat4.rotate(worldMatrix, identityMatrix, theta, [0,0,1]);
 		gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
