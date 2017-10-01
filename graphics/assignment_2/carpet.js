@@ -1,6 +1,12 @@
 var layers = [];
 const BASE = 1/3;
 const SHIFT = 2/3;
+var direction = 1;
+var rotate = false;
+var theta = 0;
+var new_time = 0;
+var old_time = 0;
+var time = 0;
 
 // translation matrix: move in space
 // rotation matrix: spin around
@@ -21,14 +27,28 @@ function run(){
 	var depth = document.getElementById('depth').value;
 	
 	var gl = init(canvas);
+	canvas.onclick = change_direction;
+
 	var vert_shader = load_vertex_shader(gl);
-	var frag_shaer = load_frag_shader(gl);
-	var program = link_program(gl, canvas, vert_shader, frag_shaer);
+	var frag_shader = load_frag_shader(gl);
+	var program = link_program(gl, canvas, vert_shader, frag_shader);
 
 	get_verts(parent, depth, is_base);
 	vertices = fill(vertices);
 	num_items = vertices.length / 8;
-	create_buffer(gl, vertices, program, canvas, num_items);
+	create_buffer(gl, vertices, program, canvas, num_items, program);
+}
+
+function change_direction(){
+	direction = direction * -1;
+}
+
+function change_rotation(){
+	if (rotate == false){
+		rotate = true;
+	} else {
+		rotate = false;
+	}
 }
 
 function init(canvas){	
@@ -84,11 +104,11 @@ function link_program(gl, canvas, vert_shader, frag_shader){
 
 	gl.viewport(0, 0, canvas.width, canvas.height);
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
-	gl.useProgram(program);
 	return program;
 }
 
-function create_buffer(gl, vertices, program, canvas, num_items){
+function create_buffer(gl, vertices, program, canvas, num_items, program){
+	gl.useProgram(program);
 	var buffer = gl.createBuffer(); // set aside memory on GPU for data
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffer); // select this buffer as something to manipulate
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW); //copy data to buffer
@@ -122,15 +142,24 @@ function create_buffer(gl, vertices, program, canvas, num_items){
 
 	var identityMatrix = new Float32Array(16);
 	mat4.identity(identityMatrix);
-	var theta = 0;
+		
+	move(gl, worldMatrix, identityMatrix, matWorldUniformLocation, num_items);
+
+}
+
+function move(gl, worldMatrix, identityMatrix, matWorldUniformLocation, num_items) {
 	var loop = function(){
-		theta = performance.now() / 1000 / 6 * 2 *  Math.PI; // miliseconds since window loaded
-		mat4.rotate(worldMatrix, identityMatrix, -theta, [0,0,1]);
+		old_time = new_time;
+		new_time = performance.now();
+		time = new_time - old_time;
+		if (rotate){
+			theta += direction * (time / 1000 / 6 * 2 *  Math.PI); // miliseconds since window loaded
+		}
+		mat4.rotate(worldMatrix, identityMatrix, theta, [0,0,1]);
 		gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 		render(gl, num_items);
 		requestAnimationFrame(loop);
 	};
-
 	requestAnimationFrame(loop);
 }
 

@@ -13,9 +13,13 @@ public class VendingMachine{
 		this.dimes = init_dimes;	
 	}
 	
+	public void print_state(){
+		System.out.println("State #" + state + ":\nquarters: " + quarters + " || nickels: " + nickels
+		+ " || dimes: " + dimes + " || value: " + value + " || cancel: " + cancel + "\n");
+	}
+
 	public String lambda(){
-		return "State #" + state + " q: " + quarters + " || n: " + nickels
-		+ " || d: " + dimes + " || value: " + value + " || cancel: " + cancel + "\n" + coffee + change;
+		return "\nOutput:\n---------------------\n" + coffee + change + "---------------------\n";
 	}
 
 	public void delta(String[] args){
@@ -55,7 +59,7 @@ public class VendingMachine{
 		count = 0;
 		if (value >= 100) {
 			count = value/100;
-			coffee = count + " coffee(s)";	
+			coffee = count + " coffee(s)\n";	
 		}
 		value = value % 100;
 	}
@@ -63,12 +67,13 @@ public class VendingMachine{
 	private void dispense_change() throws NoChangeException{
 		int q_count=0, n_count=0, d_count=0;
 		if (value != 0){
-			System.out.println("val:" + value + " || q: " + quarters + " || n: " + nickels + " || d:" + dimes);
 			while(value != 0){
 				while (value >= 25){
 					if (has_quarters()){
 						if (value < 50 && value % 25 != 0){
-							break;
+							if (has_dimes()){
+								break;
+							}
 						}
 						value -= 25;
 						quarters--;
@@ -87,6 +92,7 @@ public class VendingMachine{
 						break;
 					}
 				}
+
 				while (value >= 5){
 					if (has_nickels()){
 						value -= 5;
@@ -96,12 +102,13 @@ public class VendingMachine{
 						break;
 					}
 				}
+			//System.out.println("val:" + value + " || q: " + q_count + " || n: " + n_count + " || d:" + d_count);
 				if (value != 0){
 					throw new NoChangeException("Insufficent Change. Please call xxx-xxx-xxxx for more information");
 				}
 			}
 		}
-		change = "\nChange: " + q_count + " quarters -- " + n_count + " nickels -- " + d_count + " dimes.\n";
+		change = "Change: " + q_count + " quarters\n" + n_count + " nickels -- " + d_count + " dimes.\n";
 	}
 
 	private boolean has_quarters(){
