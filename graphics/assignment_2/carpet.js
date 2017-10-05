@@ -112,7 +112,7 @@ function create_buffer(gl, vertices, program, canvas, num_items){
 	var viewMatrix = new Float32Array(16);
 	var projMatrix = new Float32Array(16);
 	mat4.identity(worldMatrix);
-	mat4.lookAt(viewMatrix, [0, 0, -3], [0,0,0], [0,1,0]);
+	mat4.lookAt(viewMatrix, [0, 0, -2.5], [0,0,0], [0,1,0]);
 	mat4.perspective(projMatrix, glMatrix.toRadian(45), canvas.width/canvas.height, 0.1, 1000.0);
 
 	// send to shader
@@ -125,12 +125,11 @@ function create_buffer(gl, vertices, program, canvas, num_items){
 	var theta = 0;
 	var loop = function(){
 		theta = performance.now() / 1000 / 6 * 2 *  Math.PI; // miliseconds since window loaded
-		mat4.rotate(worldMatrix, identityMatrix, -theta, [0,0,1]);
+		mat4.rotate(worldMatrix, identityMatrix, -theta, [0,1,0]);
 		gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 		render(gl, num_items);
 		requestAnimationFrame(loop);
 	};
-
 	requestAnimationFrame(loop);
 }
 
