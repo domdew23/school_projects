@@ -1,5 +1,5 @@
 var layers = [];
-const BASE = 1/3;
+var BASE = 0;
 const SHIFT = 2/3;
 var direction = 1;
 var is_rotating = false;
@@ -7,6 +7,7 @@ var theta = 0;
 var new_time = 0;
 var old_time = 0;
 var delta = 0;
+var theta_var = 0;
 
 window.onload = function main(){
 	run();
@@ -16,7 +17,9 @@ function run(){
 	var num_items = 0;
 	var parent = [];
 	var vertices = [];
-	layers = [];
+	var centers = [];
+	var tmp_vertices = [];
+
 	var canvas = document.getElementById('web_gl_canvas');
 	var depth = document.getElementById('depth').value;
 	
@@ -26,12 +29,24 @@ function run(){
 	var vert_shader = load_vertex_shader(gl);
 	var frag_shader = load_frag_shader(gl);
 	var program = link_program(gl, canvas, vert_shader, frag_shader);
-	gl.useProgram(program);
 
+	layers = [];
+	BASE = 1/3;
+	parent = [];
 	get_verts(parent, depth, true);
-	vertices = fill(vertices);
-	num_items = vertices.length / 8;
-	create_buffer(gl, vertices, program, canvas, num_items, program);
+	tmp_vertices = fill(tmp_vertices);
+
+	layers = [];
+	BASE = 0;
+	parent = [];
+	get_verts(parent, depth, true);
+	centers = fill(centers);
+
+	console.log(tmp_vertices);
+	console.log(centers);
+	data = tmp_vertices.concat(centers);
+	num_items = (tmp_vertices.length / 8); // number of squares
+	create_buffer(gl, data, program, canvas, num_items, tmp_vertices);
 }
 
 function change_direction(){
@@ -102,42 +117,51 @@ function link_program(gl, canvas, vert_shader, frag_shader){
 	return program;
 }
 
-function create_buffer(gl, vertices, program, canvas, num_items, program){
+function create_buffer(gl, data, program, canvas, num_items, vertices){
+	gl.useProgram(program);
 	var buffer = gl.createBuffer(); // set aside memory on GPU for data
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffer); // select this buffer as something to manipulate
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW); //copy data to buffer
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW); //copy data to buffer
 
 	var coordinates_var = gl.getAttribLocation(program, "coordinates");
+	gl.enableVertexAttribArray(coordinates_var);
+
 	gl.vertexAttribPointer(
 		coordinates_var, 
 		2, 
 		gl.FLOAT, 
 		false, 
 		0, 
-		0);
+		0
+	);
 
-	gl.enableVertexAttribArray(coordinates_var);
+	var center_var = gl.getAttribLocation(program, "center");
+	gl.enableVertexAttribArray(center_var);
 
-	var rotation_matrix_var = gl.getUniformLocation(program, 'rotation_matrix');
-	var rotation_matrix = new Float32Array(16);
-	mat4.identity(rotation_matrix);
+	gl.vertexAttribPointer(
+		center_var, 
+		2, 
+		gl.FLOAT, 
+		false, 
+		0, 
+		vertices.length*4
+	);
 
-	var identity_matrix = new Float32Array(16);
-	mat4.identity(identity_matrix);
-		
-	rotate(gl, rotation_matrix, identity_matrix, rotation_matrix_var, num_items);
+	// grab theta from the shader
+	theta_var = gl.getUniformLocation(program, "theta");		
+	rotate(gl, num_items);
 }
 
-function rotate(gl, rotation_matrix, identity_matrix, rotation_matrix_var, num_items) {
+function rotate(gl, num_items) {
 	var loop = function(){
 		old_time = new_time;
 		new_time = performance.now();
 		delta = new_time - old_time;
 		if (is_rotating){
-			theta += direction * (delta / 500 / 6 * 2 *  Math.PI); // miliseconds since window loaded
+			theta += (direction * (delta / 500 / 6 * 2 *  Math.PI)); // miliseconds since window loaded
 		}
-		mat4.rotate(rotation_matrix, identity_matrix, theta, [0,0,1]); // rotate
-		gl.uniformMatrix4fv(rotation_matrix_var, gl.FALSE, rotation_matrix); // send to shader
+		// send theta to the shader
+		gl.uniform1f(theta_var, theta);
 		render(gl, num_items);
 		requestAnimationFrame(loop);
 	};
@@ -154,14 +178,14 @@ function render(gl, num_items){
 	}
 }
 
-function fill(vertices){
+function fill(arr){
 	for (i = 0; i < layers.length; i++){
-		vertices = vertices.concat(layers[i]);
+		arr = arr.concat(layers[i]);
 	}
-	return vertices;
+	return arr;
 }
 
-function get_verts(parent, depth, is_base=false){
+function get_verts(parent, depth, is_base){
 	if (is_base){
 		var base = [
 			//X  Y	
@@ -171,7 +195,7 @@ function get_verts(parent, depth, is_base=false){
 			BASE,-BASE
 		];
 		parent.push(base);
-		layers.push(base);
+		layers.push(base);	
 	}
 
 	if (depth == 0){
