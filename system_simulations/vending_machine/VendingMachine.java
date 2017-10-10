@@ -17,6 +17,7 @@ public class VendingMachine{
 		+ " || dimes: " + dimes + " || value: " + value + " || cancel: " + cancel + "\n");
 	}
 
+	// lambda and delta cannot depend on each other (can call similar code in both lambda and delta)
 	public String lambda(){
 		return "\nOutput:\n---------------------\n" + coffee + change + "---------------------\n";
 	}

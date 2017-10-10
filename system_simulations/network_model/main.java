@@ -24,7 +24,9 @@ public class main {
 		// 3) inject input into a running simulation to support interactive simulations
 		//state of M is a pair of bits (q1, q2)
 
-		byte[] input_set = {0, 0};
+		// make sure lambda and delta are independent of each other
+		// lambda and delta can have similar functions to one another
+		byte[] input_set = {0, 0}; // change to boolean
 		AtomicModel XOR1 = new AtomicModel(input_set);
 		AtomicModel XOR2 = new AtomicModel(input_set);
 		AtomicModel M = new AtomicModel(input_set);
