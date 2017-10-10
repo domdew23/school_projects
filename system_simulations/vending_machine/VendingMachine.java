@@ -101,8 +101,6 @@ public class VendingMachine{
 						break;
 					}
 				}
-
-			System.out.println("val:" + value + " || q: " + q_count + " || n: " + n_count + " || d:" + d_count);
 				if (value != 0){
 					throw new AtomicModelException("Insufficent Change. Please call xxx-xxx-xxxx for more information");
 				}

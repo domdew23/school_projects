@@ -13,7 +13,8 @@ public class main {
 	}
 
 	private static void start(){
-		VendingMachine VM = new VendingMachine(2, 2, 0);
+
+		VendingMachine VM = new VendingMachine(10, 5, 8); // Q N D
 		Scanner sc = new Scanner(System.in);
 		String input = "";
 		while (true){
@@ -40,7 +41,7 @@ public class main {
 				case 'd': X[i] = "d"; break;
 				case 'c': X[i] = "c"; break;
 				case 'w': X[i] = " "; break;
-				case ' ': X[i] =  " "; break;
+				case ' ': X[i] = " "; break;
 				default:
 					System.out.println("Please enter valid input");
 					return false;	
