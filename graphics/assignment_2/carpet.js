@@ -134,7 +134,7 @@ function rotate(gl, rotation_matrix, identity_matrix, rotation_matrix_var, num_i
 		new_time = performance.now();
 		delta = new_time - old_time;
 		if (is_rotating){
-			theta += direction * (delta / 500 / 6 * 2 *  Math.PI); // miliseconds since window loaded
+			theta += direction * (delta / 1000 / 6 * 2 *  Math.PI); // miliseconds since window loaded
 		}
 		mat4.rotate(rotation_matrix, identity_matrix, theta, [0,0,1]); // rotate
 		gl.uniformMatrix4fv(rotation_matrix_var, gl.FALSE, rotation_matrix); // send to shader
