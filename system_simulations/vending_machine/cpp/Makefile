@@ -1,5 +1,8 @@
-output: main.o
-	g++ main.o -o vending_machine
+output: main.o VendingMachine.o
+	g++ main.o VendingMachine.o -o vending_machine
+
+VendingMachine.o: VendingMachine.cpp VendingMachine.h
+	g++ -c VendingMachine.cpp
 
 main.o: main.cpp
 	g++ -c main.cpp
