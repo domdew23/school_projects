@@ -32,7 +32,7 @@ public class main {
 		AtomicModel M = new MemoryModel();
 
 		AtomicModel[] components = {XOR1, XOR2, M};
-		Network network = Network.builder().addComponent(XOR1).addComponent(XOR2).addComponent(M).build();
+		AtomicModel network = Network.builder().addComponent(XOR1).addComponent(XOR2).addComponent(M).build();
 
 
 		boolean[] input = new boolean[2];
@@ -55,7 +55,7 @@ public class main {
 					default: System.out.println("Invalid input"); bad_input = true; break;
 				}
 			}
-			
+
 			if (!bad_input){
 				System.out.println("\n" + ((network.lambda()) ? 1 : 0));
 				network.delta(input[0], input[1]);
