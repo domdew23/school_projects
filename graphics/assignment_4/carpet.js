@@ -266,7 +266,7 @@ function get_verts(parent, depth, is_base){
 						break;
 					case 6:
 						// bottom right
-						if (j % 2 == 0){
+						if (j % 2 == 0){n
 							// X
 							vert_to_add = vert + SHIFT;
 							child.push(vert_to_add)

@@ -22,23 +22,51 @@ public class main {
 		// 1) control rate at which time in the simulation advances
 		// 2) be notified when any component, atomic or network, produces output and when an atomic component changes state
 		// 3) inject input into a running simulation to support interactive simulations
-		//state of M is a pair of bits (q1, q2)
+		// state of M is a pair of bits (q1, q2)
 
 		// make sure lambda and delta are independent of each other
 		// lambda and delta can have similar functions to one another
-		byte[] input_set = {0, 0}; // change to boolean
-		AtomicModel XOR1 = new AtomicModel(input_set);
-		AtomicModel XOR2 = new AtomicModel(input_set);
-		AtomicModel M = new AtomicModel(input_set);
 
-		byte[] input = new byte[2];
+		AtomicModel XOR1 = new XORModel();
+		AtomicModel XOR2 = new XORModel();
+		AtomicModel M = new MemoryModel();
+
+		AtomicModel[] components = {XOR1, XOR2, M};
+		Network network = Network.builder().addComponent(XOR1).addComponent(XOR2).addComponent(M).build();
+
+
+		boolean[] input = new boolean[2];
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Enter input:\n");
-		input[0] = sc.nextByte();
-		input[1] = sc.nextByte();
+		String str = ""; 	
+		boolean bad_input = false;
 
-		for (int i = 0; i < 2; i++){
-			System.out.println(input[i]);
+		while (!str.equals("quit")){
+			bad_input = false;
+			System.out.println("Enter input:\n");
+			str = sc.nextLine();
+
+			for (int i = 0, index=0; i < str.length(); i++, index++){
+				if (bad_input)
+					break;
+				switch (str.charAt(i)){
+					case '1': input[index] = true; break;
+					case '0': input[index] = false; break;
+					case ' ': index--; break;
+					default: System.out.println("Invalid input"); bad_input = true; break;
+				}
+			}
+			
+			if (!bad_input){
+				System.out.println("\n" + ((network.lambda()) ? 1 : 0));
+				network.delta(input[0], input[1]);
+			}
 		}
 	}
 }
+
+
+
+
+
+
+
