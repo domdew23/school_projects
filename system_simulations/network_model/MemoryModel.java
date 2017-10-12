@@ -17,7 +17,7 @@ public class MemoryModel implements AtomicModel{
 	}
 
 	public void delta(boolean x1, boolean x2){
-		System.out.println("M Old State: " + ((state[0]) ? 1 : 0) + " || " + ((state[1]) ? 1 : 0));
+		System.out.println("M Input: " + ((x1) ? 1 : 0) + ((x2) ? 1 : 0));
 		state[0] = state[1];
 		state[1] = (x1 ^ x2);
 		System.out.println("M New State: " + ((state[0]) ? 1 : 0) + " || " + ((state[1]) ? 1 : 0) + "\n==================");

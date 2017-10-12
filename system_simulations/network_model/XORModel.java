@@ -19,9 +19,9 @@ public class XORModel implements AtomicModel {
 	}
 
 	public void delta(boolean x1, boolean x2){
-		System.out.println("XOR" + id + " Old State: " + ((state) ? 1 : 0));
+		System.out.println("XOR" + id + " Input: " + ((x1) ? 1 : 0) + ((x2) ? 1 : 0));
 		state = (x1 ^ x2);
-		System.out.println("XOR" + id + " New State: " + ((state) ? 1 : 0) + "\n==================");
+		System.out.println("XOR" + id + " State: " + ((state) ? 1 : 0) + "\n==================");
 		tick++;
 	}
 
