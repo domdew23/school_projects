@@ -17,13 +17,14 @@ public class Network implements AtomicModel{
 	}
 
 	public void delta(boolean x1, boolean x2){
-		for (int i = 0; i < 3; i++){
+		for (int i = 0; i < componentCount; i++){
 			boolean[] X1 = {components[0].lambda(), components[2].lambda()};
 			boolean[] X2 = {components[2].lambda(), components[1].lambda()};
 			components[0].delta(x1, x2);
 			components[1].delta(X1[0], X1[1]);
 			components[2].delta(X2[0], X2[1]);
-			System.out.println("\nNetwork state: " + ((state) ? 1 : 0) + "\nnext atomic tick...\n");
+			//System.out.println("\nNetwork state: " + ((state) ? 1 : 0) + "\nnext atomic tick...\n");
+			System.out.println("");
 		}
 		state = components[2].lambda();
 		System.out.println("\nNetwork state: " + ((state) ? 1 : 0) + "\n");
