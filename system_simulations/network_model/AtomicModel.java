@@ -1,14 +1,9 @@
-public class AtomicModel{
-	private byte[] input_set = new byte[2];
-	public AtomicModel(byte[] input_set){
-		this.input_set = input_set;
-	}
+/* Component */
+public interface AtomicModel{
 
-	public void lambda(){
+	public boolean lambda();
 
-	}
-
-	public void delta(){
-
-	}
+	public void delta(boolean x1, boolean x2);
+	
+	public int getTick();
 }
