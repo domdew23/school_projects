@@ -8,16 +8,22 @@ public class main {
 		//input: {nickel, dime, quarter, cancel, wait}
 		//output: {nickel,dime,quarter,coffee,nothing}
 		// apply output function before the state transition
+<<<<<<< HEAD
 		System.out.println("\nOptions:\nq - Quarters || n - Nickels || d - Dimes || 
 			c - Cancel || quit - Quit || w - Wait\n");
+=======
+		System.out.println("\nOptions:\nq - Quarters || n - Nickels || d - Dimes || c - Cancel || w - Wait || quit - Quit\n");
+>>>>>>> a31a59c4ec8d0d08f5ce94c762408ac7ee22b3fd
 		start();
 	}
 
 	private static void start(){
-		VendingMachine VM = new VendingMachine(0, 0, 5);
+
+		VendingMachine VM = new VendingMachine(10, 5, 8); // Q N D
 		Scanner sc = new Scanner(System.in);
 		String input = "";
 		while (true){
+			VM.print_state();
 			input = sc.nextLine();
 			String[] X = new String[input.length()];
 			if (!fill_bag(input, X)){

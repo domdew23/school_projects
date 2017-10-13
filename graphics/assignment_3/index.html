@@ -3,10 +3,20 @@
 	<head>
 		<title>Rotating Sierpinski Carpet</title>
 		<script id="vertex_shader" type="x-shader/x-vertex">
-			attribute vec4 coordinates;
-			uniform mat4 rotation_matrix;
+			precision mediump float;
+			attribute vec2 coordinates;
+			attribute vec2 center;
+			uniform float theta;
 			void main(){
-				gl_Position = (rotation_matrix * coordinates);
+				mat2 rotation_matrix = mat2(cos(theta), -sin(theta),
+											sin(theta),  cos(theta));
+
+				vec2 temp_position = coordinates;
+				temp_position = temp_position - center; // translate to origin
+				temp_position = rotation_matrix * temp_position; // rotate around origin
+				temp_position = temp_position + center; // translate back to original position
+
+				gl_Position = vec4(temp_position, 0.0, 1.0);
 			}
 		</script>
 
@@ -24,7 +34,6 @@
 		</canvas>
 		<input type="range" id="depth" max="5" step="1" value="0" onchange="run()">
 		<input type="button" id="button" value="Press to rotate." onClick="change_rotation()">
-		<script src="gl-matrix.js"></script>
 		<script src="carpet.js"></script>
 	</body>
 </html>
