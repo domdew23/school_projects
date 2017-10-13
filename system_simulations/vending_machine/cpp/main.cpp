@@ -1,10 +1,12 @@
 #include <iostream>
 #include <string>
+#include <cstring>
 #include "VendingMachine.h"
 using namespace std;
 
 int main(int argc, char** argv){
 	cout << "Options: q - Quarter || n - Nickels || d - Dimes || w - Wait || c - Cancel || quit - Quit" << endl;
+	cout << argc << endl;
 	VendingMachine* VM = new VendingMachine(5, 5, 5);
 	string input = "";
 	while (true){

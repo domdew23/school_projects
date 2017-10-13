@@ -25,7 +25,6 @@ class main{
 		new_population = new AtomicReferenceArray<Person>(POP_SIZE);
 
 		init(new_population, best_mem);
-		//ExecutorService executor = Executors.newFixedThreadPool(THREAD_COUNT);
 		run(new_population, best_mem);
 	}
 

@@ -33,7 +33,8 @@ void VendingMachine::delta(int argc, char* args){
 }
 
 void VendingMachine::print_state(){
-	cout << "Quarters: " << quarters << " || Nickels: " << nickels << " || Dimes: " << dimes << " || Value: " << value << " || Cancel: " << cancel << endl;
+	cout << "Quarters: " << quarters << " || Nickels: " << nickels << 
+	" || Dimes: " << dimes << " || Value: " << value << " || Cancel: " << cancel << endl;
 }
 
 void VendingMachine::dispense_change(){
