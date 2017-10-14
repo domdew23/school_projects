@@ -8,6 +8,8 @@ public class main {
 		//input: {nickel, dime, quarter, cancel, wait}
 		//output: {nickel,dime,quarter,coffee,nothing}
 		// apply output function before the state transition
+		System.out.println("\nOptions:\nq - Quarters || n - Nickels || d - Dimes || 
+			c - Cancel || quit - Quit || w - Wait\n");
 		System.out.println("\nOptions:\nq - Quarters || n - Nickels || d - Dimes || c - Cancel || w - Wait || quit - Quit\n");
 		start();
 	}
@@ -30,7 +32,7 @@ public class main {
 	}
 
 	private static boolean fill_bag(String input, String[] X){
-		if (input.equals("quit")){
+		if (input.equals("quit")){  
 			System.exit(0);
 		}
 		for (int i = 0; i < input.length(); i++){

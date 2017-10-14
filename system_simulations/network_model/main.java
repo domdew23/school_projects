@@ -31,34 +31,35 @@ public class main {
 		AtomicModel XOR2 = new XORModel();
 		AtomicModel M = new MemoryModel();
 
-		AtomicModel[] components = {XOR1, XOR2, M};
+		//AtomicModel[] components = {XOR1, XOR2, M};
 		AtomicModel network = Network.builder().addComponent(XOR1).addComponent(XOR2).addComponent(M).build();
 
 
-		boolean[] input = new boolean[2];
 		Scanner sc = new Scanner(System.in);
 		String str = ""; 	
 		boolean bad_input = false;
 
-		while (!str.equals("quit")){
+		while (true){
 			bad_input = false;
+			boolean[] X = new boolean[2];
 			System.out.println("Enter input:\n");
 			str = sc.nextLine();
-
+			if (str.equals("quit")){
+				break;
+			}
 			for (int i = 0, index=0; i < str.length(); i++, index++){
 				if (bad_input)
 					break;
 				switch (str.charAt(i)){
-					case '1': input[index] = true; break;
-					case '0': input[index] = false; break;
+					case '1': X[index] = true; break;
+					case '0': X[index] = false; break;
 					case ' ': index--; break;
 					default: System.out.println("Invalid input"); bad_input = true; break;
 				}
 			}
-
 			if (!bad_input){
-				System.out.println("\n" + ((network.lambda()) ? 1 : 0));
-				network.delta(input[0], input[1]);
+				System.out.println("\nNetwork output: " + ((network.lambda()) ? 1 : 0) +  "\n");
+				network.delta(X);
 			}
 		}
 	}
