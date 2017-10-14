@@ -13,13 +13,14 @@ public class MemoryModel implements AtomicModel{
 	}
 
 	public boolean lambda(){
+		System.out.println("M Output: " + ((state[0] ^ state[1]) ? 1 : 0));
 		return (state[0] ^ state[1]);
 	}
 
 	public void delta(boolean x1, boolean x2){
 		System.out.println("M Input: " + ((x1) ? 1 : 0) + ((x2) ? 1 : 0));
 		state[0] = state[1];
-		state[1] = (x1 ^ x2);
+		state[1] = x2;
 		System.out.println("M New State: " + ((state[0]) ? 1 : 0) + " || " + ((state[1]) ? 1 : 0) + "\n==================");
 		tick++;
 	}

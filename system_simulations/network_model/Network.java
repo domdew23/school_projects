@@ -20,7 +20,7 @@ public class Network implements AtomicModel{
 		for (int i = 0; i < componentCount; i++){
 			boolean[] X1 = {components[0].lambda(), components[2].lambda()}; // output of XOR1 and output of M
 			boolean[] X2 = {components[2].lambda(), components[1].lambda()}; // output of M and output of XOR2
-			
+
 			components[0].delta(x1, x2); // input to the Network
 			components[1].delta(X1[0], X1[1]);
 			components[2].delta(X2[0], X2[1]);
@@ -36,6 +36,7 @@ public class Network implements AtomicModel{
 		return this.tick;
 	}
 
+	// coupling function push over to dest
 
 	public static class NetworkBuilder {
 		private AtomicModel[] components = new AtomicModel[3];

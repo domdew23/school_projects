@@ -12,10 +12,12 @@ VendingMachine::VendingMachine(int init_quarters, int init_nickels, int init_dim
 	this->cancel = false;
 }
 
-string VendingMachine::lambda(){
-	// cant change the value
+int[] VendingMachine::lambda(){
+	// cant change the value but needs to interpret value
 	// outputs change, coffee, nothing
-	return "";
+	int[] y = {0, 0, 0, 0}; // [0]: # of coffes, [1]: # of q's, [2]: # of n's, [3]: # of d's
+	// if all 0's output is nothing
+	return y;
 }
 
 void VendingMachine::delta(int argc, char* args){
