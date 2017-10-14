@@ -5,12 +5,11 @@
 #include "VendingMachine.h"
 using namespace std;
 
-string to_string(int i)
-{
+/*string to_string(int i){
     stringstream ss;
     ss << i;
     return ss.str();
-}
+}*/
 
 void print_output(int* y){
 	string output = "";
@@ -52,18 +51,7 @@ int main(int argc, char** argv){
 		}
 		char* X = new char[input.size()];
 		strcpy(X, input.c_str());
-<<<<<<< HEAD
-		for (int i = 0; i < 4; i++){
-			switch (i){
-				case 0: VM->lambda()[0]; break; // output num coffees
-				case 1: VM->lambda()[1]; break; // num quarters
-				case 2: VM->lambda()[2]; break; // num nickels
-				case 3: VM->lambda()[3]; break; // num dimes
-			}
-		}
-=======
 		print_output(VM->lambda());
->>>>>>> 5893852dccfc81e4b659240b7811415b9bbcc40e
 		VM->delta(input.size(), X);
 		VM->print_state();
 		delete[] X;

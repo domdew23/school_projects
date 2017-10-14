@@ -12,13 +12,6 @@ VendingMachine::VendingMachine(int init_quarters, int init_nickels, int init_dim
 	this->cancel = false;
 }
 
-<<<<<<< HEAD
-int[] VendingMachine::lambda(){
-	// cant change the value but needs to interpret value
-	// outputs change, coffee, nothing
-	int[] y = {0, 0, 0, 0}; // [0]: # of coffes, [1]: # of q's, [2]: # of n's, [3]: # of d's
-	// if all 0's output is nothing
-=======
 int* VendingMachine::lambda(){
 	int coffee=0, nothing=0;
 
@@ -35,7 +28,6 @@ int* VendingMachine::lambda(){
 	}
 
 	int* y = new int[5]{coffee, 0, 0, 0, nothing};
->>>>>>> 5893852dccfc81e4b659240b7811415b9bbcc40e
 	return y;
 }
 
@@ -43,7 +35,7 @@ void VendingMachine::delta(int argc, char* args){
 	if (cancel){
 		cancel = false;
 		if (value > 0){
-			decrement_coins();
+			change_state();
 		}
 	} else if (value >= 100){
 		value %= 100;
@@ -66,7 +58,7 @@ void VendingMachine::print_state(){
 	" || Dimes: " << dimes << " || Value: " << value << " || Cancel: " << cancel << endl;
 }
 
-void VendingMachine::decrement_coins(){
+void VendingMachine::change_state(){
 	int* change = dispense_change();
 	for (int i = 0; i < change[0]; i++){
 		value -= 25;
