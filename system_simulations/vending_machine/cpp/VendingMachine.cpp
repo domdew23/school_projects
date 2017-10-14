@@ -12,14 +12,35 @@ VendingMachine::VendingMachine(int init_quarters, int init_nickels, int init_dim
 	this->cancel = false;
 }
 
-string VendingMachine::lambda(){
-	// cant change the value
-	// outputs change, coffee, nothing
-	return "";
+int* VendingMachine::lambda(){
+	int coffee=0, nothing=0;
+
+	if (cancel){
+		int* pointer = dispense_change();
+		int* y = new int[5]{coffee, pointer[0], pointer[1], pointer[2], nothing};
+		return y;
+	} else if (value >= 100){
+		coffee = value / 100;
+	}
+
+	if (!coffee){
+		nothing = 1;
+	}
+
+	int* y = new int[5]{coffee, 0, 0, 0, nothing};
+	return y;
 }
 
 void VendingMachine::delta(int argc, char* args){
-	cancel = false;
+	if (cancel){
+		cancel = false;
+		if (value > 0){
+			decrement_coins();
+		}
+	} else if (value >= 100){
+		value %= 100;
+	}
+
 	for (int i = 0; i < argc; i++){
 		switch (args[i]){
 			case 'q': quarters++; value += 25; break;
@@ -37,5 +58,63 @@ void VendingMachine::print_state(){
 	" || Dimes: " << dimes << " || Value: " << value << " || Cancel: " << cancel << endl;
 }
 
-void VendingMachine::dispense_change(){
+void VendingMachine::decrement_coins(){
+	int* change = dispense_change();
+	for (int i = 0; i < change[0]; i++){
+		value -= 25;
+		quarters--;
+	}
+
+	for (int i = 0; i < change[1]; i++){
+		value -= 5;
+		nickels--;
+	}
+
+	for (int i = 0; i < change[2]; i++){
+		value -= 10;
+		dimes--;
+	}
+}
+
+int* VendingMachine::dispense_change(){
+	int q_count=0, n_count=0, d_count=0;
+	int tmp_value = value;
+	while (tmp_value != 0){
+		while (tmp_value >= 25){
+			if (quarters > 0){
+				if (tmp_value < 50 && tmp_value % 10 == 0){
+					if (dimes > 0){
+						break;
+					}
+				}
+				q_count++;
+				tmp_value -= 25;
+			} else {
+				break;
+			}
+		}
+		while (tmp_value >= 10){
+			if (dimes > 0){
+				d_count++;
+				tmp_value -= 10;
+			} else {
+				break;
+			}
+		}
+		while (tmp_value >= 5){
+			if (nickels > 0){
+				n_count++;
+				tmp_value -= 5;
+			} else {
+				break;
+			}
+		}
+		if (tmp_value != 0){
+			cout << "OUT OF SUFFICIENT CHANGE" << endl;
+			break;
+		}
+	}
+
+	int* pointer = new int[3]{q_count, n_count, d_count};
+	return pointer;
 }

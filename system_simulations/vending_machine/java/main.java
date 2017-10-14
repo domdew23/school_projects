@@ -8,12 +8,9 @@ public class main {
 		//input: {nickel, dime, quarter, cancel, wait}
 		//output: {nickel,dime,quarter,coffee,nothing}
 		// apply output function before the state transition
-<<<<<<< HEAD
 		System.out.println("\nOptions:\nq - Quarters || n - Nickels || d - Dimes || 
 			c - Cancel || quit - Quit || w - Wait\n");
-=======
 		System.out.println("\nOptions:\nq - Quarters || n - Nickels || d - Dimes || c - Cancel || w - Wait || quit - Quit\n");
->>>>>>> a31a59c4ec8d0d08f5ce94c762408ac7ee22b3fd
 		start();
 	}
 
