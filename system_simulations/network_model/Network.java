@@ -46,6 +46,7 @@ public class Network implements AtomicModel{
 		return this.tick;
 	}
 
+	// coupling function push over to dest
 
 	public static class NetworkBuilder {
 		private AtomicModel[] components = new AtomicModel[3];

@@ -12,6 +12,7 @@ public class XORModel implements AtomicModel {
 	}
 
 	public boolean lambda(){
+		System.out.println("XOR" + id + " Output: " + ((state) ? 1 : 0));
 		return state;
 	}
 
