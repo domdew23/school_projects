@@ -16,8 +16,8 @@ int* VendingMachine::lambda(){
 	int coffee=0, nothing=0;
 
 	if (cancel){
-		int* pointer = dispense_change();
-		int* y = new int[5]{coffee, pointer[0], pointer[1], pointer[2], nothing};
+		int* change = dispense_change();
+		int* y = new int[5]{coffee, change[0], change[1], change[2], nothing};
 		return y;
 	} else if (value >= 100){
 		coffee = value / 100;
@@ -35,7 +35,7 @@ void VendingMachine::delta(int argc, char* args){
 	if (cancel){
 		cancel = false;
 		if (value > 0){
-			decrement_coins();
+			change_state();
 		}
 	} else if (value >= 100){
 		value %= 100;
@@ -58,7 +58,7 @@ void VendingMachine::print_state(){
 	" || Dimes: " << dimes << " || Value: " << value << " || Cancel: " << cancel << endl;
 }
 
-void VendingMachine::decrement_coins(){
+void VendingMachine::change_state(){
 	int* change = dispense_change();
 	for (int i = 0; i < change[0]; i++){
 		value -= 25;

@@ -9,7 +9,7 @@ class VendingMachine{
 		void delta(int argc, char* args);
 		void print_state();
 		int* dispense_change();
-		void decrement_coins();	
+		void change_state();	
 	private:
 		int quarters;
 		int nickels;
