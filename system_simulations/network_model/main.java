@@ -27,11 +27,8 @@ public class main {
 		// make sure lambda and delta are independent of each other
 		// lambda and delta can have similar functions to one another
 
-		AtomicModel XOR1 = new XORModel();
-		AtomicModel XOR2 = new XORModel();
-		AtomicModel M = new MemoryModel();
-
-		AtomicModel network = Network.builder().addComponent(XOR1).addComponent(XOR2).addComponent(M).build();
+		//AtomicModel[] components = {XOR1, XOR2, M};
+		AtomicModel network = Network.builder().addComponent(new XORModel()).addComponent(new XORModel()).addComponent(new MemoryModel()).build();
 
 
 		Scanner sc = new Scanner(System.in);

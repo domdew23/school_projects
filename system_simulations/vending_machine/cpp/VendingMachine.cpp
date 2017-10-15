@@ -16,8 +16,8 @@ int* VendingMachine::lambda(){
 	int coffee=0, nothing=0;
 
 	if (cancel){
-		int* pointer = dispense_change();
-		int* y = new int[5]{coffee, pointer[0], pointer[1], pointer[2], nothing};
+		int* change = dispense_change();
+		int* y = new int[5]{coffee, change[0], change[1], change[2], nothing};
 		return y;
 	} else if (value >= 100){
 		coffee = value / 100;

@@ -5,17 +5,16 @@
 #include "VendingMachine.h"
 using namespace std;
 
-/*string to_string(int i){
+string to_string(int i){
     stringstream ss;
     ss << i;
     return ss.str();
-}*/
+}
 
 void print_output(int* y){
 	string output = "";
 	int coffee=0, quarters=0, nickels=0, dimes=0, nothing=0;
 	for (int i = 0; i < 5; i++){
-		//cout << "y["<<i<<"]: " << y[i] << endl;
 		switch (i){
 			case 0: coffee = y[i]; break; //coffee to output
 			case 1: quarters = y[i]; break; //output quarters
