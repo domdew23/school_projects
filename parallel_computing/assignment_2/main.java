@@ -4,7 +4,5 @@ public class main{
 	// game state randomly updated at random times
 	// non-blocking data structure to store game state
 
-
-
 	}
 }

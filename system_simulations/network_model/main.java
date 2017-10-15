@@ -31,7 +31,6 @@ public class main {
 		AtomicModel XOR2 = new XORModel();
 		AtomicModel M = new MemoryModel();
 
-		//AtomicModel[] components = {XOR1, XOR2, M};
 		AtomicModel network = Network.builder().addComponent(XOR1).addComponent(XOR2).addComponent(M).build();
 
 
