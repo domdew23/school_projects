@@ -5,11 +5,11 @@
 #include "VendingMachine.h"
 using namespace std;
 
-/*string to_string(int i){
+string to_string(int i){
     stringstream ss;
     ss << i;
     return ss.str();
-}*/
+}
 
 void print_output(int* y){
 	string output = "";

@@ -19,13 +19,13 @@ public class Network implements AtomicModel{
 	public void delta(boolean[] X){
 		for (int i = 0; i < componentCount; i++){
 			boolean[][] inputs = coupling(X);
-			components[0].delta(inputs[0]); // input to the Network
-			components[1].delta(inputs[1]);
-			components[2].delta(inputs[2]);
+			for (int j = 0; j < componentCount; j++){
+				components[j].delta(inputs[j]); // input to the Network
+			}
 			System.out.println();
 		}
 		state = components[1].lambda();
-		//System.out.println("\nNetwork state: " + ((state) ? 1 : 0) + "\n");
+		System.out.println("\nNetwork state: " + ((state) ? 1 : 0) + "\n");
 		tick++;
 	}
 
