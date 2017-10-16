@@ -2,18 +2,33 @@
 interaction with NPC (merchant) then all clients recieve
 higher prices from that NPC). Most metrics will be random. */
 
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Client implements Runnable {
 	// thread local:
-	private int behavior; // high behavior metric means more likely to produce positive interactions and vice versa
+	private double behavior; // high behavior metric means more likely to produce positive interactions and vice versa
+	private final Random RAND;
+	private static ConcurrentHashMap<Integer,Merchant> merchants;
+	private int id;
 
-	public Client(){
-
+	public Client(int id, long seed, ConcurrentHashMap<Integer,Merchant> MERCHANTS){
+		RAND = new Random(seed);
+		behavior = RAND.nextDouble();
+		this.merchants = MERCHANTS;
+		this.id = id;
 	}
 
 	public void run(){
 		/* execute one action per loop */
 		while (true){
-			
+			if (Math.random() <= .35){
+				if (Math.random() <= .80){
+					buy();
+				} else {
+					interact();
+				}
+			}
 		}
 	}
 
@@ -21,8 +36,14 @@ public class Client implements Runnable {
 	private void travel(){
 		/* simulates clients traveling the world and
 		doing nothing. This function has no influence 
-		on game state and does not need to read game state. */
+		on game state and does not need to read game state.
+		Sleeps for random amount of time between 0 - 10 seconds. */
 
+		try {
+			Thread.sleep(RAND.nextInt(10000));
+		} catch (InterruptedException e){
+			return;
+		}
 
 	}
 
