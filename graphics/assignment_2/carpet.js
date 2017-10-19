@@ -121,8 +121,6 @@ function create_buffer(gl, vertices, program, canvas, num_items, program){
 	var rotation_matrix_var = gl.getUniformLocation(program, 'rotation_matrix');
 	var rotation_matrix = new Float32Array(16);
 	mat4.identity(rotation_matrix);
-
-<<<<<<< HEAD
 	var worldMatrix = new Float32Array(16);
 	var viewMatrix = new Float32Array(16);
 	var projMatrix = new Float32Array(16);
@@ -134,21 +132,21 @@ function create_buffer(gl, vertices, program, canvas, num_items, program){
 	gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 	gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, viewMatrix);
 	gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, projMatrix);
-=======
+
 	var identity_matrix = new Float32Array(16);
 	mat4.identity(identity_matrix);
 		
 	rotate(gl, rotation_matrix, identity_matrix, rotation_matrix_var, num_items);
 }
->>>>>>> a31a59c4ec8d0d08f5ce94c762408ac7ee22b3fd
+
 
 function rotate(gl, rotation_matrix, identity_matrix, rotation_matrix_var, num_items) {
 	var loop = function(){
-<<<<<<< HEAD
+
 		theta = performance.now() / 1000 / 6 * 2 *  Math.PI; // miliseconds since window loaded
 		mat4.rotate(worldMatrix, identityMatrix, -theta, [0,1,0]);
 		gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
-=======
+
 		old_time = new_time;
 		new_time = performance.now();
 		delta = new_time - old_time;
@@ -157,7 +155,7 @@ function rotate(gl, rotation_matrix, identity_matrix, rotation_matrix_var, num_i
 		}
 		mat4.rotate(rotation_matrix, identity_matrix, theta, [0,0,1]); // rotate
 		gl.uniformMatrix4fv(rotation_matrix_var, gl.FALSE, rotation_matrix); // send to shader
->>>>>>> a31a59c4ec8d0d08f5ce94c762408ac7ee22b3fd
+
 		render(gl, num_items);
 		requestAnimationFrame(loop);
 	};
