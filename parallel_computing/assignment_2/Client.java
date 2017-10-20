@@ -40,7 +40,7 @@ public class Client implements Runnable {
 		Sleeps for random amount of time between 0 - 10 seconds. */
 
 		try {
-			Thread.sleep(RAND.nextInt(10000));
+			Thread.sleep(RAND.nextInt(5000));
 		} catch (InterruptedException e){
 			return;
 		}

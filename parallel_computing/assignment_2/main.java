@@ -29,6 +29,7 @@ public class main{
 			Merchant m = new Merchant(seed, i);
 			MERCHANTS.put(i, m);
 			print(m, i, seed);
+			System.out.println(m.hashCode() % 100);
 		}
 	}
 
