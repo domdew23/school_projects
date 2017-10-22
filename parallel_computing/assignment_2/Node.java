@@ -1,7 +1,8 @@
-public class Node<Key, Value> implements Map.Entry<Key, Value>{
-	final private int hash;
-	final private Key key;
-	final private Value value;
+public class Node<Key, Value> {
+	private int hash;
+	private Key key;
+	private Value value;
+	private Node<Key, Value> next;
 
 	public Node(int hash, Key key, Value value){
 		this.hash = hash;
@@ -30,6 +31,6 @@ public class Node<Key, Value> implements Map.Entry<Key, Value>{
 	public boolean equals(Object o){
 		boolean sameKey = false;
 		boolean sameValue = false;
-		boolean sameHase = false;
+		return false;
 	}
 }

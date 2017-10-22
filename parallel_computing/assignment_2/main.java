@@ -1,13 +1,13 @@
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+//import java.util.concurrent.ConcurrentHashMap;
 
 public class main{
 
 	private static final Random RAND = new Random();
-	private static final int NUM_CLIENTS = 50;
+	private static final int NUM_CLIENTS = 2;
 	private static final int NUM_MERCHANTS = 10;
 	private static final float LOAD_FACTOR = .75f;
-	private static final ConcurrentHashMap<Integer,Merchant> MERCHANTS = new ConcurrentHashMap<Integer,Merchant>(NUM_MERCHANTS, LOAD_FACTOR, NUM_CLIENTS);
+	private static final ConcurrentHashMap<Integer,Merchant> MERCHANTS = new ConcurrentHashMap<Integer,Merchant>(100);
 	private static final Thread[] CLIENTS = new Thread[NUM_CLIENTS];
 
 	public static void main(String[] args){
@@ -19,28 +19,27 @@ public class main{
 		Compare throughput (amount of items passed to system) across two different loads on two different platforms - use JMH
 		Plot results as a graph on a web page
 		*/
-		createMerchants();
-		createClients();
+		initMerchants();
+		initClients();
+		System.out.println(MERCHANTS.toString());
+		System.out.println("Size: " + MERCHANTS.size());
+		for (int i = 0; i < NUM_CLIENTS; i++){
+			CLIENTS[i].start();
+		}
+
 	}
 
-	private static void createMerchants(){
+	private static void initMerchants(){
 		for (int i = 0; i < NUM_MERCHANTS; i++){
 			long seed = RAND.nextLong();
+			Integer id = new Integer(i);
 			Merchant m = new Merchant(seed, i);
-			MERCHANTS.put(i, m);
-			print(m, i, seed);
-			System.out.println(m.hashCode() % 100);
+			MERCHANTS.put(id, m);
+			//m.printMerchant();
 		}
 	}
 
-	private static void print(Merchant m, int i, long seed){
-		System.out.println("\nMember #" + i + ": Seed: " + seed + " || Chemistry: " + m.getChemistry() + " || avg price: " + m.getAvgPrice());			
-		System.out.println("====================");
-		m.printGoodPrices();
-		System.out.println("====================");
-	}
-
-	private static void createClients(){
+	private static void initClients(){
 		for (int i = 0; i < NUM_CLIENTS; i++){
 			long seed = RAND.nextLong();
 			Thread t = new Thread(new Client(i, seed, MERCHANTS));
