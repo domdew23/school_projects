@@ -45,17 +45,20 @@ public class Client implements Runnable {
 		on game state and does not need to read game state.
 		Sleeps for random amount of time between 0 - 5 seconds. */
 
-		if (Math.random() <= .9){
-			double earnings = RAND.nextDouble() * RAND.nextInt(1000);
-			salary += (earnings);
-			//System.out.printf("Earned: $%.2f", earnings);
-			//System.out.println();
-		} else {
-			try {
+		try {
+			if (Math.random() <= .9){
+				// simulate completing quests/missions for money
+				double earnings = RAND.nextDouble() * RAND.nextInt(1000);
+				salary += (earnings);
+				Thread.sleep(RAND.nextInt(500));
+				//System.out.printf("Earned: $%.2f", earnings);
+				//System.out.println();
+			} else {
+				// simulate doing nothing
 				Thread.sleep(RAND.nextInt(2500));
-			} catch (InterruptedException e){
-				return;
 			}
+		} catch (InterruptedException e){
+			return;
 		}
 	}
 
