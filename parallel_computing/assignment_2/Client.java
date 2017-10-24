@@ -70,16 +70,20 @@ public class Client implements Runnable {
 		Merchant myMerchant = merchants.get(RAND.nextInt(merchants.size()));
 		Good good = myMerchant.getGoods()[RAND.nextInt(myMerchant.getGoodCount())];
 		if (!(good.getPrice() > salary)){
-			System.out.print("Client " + id + " just made a purchase from " + myMerchant.id() + " of good " + good.id());
-			System.out.printf(" for $%.2f", good.getPrice());
-			System.out.print(" || quant: " + good.getQuantity()); 
-			System.out.printf(" salary is before $%.2f", salary);
-			//System.out.println();
 			good.buy();
 			salary -= good.getPrice();
-			System.out.printf(" || salary is now $%.2f", salary);
-			System.out.print(" || good quant now: " + good.getQuantity());
-			System.out.println();
+			String output = "-----------------------------------------------------------------------------------------------------------------\n";
+			//output += 		"\n";//|\t\t|\t\t|\t\t|\t\t\t|\t\t|\t\t\t\t|\n";
+			output +=		"|  Client: " + id + "  |  Merchant: " + myMerchant.id() + "  |  Good " + good.id() + "   |";
+			System.out.print(output);
+			String output2 = "";
+			System.out.printf("  Cost: $%.2f", good.getPrice());
+			System.out.print("         |  Quantity: " + good.getQuantity() + "     |"); 
+			System.out.printf("  Salary: $%.2f", salary);
+			output2 +=		"    |\n";//\t|\n|\t\t|\t\t|\t\t|\t\t\t|\t\t|\t\t\t\t|\n";
+			output2 +=		"-----------------------------------------------------------------------------------------------------------------\n";
+			System.out.print(output2); 
+
 		}
 	}
 

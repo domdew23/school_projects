@@ -4,7 +4,7 @@ import java.util.Random;
 public class main{
 
 	private static final Random RAND = new Random();
-	private static final int NUM_CLIENTS = 1;
+	private static final int NUM_CLIENTS = 4;
 	private static final int NUM_MERCHANTS = 10;
 	private static final float LOAD_FACTOR = .75f;
 	private static final ConcurrentHashMap<Integer,Merchant> MERCHANTS = new ConcurrentHashMap<Integer,Merchant>(100);
@@ -16,7 +16,8 @@ public class main{
 		Non-blocking data structure to store game state
 		Game state is collection of Merchants
 		Solution using a data struture and/or locking scheme - use standard JDK components
-		Compare throughput (amount of items passed to system) across two different loads on two different platforms - use JMH
+		Compare throughput (amount of items passed to system) across two different loads 
+		on two different platforms use JMH
 		Plot results as a graph on a web page
 		*/
 		initMerchants();
