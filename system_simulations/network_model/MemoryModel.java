@@ -11,6 +11,7 @@ public class MemoryModel implements AtomicModel{
 
 	public boolean lambda(){
 		System.out.println("M Output: " + ((state[0] ^ state[1]) ? 1 : 0));
+		System.out.println("==================");
 		return state[0];
 	}
 
