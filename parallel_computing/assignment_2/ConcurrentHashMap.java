@@ -3,24 +3,31 @@ import java.util.Random;
 public class ConcurrentHashMap<Key, Value> {
 	
 	private Node<Key, Value>[] nodes;
+	private LinkedList[] buckets;
 	private int size;
 	private int maxCapacity;
 	private Random rand = new Random();
 
 	public ConcurrentHashMap(int maxCapacity){
 		nodes = new Node[maxCapacity];
+		buckets = new LinkedList[maxCapacity];
 		size = 0;
 		this.maxCapacity = maxCapacity;
 	}
 
 	public Value get(Key key) {
 		int index = hashCode(key);
+		System.out.println(" getting: " + index + "...");
+		while (nodes[index] == null){
+			index = rand.nextInt(size);
+		}
 		return nodes[index].getValue();
 	}
 
 	public Value put(Key key, Value value){
 		int index = hashCode(key);
-		System.out.println("hash: " + index);
+		System.out.println(" adding: " + index + "...");
+		//System.out.println("hash: " + index);
 		if (nodes[index] == null){
 			nodes[index] = new Node<Key, Value>(index, key, value);
 			size++;
@@ -33,6 +40,7 @@ public class ConcurrentHashMap<Key, Value> {
 
 	public void remove(Key key){
 		int index = hashCode(key);
+		System.out.println(" removing: " + index + "...");
 		if (nodes[index] != null){
 			nodes[index] = null;
 			size--;
@@ -88,5 +96,4 @@ public class ConcurrentHashMap<Key, Value> {
 		}
 		return retVal;
 	}
-
 }

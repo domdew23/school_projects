@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.util.concurrent.locks.ReadWriteLock;
 
 public class Merchant {
 	// bad relationship means high prices
@@ -9,13 +10,18 @@ public class Merchant {
 	private double avgPrice;
 	private Random rand;
 	private int id;
+	private volatile static int count = 0;
+	//private ReadWriteLock lock = new ReadWriteLock();
 
 	public Merchant(long seed, int id){
 		rand = new Random(seed);
-		goodCount = rand.nextInt(100);
+		while (goodCount <= 0){
+			goodCount = rand.nextInt(100);
+		}
 		goods = new Good[goodCount];
 		chemistry = (rand.nextDouble() * 100); // max = 100.0 : min = 0.0
 		this.id = id;
+		count++;
 		fill();
 	}
 
@@ -42,12 +48,27 @@ public class Merchant {
 		System.out.println("====================");
 	}
 
-	public void badInteraction(){
-
+	public boolean badInteraction(){
+		double result = (rand.nextDouble() * 100);
+		chemistry -= result;
+		if (chemistry <= 0){
+			if (Math.random() < .3){
+				return true;
+			}
+		}
+		return false;
 	}
 
-	public void goodInteraction(){
-		
+	public boolean goodInteraction(){
+		double result = (rand.nextDouble() * 100);
+		chemistry += result;
+		if (chemistry >= 100){
+			chemistry = 50;
+			if (Math.random() < .3){
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public double getAvgPrice(){
@@ -68,5 +89,9 @@ public class Merchant {
 
 	public int id(){
 		return id;
+	}
+
+	public static int getCount(){
+		return count;
 	}
 }

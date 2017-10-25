@@ -2,8 +2,9 @@ public class Node<Key, Value> {
 	private int hash;
 	private Key key;
 	private Value value;
-	private Node<Key, Value> next;
-
+	public Node<Key, Value> next;
+	public Node<Key, Value> previous;
+	
 	public Node(int hash, Key key, Value value){
 		this.hash = hash;
 		this.key = key;
@@ -32,5 +33,9 @@ public class Node<Key, Value> {
 		boolean sameKey = false;
 		boolean sameValue = false;
 		return false;
+	}
+
+	public void display(){
+		System.out.println("Key: " + key + " | Value: " + value + " | Next: " + next);
 	}
 }
