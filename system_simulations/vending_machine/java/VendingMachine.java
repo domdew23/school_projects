@@ -1,10 +1,7 @@
 public class VendingMachine{
 	private int quarters=0, nickels=0, dimes=0, value=0;
 	private boolean cancel = false;
-	private int count = 0;
-	private String coffee = "";
 	private int state = 0;
-	private String change = "";
 
 	public VendingMachine(int init_quarters, int init_nickels, int init_dimes){
 		this.quarters = init_quarters;
@@ -18,60 +15,84 @@ public class VendingMachine{
 	}
 
 	// lambda and delta cannot depend on each other (can call similar code in both lambda and delta)
-	public String lambda(){
-		return "\nOutput:\n---------------------\n" + coffee + change + "---------------------\n";
+	public int[] lambda(){
+		int coffee=0, nothing=0;
+
+		if (cancel){
+			try{
+				int[] change = dispense_change();
+				int[] y = {coffee, change[0], change[1], change[2], nothing};
+				return y;
+			} catch (AtomicModelException e){
+				e.printStackTrace();
+				System.out.println("OUT OF ORDER");
+				System.exit(0);
+			}
+		} else if (value >= 100){
+			coffee = value/100;
+		}
+
+		if (coffee == 0){
+			nothing = 1;
+		}
+
+		int[] y = {coffee, 0, 0, 0, nothing};
+		return y;
 	}
 
 	public void delta(String[] args){
 		state++;
-		cancel = false;
-		change = "";
-		coffee = "";
-		int new_quarters=0, new_nickels=0, new_dimes=0;
+		if (cancel){
+			cancel = false;
+			if (value > 0){
+				changeState();
+			}
+		} else if (value >= 100){
+			value %= 100;
+		}
+
 		for (int i = 0; i < args.length; i++){
 			switch (args[i]){
-				case "q": new_quarters++; break;
-				case "n": new_nickels++; break;
-				case "d": new_dimes++; break;
+				case "q": quarters++; value += 25;break;
+				case "n": nickels++; value += 5;break;
+				case "d": dimes++; value += 10; break;
 				case "c": cancel = true; break;
 				case " ": break;
 				default : System.out.println("Something went wrong");
 			}
 		}
-		value += (new_quarters*25) + (new_nickels*5) + (new_dimes*10);
-		quarters += new_quarters;
-		nickels += new_nickels;
-		dimes += new_dimes;
-		check();
 	}
 
-	private void check(){
-		if (cancel){
-			try {
-				dispense_change();
-			} catch (AtomicModelException e){
-				e.printStackTrace();
-				System.out.println("\nOUT OF ORDER...");
-				System.exit(0);
+	private void changeState(){
+		try {
+			int[] change = dispense_change();
+			for (int i = 0; i < change[0]; i++){
+				value -= 25;
+				quarters--;
 			}
-			return;
+			for (int i = 0; i < change[1]; i++){
+				value -= 5;
+				nickels--;
+			}
+			for (int i = 0; i < change[2]; i++){
+				value -= 10;
+				dimes--;
+			}
+	} catch (AtomicModelException e){
+			e.printStackTrace();
+			System.out.println("\nOUT OF ORDER...");
+			System.exit(0);		
 		}
-		count = 0;
-		if (value >= 100) {
-			count = value/100;
-			coffee = count + " coffee(s)\n";	
-		}
-		value = value % 100;
 	}
 
-	private void dispense_change() throws AtomicModelException{
+	private int[] dispense_change() throws AtomicModelException{
 		int q_count=0, n_count=0, d_count=0;
 		if (value != 0){
 			while(value != 0){
 				while (value >= 25){
-					if (has_quarters()){
+					if (quarters > 0){
 						if (value < 50 && value % 10 == 0){
-							if (has_dimes()){
+							if (dimes > 0){
 								break;
 							}
 						}
@@ -84,7 +105,7 @@ public class VendingMachine{
 				}
 
 				while (value >= 10){
-					if (has_dimes()){
+					if (dimes > 0){
 						value -= 10;
 						dimes--;
 						d_count++;
@@ -94,7 +115,7 @@ public class VendingMachine{
 				}
 
 				while (value >= 5){
-					if (has_nickels()){
+					if (nickels > 0){
 						value -= 5;
 						nickels--;
 						n_count++;
@@ -107,27 +128,7 @@ public class VendingMachine{
 				}
 			}
 		}
-		change = "Change: " + q_count + " quarters\n" + n_count + " nickels -- " + d_count + " dimes.\n";
-	}
-
-	private boolean has_quarters(){
-		if (quarters == 0){
-			return false;
-		}
-		return true;
-	}
-
-	private boolean has_nickels(){
-		if (nickels == 0){
-			return false;
-		}
-		return true;
-	}
-
-	private boolean has_dimes(){
-		if (dimes == 0){
-			return false;
-		}
-		return true;
+		int[] change = {q_count, n_count, d_count};
+		return change;
 	}
 }

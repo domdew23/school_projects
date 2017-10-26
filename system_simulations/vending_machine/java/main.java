@@ -2,21 +2,37 @@ import java.util.Scanner;
 
 public class main {
 	public static void main(String[] args){
-		//accepts nickels dimes and quarters
-		//when 1 dollar is inserted dispense coffee
-		//when change is pressed return unspent coins
-		//input: {nickel, dime, quarter, cancel, wait}
-		//output: {nickel,dime,quarter,coffee,nothing}
-		// apply output function before the state transition
-		System.out.println("\nOptions:\nq - Quarters || n - Nickels || d - Dimes || 
-			c - Cancel || quit - Quit || w - Wait\n");
 		System.out.println("\nOptions:\nq - Quarters || n - Nickels || d - Dimes || c - Cancel || w - Wait || quit - Quit\n");
 		start();
 	}
 
+	private static void printOutput(int[] y){
+		String output = "";
+		int coffee=0, quarters=0, nickels=0, dimes=0, nothing=0;
+		for (int i = 0; i < 5; i++){
+			switch (i){
+				case 0: coffee   = y[i]; break; //coffee to output
+				case 1: quarters = y[i]; break; //output quarters
+				case 2: nickels  = y[i]; break; //output nickels
+				case 3: dimes    = y[i]; break; //output dimes
+				case 4: nothing  = y[i]; break;//output nothing
+				default: System.out.println("Something went wrong");
+			}
+		}
+
+		if (nothing == 1){
+			output = "Nothing.\n";
+		} else if (coffee > 0){
+			output += (coffee + " Coffee(s)\n");
+		} else {
+			output += (quarters + " Quarters\n" + nickels + " Nickels\n" + dimes + " Dimes\n");
+		}
+		System.out.println("\n=================\n" + output + "=================\n");
+	}
+
 	private static void start(){
 
-		VendingMachine VM = new VendingMachine(10, 5, 8); // Q N D
+		VendingMachine VM = new VendingMachine(10, 0, 8); // Q N D
 		Scanner sc = new Scanner(System.in);
 		String input = "";
 		while (true){
@@ -26,7 +42,7 @@ public class main {
 			if (!fill_bag(input, X)){
 				continue;
 			}
-			System.out.println(VM.lambda());
+			printOutput(VM.lambda());
 			VM.delta(X);
 		}
 	}
