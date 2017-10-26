@@ -24,11 +24,15 @@ public class Network implements AtomicModel{
 			}
 			System.out.println();
 		}
+		// network does not have state, it's state is the state of all of its components
+		// output of the network (in this case) is output of XOR2 - output is not the state
 		state = components[1].lambda();
 		System.out.println("\nNetwork state: " + ((state) ? 1 : 0) + "\n");
 		tick++;
 	}
 
+	// need to make coupling function more abstract
+	// **should not be hard coded in **
 	private boolean[][] coupling(boolean[] X){
 		boolean XOR1y = components[0].lambda(); // coupled with input to XOR2
 		boolean XOR2y = components[1].lambda(); // coupled with output of network AND input to M
