@@ -17,10 +17,10 @@ public class ConcurrentHashMap<Key, Value> {
 
 	public Value get(Key key) {
 		int index = hashCode(key);
-		Value retValue = null;
 		lock.readLock().lock();
+		Node tmp;
 		try{
-			Node tmp = buckets[index].getFirst();
+			tmp = buckets[index].getFirst();
 			while (tmp.getKey() != key){
 				if (tmp.next == null){
 					return null;
@@ -29,15 +29,15 @@ public class ConcurrentHashMap<Key, Value> {
 			}
 		} finally {
 			lock.readLock().unlock();
-			return tmp.getValue();
 		}
+		return tmp.getValue();
 	}
 
 	public Value put(Key key, Value value){
 		int index = hashCode(key);
 		lock.writeLock().lock();
 		try{
-			buckets[index].addFirst(new Node<Key, Value>(index, key, value);
+			buckets[index].addFirst(new Node<Key, Value>(index, key, value));
 			size++;
 		} finally {
 			lock.writeLock().unlock();
