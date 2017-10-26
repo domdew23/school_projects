@@ -3,7 +3,7 @@ interaction with NPC (merchant) then all clients recieve
 higher prices from that NPC). Most metrics will be random. */
 
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+//import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client implements Runnable {

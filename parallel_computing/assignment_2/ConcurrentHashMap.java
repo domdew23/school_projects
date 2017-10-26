@@ -1,15 +1,15 @@
 import java.util.Random;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ConcurrentHashMap<Key, Value> {
 	
-	private Node<Key, Value>[] nodes;
 	private LinkedList[] buckets;
 	private int size;
 	private int maxCapacity;
 	private Random rand = new Random();
+	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	public ConcurrentHashMap(int maxCapacity){
-		nodes = new Node[maxCapacity];
 		buckets = new LinkedList[maxCapacity];
 		size = 0;
 		this.maxCapacity = maxCapacity;
@@ -17,35 +17,46 @@ public class ConcurrentHashMap<Key, Value> {
 
 	public Value get(Key key) {
 		int index = hashCode(key);
-		System.out.println(" getting: " + index + "...");
-		while (nodes[index] == null){
-			index = rand.nextInt(size);
+		Value retValue = null;
+		lock.readLock().lock();
+		try{
+			Node tmp = buckets[index].getFirst();
+			while (tmp.getKey() != key){
+				if (tmp.next == null){
+					return null;
+				}
+				tmp = tmp.next;
+			}
+		} finally {
+			lock.readLock().unlock();
+			return tmp.getValue();
 		}
-		return nodes[index].getValue();
 	}
 
 	public Value put(Key key, Value value){
 		int index = hashCode(key);
-		System.out.println(" adding: " + index + "...");
-		//System.out.println("hash: " + index);
-		if (nodes[index] == null){
-			nodes[index] = new Node<Key, Value>(index, key, value);
+		lock.writeLock().lock();
+		try{
+			buckets[index].addFirst(new Node<Key, Value>(index, key, value);
 			size++;
+		} finally {
+			lock.writeLock().unlock();
 			return nodes[index].getValue();
 		}
-
-		System.out.println("THERE HAS BEEN A COLLISION. Consider adding a linkedlist as buckets");
-		return nodes[index].getValue();
 	}
 
-	public void remove(Key key){
+	public Value remove(Key key){
 		int index = hashCode(key);
-		System.out.println(" removing: " + index + "...");
-		if (nodes[index] != null){
-			nodes[index] = null;
-			size--;
-			return;
+		lock.writeLock().lock();
+		try {
+			if (buckets[index].remove(key) != null){
+				size--;
+				return;
+			}
+		} finally {
+			lock.writeLock().unlock();
 		}
+		//System.out.println("Trying to remove a value that does not exist");	
 	}
 
 	public int hashCode(Object o){
@@ -61,26 +72,23 @@ public class ConcurrentHashMap<Key, Value> {
 		return false;
 	}
 
-	public boolean containsValue(Object value){
+	/*public boolean containsValue(Object value){
 		for (int i = 0; i < nodes.length; i++){
 			if (nodes[i].getValue() == value){
 				return true;
 			}
 		}
 		return false;
-	}
+	}*/
 
 	public void clear(){
 		for (int i = 0; i < maxCapacity; i++){
-			remove(nodes[i].getKey());
+			buckets[i].clear();
 		}
 	}
 
 	public boolean isEmpty(){
-		if (size == 0){
-			return true;
-		}
-		return false;
+		return (size == 0);
 	}
 
 	public int size(){
@@ -90,8 +98,8 @@ public class ConcurrentHashMap<Key, Value> {
 	public String toString(){
 		String retVal = "";
 		for (int i = 0; i < maxCapacity; i++){
-			if (nodes[i] != null){
-				retVal += ("My index (hash): " + nodes[i].hashCode() + " || My id: " + nodes[i].getKey() + "\n");
+			if (!(buckets[i].isEmpty())){
+				buckets[i].display();
 			}
 		}
 		return retVal;

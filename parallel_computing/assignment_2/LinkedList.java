@@ -93,6 +93,14 @@ public class LinkedList {
 		return true;
 	}
 
+	public void clear(){
+		Node n = first;
+		while (n.next != null){
+			remove(n);
+			n = n.next;
+		}
+	}
+	
 	public Node getFirst(){
 		return first;
 	}

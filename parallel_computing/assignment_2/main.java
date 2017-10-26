@@ -1,5 +1,5 @@
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+//import java.util.concurrent.ConcurrentHashMap;
 
 public class main{
 
@@ -20,22 +20,18 @@ public class main{
 		on two different platforms use JMH
 		Plot results as a graph on a web page
 		*/
-		initMerchants();
-
-	}
-
-	private static void printUpdate(){
+		init();
 		while (true){
 			if (System.currentTimeMillis() % 5000 == 0){
-				System.out.println("\n" + MERCHANTS.toString() + "\n");
+				//System.out.println("\n" + MERCHANTS.toString() + "\n");
+				//System.out.println("here");
 			} 
 		}
 	}
+
 	private static void init(){
 		initMerchants();
 		initClients();
-		System.out.println(MERCHANTS.toString());
-		System.out.println("Size: " + MERCHANTS.size());
 		for (int i = 0; i < NUM_CLIENTS; i++){
 			CLIENTS[i].start();
 		}
@@ -48,17 +44,7 @@ public class main{
 			Integer id = new Integer(i);
 			Merchant m = new Merchant(seed, i);
 			MERCHANTS.put(id, m);
-			Node<Integer, Merchant> node = new Node<Integer, Merchant>(id, id, m);
-			list.addFirst(node);
-			//m.printMerchant();
 		}
-		list.display();
-		System.out.println("first: " + list.getFirst() + " | last: " + list.getLast() + "\n");
-
-		list.removeLast();
-		list.removeFirst();
-		list.display();
-		System.out.println("first: " + list.getFirst() + " | last: " + list.getLast());
 	}
 
 	private static void initClients(){
