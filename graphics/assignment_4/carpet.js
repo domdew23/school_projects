@@ -9,6 +9,17 @@ var old_time = 0;
 var delta = 0;
 var theta_var = 0;
 
+/* Need to add:
+	- light (parallel or point)
+	- material (random or uniform on each square)
+	- camera motion
+*/
+
+// -1 means light is pointing directly opposite at the object
+//  1 means light is pointing directly at the object
+// multiply color by dot product to produce light (Phong light equation)
+// normals - describe the direction a surface is facing (perpendicular)
+
 window.onload = function main(){
 	run();
 }
