@@ -52,7 +52,7 @@ public class Merchant {
 		double result = (rand.nextDouble() * 100);
 		chemistry -= result;
 		if (chemistry <= 0){
-			if (Math.random() < .3){
+			if (Math.random() < .15){
 				return true;
 			}
 		}
@@ -64,7 +64,7 @@ public class Merchant {
 		chemistry += result;
 		if (chemistry >= 100){
 			chemistry = 50;
-			if (Math.random() < .3){
+			if (Math.random() < .15){
 				return true;
 			}
 		}

@@ -36,6 +36,6 @@ public class Node<Key, Value> {
 	}
 
 	public void display(){
-		System.out.println("Key: " + key + " | Value: " + value + " | Next: " + next);
+		System.out.println("Key: " + key + " | Hash: " + hash + " | Value: " + value + " | Next: " + next);
 	}
 }

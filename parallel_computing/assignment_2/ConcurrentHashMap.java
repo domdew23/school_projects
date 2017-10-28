@@ -3,73 +3,89 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ConcurrentHashMap<Key, Value> {
 	
-	private LinkedList[] buckets;
-	private int size;
-	private int maxCapacity;
-	private Random rand = new Random();
+	private volatile LinkedList<Key, Value>[] buckets;
+	private volatile int size;
+	private volatile int maxCapacity;
+	private volatile Random rand = new Random();
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	public ConcurrentHashMap(int maxCapacity){
+		this.maxCapacity = maxCapacity;
 		buckets = new LinkedList[maxCapacity];
 		size = 0;
-		this.maxCapacity = maxCapacity;
+		init();
+	}
+
+	private void init(){
+		for (int i = 0; i < maxCapacity; i++){
+			buckets[i] = new LinkedList<Key,Value>();
+		}
 	}
 
 	public Value get(Key key) {
 		int index = hashCode(key);
+		//System.out.println("I AM WAITING ON THE READ LOCK");
 		lock.readLock().lock();
-		Node tmp;
+		Node<Key, Value> tmp = null;
 		try{
-			tmp = buckets[index].getFirst();
-			while (tmp.getKey() != key){
-				if (tmp.next == null){
-					return null;
-				}
-				tmp = tmp.next;
-			}
+			//System.out.println("I HAVE THE READ LOCK");
+			tmp = buckets[index].get(key);
 		} finally {
 			lock.readLock().unlock();
+			//System.out.println("I HAVE GIVEN UP THE READ LOCK");
+			return tmp.getValue();
 		}
-		return tmp.getValue();
 	}
 
 	public Value put(Key key, Value value){
 		int index = hashCode(key);
+		//System.out.println("I AM WAITING ON THE ADD LOCK");
 		lock.writeLock().lock();
 		try{
+			//System.out.println("I HAVE THE ADD LOCK");
 			buckets[index].addFirst(new Node<Key, Value>(index, key, value));
+			//buckets[index].getFirst().display();
 			size++;
 		} finally {
+			Value retVal = buckets[index].getFirst().getValue();
 			lock.writeLock().unlock();
-			return nodes[index].getValue();
+			//System.out.println("I HAVE GIVEN UP THE ADD LOCK");
+			return retVal;
 		}
 	}
 
 	public Value remove(Key key){
 		int index = hashCode(key);
+		//System.out.println("I AM WAITING ON THE REMOVE LOCK");
 		lock.writeLock().lock();
+		Value retVal = null;
 		try {
-			if (buckets[index].remove(key) != null){
+			//System.out.println("I HAVE THE REMOVE LOCK");
+			retVal = buckets[index].removeByKey(key).getValue();
+			if (retVal != null){
 				size--;
-				return;
 			}
 		} finally {
 			lock.writeLock().unlock();
+			//System.out.println("I HAVE GIVEN UP THE REMOVE LOCK");
+			return retVal;
 		}
 		//System.out.println("Trying to remove a value that does not exist");	
 	}
 
-	public int hashCode(Object o){
-		return (o.hashCode() % maxCapacity);
+	public int hashCode(Key key){
+		return (key.hashCode() % maxCapacity);
 	}
 
-	public boolean containsKey(Object key){
-		int index = hashCode(key);
-		if (nodes[index] != null){
-			return true;
+	public boolean containsKey(Key key){
+		lock.readLock().lock();
+		boolean retVal = false;
+		try {
+			retVal = (buckets[hashCode(key)].containsKey(key));
+		} finally {
+			lock.readLock().unlock();
+			return retVal;
 		}
-
-		return false;
 	}
 
 	/*public boolean containsValue(Object value){

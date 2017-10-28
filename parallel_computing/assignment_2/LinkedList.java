@@ -1,10 +1,10 @@
-public class LinkedList {
+public class LinkedList<Key, Value> {
 	/* Each link has a reference to another link in the list
 	LinkedList has only reference to the first and last link added
 	newest guy added to the list  (firstLink) */
 	
-	public Node first;
-	public Node last;
+	public Node<Key, Value> first;
+	public Node<Key, Value> last;
 
 	public LinkedList(){
 		first = null;
@@ -21,7 +21,7 @@ public class LinkedList {
 		first = n; // put n at the head
 	}
 
-	public void addLast(Node n){
+	public void addLast(Node<Key, Value> n){
 		if (isEmpty()){
 			first = n;
 		} else {
@@ -31,8 +31,8 @@ public class LinkedList {
 		last = n;
 	}
 
-	public Node removeFirst(){
-		Node n = first;
+	public Node<Key, Value> removeFirst(){
+		Node<Key, Value> n = first;
 
 		if (!isEmpty()){
 			first = first.next; // move first.next to the head
@@ -42,7 +42,7 @@ public class LinkedList {
 		return n;
 	}
 
-	public Node removeLast(){
+	public Node<Key, Value> removeLast(){
 		Node n = last;
 		if (!isEmpty()){
 			last = n.previous;
@@ -53,9 +53,9 @@ public class LinkedList {
 		return n;
 	}
 
-	public Node remove(Node n){
-		Node current = first;
-		Node previous = first;
+	public Node<Key, Value> remove(Node<Key, Value> n){
+		Node<Key, Value> current = first;
+		Node<Key, Value> previous = first;
 
 		while (current.getKey() != n.getKey()){
 			if (current.next == null){
@@ -74,43 +74,54 @@ public class LinkedList {
 		return current;
 	}
 
+	public Node<Key, Value> removeByKey(Key key){
+		Node<Key, Value> n = get(key);
+		Node<Key, Value> retVal = remove(n);
+		return retVal;
+	}
 	public boolean isEmpty(){
 		return (first == null);
 	}
 
-	public boolean contains(Node n){
-		if (isEmpty()){
-			return false;
-		}
+	public boolean contains(Node<Key,Value> n){
+		return (!isEmpty() && containsKey(n.getKey()));
+	}
 
-		Node tmp = first;
-		while (n.getKey() != tmp.getKey()){
-			if (tmp.next == null){
-				return false;
+	public boolean containsKey(Key key){
+		//System.out.println("stuck in here:" + key + "\n");
+		//display();
+		return (!isEmpty() && get(key) != null);
+	}
+
+	public Node<Key, Value> get(Key key){
+		Node<Key, Value> current = first;
+		while (!(key.equals(current.getKey()))){
+			if (current.next == null){
+				return null;
 			}
-			tmp = tmp.next;
+			current = current.next;
 		}
-		return true;
+		return current;
 	}
 
 	public void clear(){
-		Node n = first;
+		Node<Key, Value> n = first;
 		while (n.next != null){
 			remove(n);
 			n = n.next;
 		}
 	}
 	
-	public Node getFirst(){
+	public Node<Key, Value> getFirst(){
 		return first;
 	}
 
-	public Node getLast(){
+	public Node<Key, Value> getLast(){
 		return last;
 	}
 
 	public void display(){
-		Node n = first;
+		Node<Key, Value> n = first;
 		while (n != null){
 			n.display();
 			n = n.next;

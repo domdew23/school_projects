@@ -3,7 +3,7 @@ interaction with NPC (merchant) then all clients recieve
 higher prices from that NPC). Most metrics will be random. */
 
 import java.util.Random;
-//import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client implements Runnable {
@@ -27,8 +27,8 @@ public class Client implements Runnable {
 	public void run(){
 		/* execute one action per loop */
 		while (true){
-			if (Math.random() <= .25){
-				if (Math.random() <= .9){
+			if (Math.random() <= .3){
+				if (Math.random() <= .5){
 					buy();
 				} else {
 					interact();
@@ -62,11 +62,13 @@ public class Client implements Runnable {
 						behavior = .5;
 					}
 				}
+				//System.out.println("traveling...");
 				Thread.sleep(RAND.nextInt(500));
 				//System.out.printf("Earned: $%.2f", earnings);
 				//System.out.println();
 			} else {
 				// simulate doing nothing
+				//System.out.println("Client " + id + " traveling...");
 				Thread.sleep(RAND.nextInt(2500));
 			}
 		} catch (InterruptedException e){
@@ -83,19 +85,20 @@ public class Client implements Runnable {
 		while (!merchants.containsKey(index)){
 			index = RAND.nextInt(Merchant.getCount());
 		}
-
 		Merchant myMerchant = merchants.get(index);
 		Good good = myMerchant.getGoods()[RAND.nextInt(myMerchant.getGoodCount())];
+
 		if (!(good.getPrice() > salary)){
 			good.buy();
 			salary -= good.getPrice();
-			/*String output = "-----------------------------------------------------------------------------------------------------------------\n";
+			/*String output = "";//-----------------------------------------------------------------------------------------------------------------\n";
 			//output += 		"\n";//|\t\t|\t\t|\t\t|\t\t\t|\t\t|\t\t\t\t|\n";
 			output +=		"|  Client: " + id + "  |  Merchant: " + myMerchant.id() + "  |  Good " + good.id() + "   |";
 			System.out.print(output);
 			String output2 = "";
 			System.out.printf("  Cost: $%.2f", good.getPrice());
-			System.out.print("         |  Quantity: " + good.getQuantity() + "     |"); 
+			System.out.printf("         |  Behavior: %.4f", behavior);
+			System.out.print("     |"); 
 			System.out.printf("  Salary: $%.2f", salary);
 			output2 +=		"    |\n";//\t|\n|\t\t|\t\t|\t\t|\t\t\t|\t\t|\t\t\t\t|\n";
 			output2 +=		"-----------------------------------------------------------------------------------------------------------------\n";
@@ -120,22 +123,33 @@ public class Client implements Runnable {
 		// when chemistry is high more merchants are added
 		int index = RAND.nextInt(Merchant.getCount());
 		while (!merchants.containsKey(index)){
+			if (merchants.isEmpty()){
+				System.out.println("STUCK in here:" + merchants.toString());
+				if (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) != null){
+					System.out.println("added: " + (Merchant.getCount() - 1) + ".");
+					return;
+				}
+			}
 			index = RAND.nextInt(Merchant.getCount());
-			return;
 		}
+
 		Merchant myMerchant = merchants.get(index);
 		if (Math.random() >= behavior){
 			if (myMerchant.badInteraction()){
 				// remove
+				System.out.println("Client " + id + " started bad interaction");
 				if (merchants.remove(myMerchant.id()) != null){
 					System.out.println("removed " + myMerchant.id() + ".");
+					System.out.println(merchants.toString());
 				}
 			}
 		} else {
 			if(myMerchant.goodInteraction()){
 				//add
-				if (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) == null){
-					System.out.println("added: " + Merchant.getCount() + ".");		
+				System.out.println("Client " + id + " started good interaction");
+				if (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) != null){
+					System.out.println("added: " + (Merchant.getCount() - 1) + ".");
+					//System.out.println(merchants.toString());		
 				}
 			}
 		}

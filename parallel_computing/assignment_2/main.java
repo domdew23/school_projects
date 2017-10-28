@@ -1,5 +1,5 @@
 import java.util.Random;
-//import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class main{
 
@@ -38,7 +38,6 @@ public class main{
 	}
 
 	private static void initMerchants(){
-		LinkedList list = new LinkedList();
 		for (int i = 0; i < NUM_MERCHANTS; i++){
 			long seed = RAND.nextLong();
 			Integer id = new Integer(i);
