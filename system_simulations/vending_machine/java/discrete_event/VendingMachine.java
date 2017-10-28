@@ -50,6 +50,9 @@ public class VendingMachine{
 
 	public void deltaInternal(){
 		// gets executed when there needs to be output
+		if (value >= 100){
+			value %= 100;
+		}
 		try {
 			int[] change = dispense_change();
 			for (int i = 0; i < change[0]; i++){
@@ -79,8 +82,8 @@ public class VendingMachine{
 
 	// lambda and delta cannot depend on each other (can call similar code in both lambda and delta)
 	public int[] lambda(){
-		int coffee=0;
 		try{
+			int coffee = value/100;
 			int[] change = dispense_change();
 			int[] y = {coffee, change[0], change[1], change[2]};
 			return y;
@@ -88,13 +91,8 @@ public class VendingMachine{
 			e.printStackTrace();
 			System.out.println("OUT OF ORDER");
 			System.exit(0);
+			return null;
 		}
-		if (value >= 100){
-			coffee = value/100;
-		}
-
-		int[] y = {coffee, 0, 0, 0};
-		return y;
 	}
 
 	public int timeAdvance(){
@@ -128,7 +126,8 @@ public class VendingMachine{
 
 		if (coffee > 0){
 			output += (coffee + " Coffee(s)\n");
-		} else {
+		}
+		if ((quarters > 0 || nickels > 0) || dimes > 0){
 			output += (quarters + " Quarters\n" + nickels + " Nickels\n" + dimes + " Dimes\n");
 		}
 		System.out.println("\n=================\n" + output + "=================\n");
@@ -136,43 +135,41 @@ public class VendingMachine{
 
 	private int[] dispense_change() throws AtomicModelException{
 		int q_count=0, n_count=0, d_count=0;
-		if (value != 0){
-			while(value != 0){
-				while (value >= 25){
+		int tmpValue = value % 100;
+		if (tmpValue != 0){
+			while(tmpValue != 0){
+				while (tmpValue >= 25){
 					if (quarters > 0){
-						if (value < 50 && value % 10 == 0){
+						if (tmpValue < 50 && tmpValue % 10 == 0){
 							if (dimes > 0){
 								break;
 							}
 						}
-						value -= 25;
-						quarters--;
+						tmpValue -= 25;
 						q_count++;
 					} else {
 						break;
 					}
 				}
 
-				while (value >= 10){
+				while (tmpValue >= 10){
 					if (dimes > 0){
-						value -= 10;
-						dimes--;
+						tmpValue -= 10;
 						d_count++;
 					} else {
 						break;
 					}
 				}
 
-				while (value >= 5){
+				while (tmpValue >= 5){
 					if (nickels > 0){
-						value -= 5;
-						nickels--;
+						tmpValue -= 5;
 						n_count++;
 					} else {
 						break;
 					}
 				}
-				if (value != 0){
+				if (tmpValue != 0){
 					throw new AtomicModelException("Insufficent Change. Please call xxx-xxx-xxxx for more information");
 				}
 			}

@@ -29,21 +29,22 @@ void Network::delta(bool x1, bool x2){
 
 bool** Network::couple(bool x1, bool x2){
 	bool* outputs = new bool[compCount];
+	bool** retVal = new bool*[2];
+
 	for (int i = 0; i < compCount; i++){
 		outputs[i] = components[i]->lambda();
 	}
 
-	bool* XOR1x = new bool[2]{x1, x2};
-	bool* XOR2x = new bool[2]{outputs[0], outputs[2]};
-	bool* Mx = new bool[2]{outputs[1], outputs[2]};
-	//bool ret[compCount][2] = ;
-
-	bool** retValue; //= new bool[3][2]{{XOR1x}, {XOR2x}, {Mx}};
-	retValue[0] = XOR1x;
-	retValue[1] = XOR2x;
-	retValue[2] = Mx;
-
-	return retValue;
+	for (int i = 0; i < compCount; i++){
+		if (i == 0){
+			bool* tmp = new bool[2]{x1, x2};
+			retVal[i] = tmp;
+		} else {
+			bool* tmp = new bool[2]{outputs[compCount-1], outputs[i-1]};
+			retVal[i] = tmp;
+		}
+	}
+	return retVal;
 }
 
 Network::NetworkBuilder::NetworkBuilder(){

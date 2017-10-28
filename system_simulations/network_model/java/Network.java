@@ -13,7 +13,7 @@ public class Network implements AtomicModel{
 	}
 
 	public boolean lambda(){
-		return state;
+		return components[1].lambda();
 	}
 
 	public void delta(boolean[] X){
@@ -26,24 +26,30 @@ public class Network implements AtomicModel{
 		}
 		// network does not have state, it's state is the state of all of its components
 		// output of the network (in this case) is output of XOR2 - output is not the state
-		state = components[1].lambda();
-		System.out.println("\nNetwork state: " + ((state) ? 1 : 0) + "\n");
+		System.out.println("\nNetwork state: " + (lambda() ? 1 : 0) + "\n");
 		tick++;
 	}
 
 	// need to make coupling function more abstract
 	// **should not be hard coded in **
 	private boolean[][] coupling(boolean[] X){
-		boolean XOR1y = components[0].lambda(); // coupled with input to XOR2
-		boolean XOR2y = components[1].lambda(); // coupled with output of network AND input to M
-		boolean My = components[2].lambda(); // coupled with input to XOR2
+		boolean[] outputs = new boolean[componentCount];
+		boolean[][] retVal = new boolean[componentCount][2];
 
-		boolean[] XOR1x = X;
-		boolean[] XOR2x = {XOR1y, My};
-		boolean[] Mx = {My, XOR2y};
-		boolean[][] retValue = {XOR1x, XOR2x, Mx};
+		for (int i = 0; i < componentCount; i++){
+			outputs[i] = components[i].lambda();
+		}
 
-		return retValue;
+		for (int i = 0; i < componentCount; i++){
+			if (i == 0){
+				boolean[] tmp = X;
+				retVal[i] = tmp;
+			} else {
+				boolean[] tmp = {outputs[componentCount-1], outputs[i-1]};
+				retVal[i] = tmp;
+			}
+		}
+		return retVal;
 	}
 
 	public int getTick(){
