@@ -6,7 +6,6 @@ public class ConcurrentHashMap<Key, Value> {
 	private volatile LinkedList<Key, Value>[] buckets;
 	private volatile int size;
 	private volatile int maxCapacity;
-	private volatile Random rand = new Random();
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	public ConcurrentHashMap(int maxCapacity){
@@ -24,53 +23,42 @@ public class ConcurrentHashMap<Key, Value> {
 
 	public Value get(Key key) {
 		int index = hashCode(key);
-		//System.out.println("I AM WAITING ON THE READ LOCK");
 		lock.readLock().lock();
 		Node<Key, Value> tmp = null;
 		try{
-			//System.out.println("I HAVE THE READ LOCK");
 			tmp = buckets[index].get(key);
 		} finally {
 			lock.readLock().unlock();
-			//System.out.println("I HAVE GIVEN UP THE READ LOCK");
 			return tmp.getValue();
 		}
 	}
 
 	public Value put(Key key, Value value){
 		int index = hashCode(key);
-		//System.out.println("I AM WAITING ON THE ADD LOCK");
 		lock.writeLock().lock();
 		try{
-			//System.out.println("I HAVE THE ADD LOCK");
 			buckets[index].addFirst(new Node<Key, Value>(index, key, value));
-			//buckets[index].getFirst().display();
 			size++;
 		} finally {
 			Value retVal = buckets[index].getFirst().getValue();
 			lock.writeLock().unlock();
-			//System.out.println("I HAVE GIVEN UP THE ADD LOCK");
 			return retVal;
 		}
 	}
 
 	public Value remove(Key key){
 		int index = hashCode(key);
-		//System.out.println("I AM WAITING ON THE REMOVE LOCK");
 		lock.writeLock().lock();
 		Value retVal = null;
 		try {
-			//System.out.println("I HAVE THE REMOVE LOCK");
 			retVal = buckets[index].removeByKey(key).getValue();
 			if (retVal != null){
 				size--;
 			}
 		} finally {
 			lock.writeLock().unlock();
-			//System.out.println("I HAVE GIVEN UP THE REMOVE LOCK");
 			return retVal;
 		}
-		//System.out.println("Trying to remove a value that does not exist");	
 	}
 
 	public int hashCode(Key key){

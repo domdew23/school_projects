@@ -1,5 +1,4 @@
 import java.util.Random;
-import java.util.concurrent.locks.ReadWriteLock;
 
 public class Merchant {
 	// bad relationship means high prices
@@ -11,7 +10,6 @@ public class Merchant {
 	private Random rand;
 	private int id;
 	private volatile static int count = 0;
-	//private ReadWriteLock lock = new ReadWriteLock();
 
 	public Merchant(long seed, int id){
 		rand = new Random(seed);

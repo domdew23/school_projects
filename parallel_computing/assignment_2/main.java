@@ -1,10 +1,10 @@
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+//import java.util.concurrent.ConcurrentHashMap;
 
 public class main{
 
 	private static final Random RAND = new Random();
-	private static final int NUM_CLIENTS = 100;
+	private static final int NUM_CLIENTS = 1;
 	private static final int NUM_MERCHANTS = 10;
 	private static final float LOAD_FACTOR = .75f;
 	private static final ConcurrentHashMap<Integer,Merchant> MERCHANTS = new ConcurrentHashMap<Integer,Merchant>(100);

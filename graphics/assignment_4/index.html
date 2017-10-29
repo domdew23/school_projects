@@ -7,8 +7,12 @@
 			// material can be random or uniform throughout the entire program
 			precision mediump float;
 			attribute vec2 coordinates;
+			attribute vec2 vertTexCoord;
+			varying vec2 fragTexCoord;
 			attribute vec2 center;
 			uniform float theta;
+			uniform mat4 mProj;
+			uniform mat4 mView;
 			void main(){
 				mat2 rotation_matrix = mat2(cos(theta), -sin(theta),
 											sin(theta),  cos(theta));
@@ -18,14 +22,17 @@
 				temp_position = rotation_matrix * temp_position; // rotate around origin
 				temp_position = temp_position + center; // translate back to original position
 
-				gl_Position = vec4(temp_position, 0.0, 1.0);
+				fragTexCoord = vertTexCoord;
+				gl_Position = mProj * mView * vec4(temp_position, 0.0, 1.0);
 			}
 		</script>
 
 		<script id="fragment_shader" type="x-shader/x-fragment">
 			precision mediump float;
+			varying vec2 fragTexCoord;
+			uniform sampler2D sampler;
 			void main() {
-				gl_FragColor = vec4(0.0, 0.85, 0.49, 1.0);
+				gl_FragColor = texture2D(sampler, fragTexCoord);
 			}
 		</script>
 		
@@ -34,8 +41,17 @@
 		<canvas id="web_gl_canvas" width="800px" height="800px">
 			Your browser does not support HTML 5.
 		</canvas>
+		Camera X:
+		<input type="range" id="camX" max="10" min="-10" step="1" value="0" onchange="run()"><br>
+		Camera Y:
+		<input type="range" id="camY" max="10" min="-10" step="1" value="0" onchange="run()"><br>
+		Camera Z:
+		<input type="range" id="camZ" max="-1" min="-10" step="1" value="-3" onchange="run()"><br>
+
 		<input type="range" id="depth" max="5" step="1" value="0" onchange="run()">
-		<input type="button" id="button" value="Press to rotate." onClick="change_rotation()">
+		<input type="button" id="button" value="Press to rotate." onClick="change_rotation()"><br>
+		<img id="box_image" src="vunce.jpg" width="0" height="0"></img>
+		<script src="gl-matrix.js"></script>
 		<script src="carpet.js"></script>
 	</body>
 </html>
