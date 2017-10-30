@@ -4,12 +4,8 @@ import java.util.Random;
 public class main{
 
 	private static final Random RAND = new Random();
-<<<<<<< HEAD
-	private static final int NUM_CLIENTS = 1000;
-=======
-	private static final int NUM_CLIENTS = 1;
->>>>>>> e07feafae27d032502d2bc23363b18e48d9cf587
-	private static final int NUM_MERCHANTS = 10;
+	private static final int NUM_CLIENTS = 5000;
+	private static final int NUM_MERCHANTS = 30;
 	private static final ConcurrentHashMap<Integer,Merchant> MERCHANTS = new ConcurrentHashMap<Integer,Merchant>(100);
 	private static final Thread[] CLIENTS = new Thread[NUM_CLIENTS];
 
@@ -25,7 +21,29 @@ public class main{
 		*/
 		
 		init();
+		while (true){
+			if (MERCHANTS.isEmpty()){
+				System.out.println("YOU LOST!\nAll merchants have left the world.");
+				System.exit(0);
+			}
+		}
 		//test();
+	}
+
+	private static void print(){
+		while (true){
+			if (System.currentTimeMillis() % 10000 == 0){
+				double total = 0;
+				int size = MERCHANTS.size();
+				for (int i = 0; i < size; i++){
+					if (MERCHANTS.get(i) != null){
+						total += MERCHANTS.get(i).getChemistry();		
+					}
+				}
+				double avg = total/size;
+				System.out.println("Avg chemistry: " + avg);
+			}
+		}	
 	}
 
 	private static void test(){
@@ -33,6 +51,7 @@ public class main{
 			public void run(){
 				for (int i = 0; i < 100000; i++){
 					while(MERCHANTS.put(i, new Merchant(RAND.nextLong(), i)) != null){
+						System.out.println("adding " + i);
 					}
 					//System.out.println("adding..." + i);
 				}
@@ -43,6 +62,7 @@ public class main{
 			public void run(){
 				for (int i = 0; i < 100000; i++){
 					while (MERCHANTS.remove(i) == null){
+						System.out.println("removing..." + i);
 					}
 					//System.out.println("removing..." + i);
 				}
@@ -63,8 +83,8 @@ public class main{
 
 		long end = System.currentTimeMillis();
 		System.out.println("Took: {" + (end - start) + "} milliseconds.");
-		// me - 403 / 11225 / 822
-		// dl - 139 / 16225 / 781 ~ 804 
+		// me - 403 / 11225 / 822 / 536
+		// dl - 139 / 16225 / 781 / 503
 		
 	}
 	private static void init(){

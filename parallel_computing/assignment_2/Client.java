@@ -27,8 +27,8 @@ public class Client implements Runnable {
 	public void run(){
 		/* execute one action per loop */
 		while (true){
-			if (Math.random() <= .3){
-				if (Math.random() <= .7){
+			if (Math.random() <= .25){
+				if (Math.random() <= .85){
 					buy();
 				} else {
 					interact();
@@ -50,23 +50,23 @@ public class Client implements Runnable {
 				// simulate completing quests/missions for money
 				double earnings = RAND.nextDouble() * RAND.nextInt(1000);
 				salary += (earnings);
-				if (Math.random() < behavior){
-					behavior += RAND.nextDouble()/10;
+				if (Math.random() >= behavior){
+					behavior += RAND.nextDouble()/20;
 					if (behavior >= 1){
 						behavior = .75;
 					}
 				} else {
-					behavior -= RAND.nextDouble()/10;
+					behavior -= RAND.nextDouble()/20;
 					if (behavior <= 0){
 						behavior = .5;
 					}
 				}
 				Thread.sleep(RAND.nextInt(500));
-				System.out.printf("Earned: $%.2f", earnings);
-				System.out.println();
+				//System.out.printf("Earned: $%.2f", earnings);
+				//System.out.println();
 			} else {
 				// simulate doing nothing
-				System.out.println("Client " + id + " traveling...");
+				//System.out.println("Client " + id + " traveling...");
 				Thread.sleep(RAND.nextInt(2500));
 			}
 		} catch (InterruptedException e){
@@ -83,10 +83,14 @@ public class Client implements Runnable {
 		while (merchants.get(index) == null){
 			index = RAND.nextInt(Merchant.getCount());
 		}
+
 		Merchant myMerchant = merchants.get(index);
+		if (myMerchant == null){
+			return;
+		}
 		Good good = myMerchant.getGoods()[RAND.nextInt(myMerchant.getGoodCount())];
 
-		if (!(good.getPrice() > salary)){
+		if (good.getPrice() < salary){
 			good.buy();
 			salary -= good.getPrice();
 			/*String output = "";//-----------------------------------------------------------------------------------------------------------------\n";
@@ -105,6 +109,16 @@ public class Client implements Runnable {
 		}
 	}
 
+	private void reFill(){
+		if (!(merchants.isEmpty())){
+			return;
+		}
+		System.out.println("Refilling...");
+		while (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) != null){
+		}	
+		System.out.println("done refilling");	
+	}
+	
 	/* least common action of clients */
 	private void interact(){
 		/* has an interaction with a merchant based on
@@ -118,43 +132,37 @@ public class Client implements Runnable {
 		the game. */
 
 		// chemistry below 0 - remove
-<<<<<<< HEAD
 		// when chemistry is high more merchants are added
 		
+
+
 		int index = RAND.nextInt(Merchant.getCount());
-		while (!merchants.containsKey(index)){
+		while (merchants.get(index) == null){
 			if (merchants.isEmpty()){
-				while (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) != null){
-=======
-		// chemistry above 100 - add
-		int index = RAND.nextInt(Merchant.getCount());
-		while (!merchants.containsKey(index)){
-			if (merchants.isEmpty()){
-				if (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) != null){
-					System.out.println("added: " + (Merchant.getCount() - 1) + ".");
-					return;
->>>>>>> e07feafae27d032502d2bc23363b18e48d9cf587
-				}
-				System.out.println("added: " + (Merchant.getCount() - 1) + ".");
+				//reFill();
+				return;
 			}
 			index = RAND.nextInt(Merchant.getCount());
 		}
 
 		Merchant myMerchant = merchants.get(index);
+		if (myMerchant == null){
+			return;
+		}
 		if (Math.random() >= behavior){
 			if (myMerchant.badInteraction()){
 				// remove
-				System.out.println("Client " + id + " started bad interaction");
+				//System.out.println("Client " + id + " started bad interaction");
 				while (merchants.remove(myMerchant.id()) == null){
+					//reFill();
+					return;
 				}
 				System.out.println("removed " + myMerchant.id() + " - Size: " + merchants.size());
-				//System.out.println(merchants.toString());
-
 			}
 		} else {
 			if(myMerchant.goodInteraction()){
 				//add
-				System.out.println("Client " + id + " started good interaction");
+				//System.out.println("Client " + id + " started good interaction");
 				while (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) != null){
 				}
 				System.out.println("added: " + (Merchant.getCount() - 1) + " - Size: " + merchants.size());
