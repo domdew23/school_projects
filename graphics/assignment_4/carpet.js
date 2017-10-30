@@ -13,9 +13,10 @@ var eyeCamY;
 var eyeCamZ;
 var centCamX;
 var centCamY;
+var lightInt;
+
 var texCoordArr;
 var normalsArr;
-var lightInt;
 var lightDirX;
 var lightDirY;
 var lightDirZ;
@@ -173,7 +174,7 @@ function link_program(gl, canvas, vert_shader, frag_shader){
 	}
 
 	gl.viewport(0, 0, canvas.width, canvas.height);
-	gl.clearColor(0.0, 0.0, 0.0, 1.0);
+	gl.clearColor(0.65, 0.7, 0.65, 1.0);
 	return program;
 }
 
@@ -183,14 +184,6 @@ function create_buffer(gl, data, program, canvas, num_items, vertices, centers, 
 	var buffer = gl.createBuffer(); // set aside memory on GPU for data
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffer); // select this buffer as something to manipulate
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW); //copy data to buffer
-
-
-	// normal buffer
-	//var normalBuffer = gl.createBuffer();
-	//gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-	//gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
-	
-	//gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
 
 	var normalVar = gl.getAttribLocation(program, "vertNormal");
 	gl.enableVertexAttribArray(normalVar);
@@ -306,7 +299,6 @@ function rotate(gl, num_items, texture) {
 
 function render(gl, num_items, texture){
 	// draw to the screen
-	gl.clearColor(0.75, 0.85, 0.8, 1.0);
 	gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 	var offset = 0;
 	gl.bindTexture(gl.TEXTURE_2D, texture);
