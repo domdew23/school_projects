@@ -280,8 +280,8 @@ function create_buffer(gl, data, program, canvas, num_items, vertices, centers, 
 	var directionalLightColorVar = gl.getUniformLocation(program, 'directionalLightColor');
 
 	gl.uniform3f(ambientLightIntensityVar, lightInt, lightInt, lightInt);
-	gl.uniform3f(directionalLightDirVar, lightDirX, lightDirY, -1.0);
-	gl.uniform3f(directionalLightColorVar, 0.9, 0.9, 0.9);
+	gl.uniform3f(directionalLightDirVar, lightDirX, lightDirY, -2.0);
+	gl.uniform3f(directionalLightColorVar, 0.1, 0.2, 0.2);
 
 	rotate(gl, num_items, texture);
 }
