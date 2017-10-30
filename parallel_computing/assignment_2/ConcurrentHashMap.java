@@ -6,7 +6,10 @@ public class ConcurrentHashMap<Key, Value> {
 	private volatile LinkedList<Key, Value>[] buckets;
 	private volatile int size;
 	private volatile int maxCapacity;
+<<<<<<< HEAD
 	private final Random rand = new Random();
+=======
+>>>>>>> e07feafae27d032502d2bc23363b18e48d9cf587
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	public ConcurrentHashMap(int maxCapacity){
@@ -28,6 +31,10 @@ public class ConcurrentHashMap<Key, Value> {
 		}
 
 		int index = hashCode(key);
+<<<<<<< HEAD
+=======
+		lock.readLock().lock();
+>>>>>>> e07feafae27d032502d2bc23363b18e48d9cf587
 		Node<Key, Value> tmp = null;
 		lock.readLock().lock();
 		try{
@@ -43,10 +50,8 @@ public class ConcurrentHashMap<Key, Value> {
 
 	public Value put(Key key, Value value){
 		int index = hashCode(key);
-		//System.out.println("I AM WAITING ON THE ADD LOCK");
 		lock.writeLock().lock();
 		try{
-			//System.out.println("I HAVE THE ADD LOCK");
 			buckets[index].addFirst(new Node<Key, Value>(index, key, value));
 			size++;
 			//incSize();
@@ -54,22 +59,29 @@ public class ConcurrentHashMap<Key, Value> {
 		} finally {
 			//Value retVal = buckets[index].getFirst().getValue();
 			lock.writeLock().unlock();
+<<<<<<< HEAD
 			//System.out.println("I HAVE GIVEN UP THE ADD LOCK");
 			return null;
+=======
+			return retVal;
+>>>>>>> e07feafae27d032502d2bc23363b18e48d9cf587
 		}
 	}
 
 	public Value remove(Key key){
 		int index = hashCode(key);
+<<<<<<< HEAD
 		//System.out.println("I AM WAITING ON THE REMOVE LOCK");
 		if (!containsKey(key)){
 			return null;
 		}
 
+=======
+		lock.writeLock().lock();
+>>>>>>> e07feafae27d032502d2bc23363b18e48d9cf587
 		Value retVal = null;
 		lock.writeLock().lock();
 		try {
-			//System.out.println("I HAVE THE REMOVE LOCK");
 			retVal = buckets[index].removeByKey(key).getValue();
 			//decSize();
 			if (retVal != null){
@@ -78,11 +90,13 @@ public class ConcurrentHashMap<Key, Value> {
 		} finally {
 
 			lock.writeLock().unlock();
+<<<<<<< HEAD
 
 			//System.out.println("I HAVE GIVEN UP THE REMOVE LOCK");
+=======
+>>>>>>> e07feafae27d032502d2bc23363b18e48d9cf587
 			return retVal;
 		}
-		//System.out.println("Trying to remove a value that does not exist");	
 	}
 
 	public int hashCode(Key key){

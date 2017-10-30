@@ -4,7 +4,11 @@ import java.util.Random;
 public class main{
 
 	private static final Random RAND = new Random();
+<<<<<<< HEAD
 	private static final int NUM_CLIENTS = 1000;
+=======
+	private static final int NUM_CLIENTS = 1;
+>>>>>>> e07feafae27d032502d2bc23363b18e48d9cf587
 	private static final int NUM_MERCHANTS = 10;
 	private static final ConcurrentHashMap<Integer,Merchant> MERCHANTS = new ConcurrentHashMap<Integer,Merchant>(100);
 	private static final Thread[] CLIENTS = new Thread[NUM_CLIENTS];

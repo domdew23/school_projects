@@ -28,7 +28,7 @@ public class Client implements Runnable {
 		/* execute one action per loop */
 		while (true){
 			if (Math.random() <= .3){
-				if (Math.random() <= .5){
+				if (Math.random() <= .7){
 					buy();
 				} else {
 					interact();
@@ -45,7 +45,6 @@ public class Client implements Runnable {
 		earning salary. This function has no influence 
 		on game state and does not need to read game state.
 		Sleeps for random amount of time between 0 - 5 seconds. */
-
 		try {
 			if (Math.random() <= .9){
 				// simulate completing quests/missions for money
@@ -62,13 +61,12 @@ public class Client implements Runnable {
 						behavior = .5;
 					}
 				}
-				//System.out.println("traveling...");
 				Thread.sleep(RAND.nextInt(500));
-				//System.out.printf("Earned: $%.2f", earnings);
-				//System.out.println();
+				System.out.printf("Earned: $%.2f", earnings);
+				System.out.println();
 			} else {
 				// simulate doing nothing
-				//System.out.println("Client " + id + " traveling...");
+				System.out.println("Client " + id + " traveling...");
 				Thread.sleep(RAND.nextInt(2500));
 			}
 		} catch (InterruptedException e){
@@ -120,12 +118,22 @@ public class Client implements Runnable {
 		the game. */
 
 		// chemistry below 0 - remove
+<<<<<<< HEAD
 		// when chemistry is high more merchants are added
 		
 		int index = RAND.nextInt(Merchant.getCount());
 		while (!merchants.containsKey(index)){
 			if (merchants.isEmpty()){
 				while (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) != null){
+=======
+		// chemistry above 100 - add
+		int index = RAND.nextInt(Merchant.getCount());
+		while (!merchants.containsKey(index)){
+			if (merchants.isEmpty()){
+				if (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) != null){
+					System.out.println("added: " + (Merchant.getCount() - 1) + ".");
+					return;
+>>>>>>> e07feafae27d032502d2bc23363b18e48d9cf587
 				}
 				System.out.println("added: " + (Merchant.getCount() - 1) + ".");
 			}
