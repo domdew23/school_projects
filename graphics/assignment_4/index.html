@@ -6,33 +6,57 @@
 			// add materials and lighting to the scene
 			// material can be random or uniform throughout the entire program
 			precision mediump float;
+
 			attribute vec2 coordinates;
 			attribute vec2 vertTexCoord;
+			attribute vec3 vertNormal;
+
+			varying vec3 fragNormal;
 			varying vec2 fragTexCoord;
+
 			attribute vec2 center;
 			uniform float theta;
+
 			uniform mat4 mProj;
 			uniform mat4 mView;
+			uniform mat4 mWorld;
+
 			void main(){
 				mat2 rotation_matrix = mat2(cos(theta), -sin(theta),
 											sin(theta),  cos(theta));
-
+ 
 				vec2 temp_position = coordinates;
 				temp_position = temp_position - center; // translate to origin
 				temp_position = rotation_matrix * temp_position; // rotate around origin
 				temp_position = temp_position + center; // translate back to original position
 
 				fragTexCoord = vertTexCoord;
-				gl_Position = mProj * mView * vec4(temp_position, 0.0, 1.0);
+				fragNormal = (mWorld * vec4(vertNormal, 0.0)).xyz;
+				gl_Position = mProj * mView * mWorld * vec4(temp_position, 0.0, 1.0);
 			}
 		</script>
 
 		<script id="fragment_shader" type="x-shader/x-fragment">
 			precision mediump float;
+
 			varying vec2 fragTexCoord;
+			varying vec3 fragNormal;
+
 			uniform sampler2D sampler;
+
+			uniform vec3 ambientLightIntensity;
+			uniform vec3 directionalLightColor;
+			uniform vec3 directionalLightDirection;
+
 			void main() {
-				gl_FragColor = texture2D(sampler, fragTexCoord);
+				vec3 surfaceNormal = normalize(fragNormal); 
+				vec3 normSunDir = normalize(directionalLightDirection);
+				vec4 texel = texture2D(sampler, fragTexCoord);
+
+				vec3 lightIntensity = ambientLightIntensity + directionalLightColor
+									 * max(dot(fragNormal, normSunDir), 0.0);
+
+				gl_FragColor = vec4(texel.rgb * lightIntensity, texel.a); // texture rgb, texture alpha
 			}
 		</script>
 		
@@ -41,16 +65,30 @@
 		<canvas id="web_gl_canvas" width="800px" height="800px">
 			Your browser does not support HTML 5.
 		</canvas>
-		Camera X:
-		<input type="range" id="camX" max="10" min="-10" step="1" value="0" onchange="run()"><br>
-		Camera Y:
-		<input type="range" id="camY" max="10" min="-10" step="1" value="0" onchange="run()"><br>
-		Camera Z:
-		<input type="range" id="camZ" max="-1" min="-10" step="1" value="-3" onchange="run()"><br>
+		Camera Eye X:
+		<input type="range" id="eyeCamX" max="10" min="-10" step="1" value="0" onchange="run()"><br>
+		Camera Eye Y:
+		<input type="range" id="eyeCamY" max="10" min="-10" step="1" value="0" onchange="run()"><br>
+		Camera Eye Z:
+		<input type="range" id="eyeCamZ" max="-1" min="-10" step="1" value="-3" onchange="run()"><br>
+
+		Camera Ceneter X:
+		<input type="range" id="centCamX" max="2" min="-2" step=".01" value="0" onchange="run()"><br>
+		Camera Ceneter Y:
+		<input type="range" id="centCamY" max="2" min="-2" step=".01" value="0" onchange="run()"><br>
+
+		Light Intensity:
+		<input type="range" id="lightInt" max="3" min="-1" step=".01" value=".7" onchange="run()"><br>
+
+		Light Direction X:
+		<input type="range" id="lightDirX" max="5" min="-5" step=".1" value="3.0" onchange="run()"><br>
+		Light Direction Y:
+		<input type="range" id="lightDirY" max="5" min="-5" step=".1" value="4.0" onchange="run()"><br>
+
 
 		<input type="range" id="depth" max="5" step="1" value="0" onchange="run()">
 		<input type="button" id="button" value="Press to rotate." onClick="change_rotation()"><br>
-		<img id="box_image" src="vunce.jpg" width="0" height="0"></img>
+		<img id="box_image" src="box.jpg" width="0" height="0"></img>
 		<script src="gl-matrix.js"></script>
 		<script src="carpet.js"></script>
 	</body>

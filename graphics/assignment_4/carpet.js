@@ -8,10 +8,18 @@ var new_time = 0;
 var old_time = 0;
 var delta = 0;
 var theta_var = 0;
-var camX;
-var camY;
-var camZ;
+var eyeCamX;
+var eyeCamY;
+var eyeCamZ;
+var centCamX;
+var centCamY;
 var texCoordArr;
+var normalsArr;
+var lightInt;
+var lightDirX;
+var lightDirY;
+var lightDirZ;
+
 /* Need to add:
 	- light (parallel or point)
 	- material (random or uniform on each square)
@@ -34,16 +42,19 @@ function run(){
 	var centers = [];
 	var tmp_vertices = [];
 	texCoordArr = [];
+	normalsArr = [];
 
 	var canvas = document.getElementById('web_gl_canvas');
 	var depth = document.getElementById('depth').value;
-	camX = document.getElementById('camX').value;
-	camY = document.getElementById('camY').value;
-	camZ = document.getElementById('camZ').value;
-
-	console.log("camX: " + camX);
-	console.log("camY: " + camY);
-	console.log("camZ: " + camZ);
+	eyeCamX = document.getElementById('eyeCamX').value;
+	eyeCamY = document.getElementById('eyeCamY').value;
+	eyeCamZ = document.getElementById('eyeCamZ').value;
+	centCamX = document.getElementById('centCamX').value;
+	centCamY = document.getElementById('centCamY').value;
+	lightInt = document.getElementById('lightInt').value;
+ 	lightDirX = document.getElementById('lightDirX').value;
+ 	lightDirY = document.getElementById('lightDirY').value;
+	//lightDirZ = document.getElementById('lightDirZ').value;
 
 	var gl = init(canvas);
 	canvas.onclick = change_direction;
@@ -64,20 +75,38 @@ function run(){
 	get_verts(parent, depth, true);
 	centers = fill(centers);
 
-	data = tmp_vertices.concat(centers);
+	data = tmp_vertices.concat(centers); // same amount of normals as there are vertices
 	num_items = (tmp_vertices.length / 8); // number of squares
 
 	var texCoord = [
-		0,0,
-		0,1,
 		1,1,
-		1,0
+		1,0,
+		0,0,
+		0,1
 	];
+
+	var normals = [
+      0.0, 0.0,
+      0.0, 0.0,
+      0.0 ,0.0,
+      0.0 ,0.0
+   ];
+
+   	var texCount = 0;
 	for (i = 0; i < num_items; i++){
+		texCount++;
 		data = data.concat(texCoord);
 	}
+
+	var texLen = texCount * texCoord.length;
+
+	for (i = 0; i < num_items; i++){
+		data = data.concat(normals);
+	}
+
 	console.log(data);
-	create_buffer(gl, data, program, canvas, num_items, tmp_vertices, centers);
+	console.log(texLen);
+	create_buffer(gl, data, program, canvas, num_items, tmp_vertices, centers, texLen);
 }
 
 function change_direction(){
@@ -148,11 +177,32 @@ function link_program(gl, canvas, vert_shader, frag_shader){
 	return program;
 }
 
-function create_buffer(gl, data, program, canvas, num_items, vertices, centers){
+function create_buffer(gl, data, program, canvas, num_items, vertices, centers, texLen){
 	gl.useProgram(program);
+
 	var buffer = gl.createBuffer(); // set aside memory on GPU for data
 	gl.bindBuffer(gl.ARRAY_BUFFER, buffer); // select this buffer as something to manipulate
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW); //copy data to buffer
+
+
+	// normal buffer
+	//var normalBuffer = gl.createBuffer();
+	//gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+	//gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(normals), gl.STATIC_DRAW);
+	
+	//gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+
+	var normalVar = gl.getAttribLocation(program, "vertNormal");
+	gl.enableVertexAttribArray(normalVar);
+
+	gl.vertexAttribPointer(
+		normalVar,
+		2,
+		gl.FLOAT,
+		false,
+		0,
+		(vertices.length*4) + (centers.length*4) + (texLen*4)
+	);
 
 	var coordinates_var = gl.getAttribLocation(program, "coordinates");
 	gl.enableVertexAttribArray(coordinates_var);
@@ -208,16 +258,31 @@ function create_buffer(gl, data, program, canvas, num_items, vertices, centers){
 	// get projection matrix from shader and fill with identity
 	var matProjectionVar = gl.getUniformLocation(program, "mProj");
 	var matViewVar = gl.getUniformLocation(program, "mView");
+	var matWorldVar = gl.getUniformLocation(program, "mWorld");
 
 	var viewMatrix = new Float32Array(16);
 	var projMatrix = new Float32Array(16);
+	var worldMatrix = new Float32Array(16);
 
-	// generate look at matrix     eye			  center       up
-	mat4.lookAt(viewMatrix, [camX, camY, camZ], [0, 0, 0], [0, 1, 0]);
+	// generate look at matrix     eye			  			    center       		  up
+	mat4.lookAt(viewMatrix, [eyeCamX, eyeCamY, eyeCamZ], [centCamX, centCamY, 0], [0, 1, 0]);
 	mat4.perspective(projMatrix, glMatrix.toRadian(45), canvas.width / canvas.height, 0.1, 1000.0);
-	
+	mat4.identity(worldMatrix);
+
 	gl.uniformMatrix4fv(matProjectionVar, gl.FALSE, projMatrix);
 	gl.uniformMatrix4fv(matViewVar, gl.FALSE, viewMatrix);
+	gl.uniformMatrix4fv(matWorldVar, gl.FALSE, worldMatrix);
+
+	/* Lighting Information */
+	gl.useProgram(program);
+	var ambientLightIntensityVar = gl.getUniformLocation(program, 'ambientLightIntensity');
+	var directionalLightDirVar = gl.getUniformLocation(program, 'directionalLightDirection');
+	var directionalLightColorVar = gl.getUniformLocation(program, 'directionalLightColor');
+
+	gl.uniform3f(ambientLightIntensityVar, lightInt, lightInt, lightInt);
+	gl.uniform3f(directionalLightDirVar, lightDirX, lightDirY, -1.0);
+	gl.uniform3f(directionalLightColorVar, 0.9, 0.9, 0.9);
+
 	rotate(gl, num_items, texture);
 }
 
@@ -226,9 +291,11 @@ function rotate(gl, num_items, texture) {
 		old_time = new_time;
 		new_time = performance.now();
 		delta = new_time - old_time;
+		
 		if (is_rotating){
 			theta += (direction * (delta / 500 / 6 * 2 *  Math.PI)); // miliseconds since window loaded
 		}
+
 		// send theta to the shader
 		gl.uniform1f(theta_var, theta);
 		render(gl, num_items, texture);
@@ -239,7 +306,8 @@ function rotate(gl, num_items, texture) {
 
 function render(gl, num_items, texture){
 	// draw to the screen
-	gl.clear(gl.COLOR_BUFFER_BIT);
+	gl.clearColor(0.75, 0.85, 0.8, 1.0);
+	gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 	var offset = 0;
 	gl.bindTexture(gl.TEXTURE_2D, texture);
 	gl.activeTexture(gl.TEXTURE0);
