@@ -1,3 +1,5 @@
+package com.Dom;
+
 /* Clients are guilty by assoication (if one has a bad 
 interaction with NPC (merchant) then all clients recieve
 higher prices from that NPC). Most metrics will be random. */
@@ -7,21 +9,26 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client implements Runnable {
-	// thread local:
-	private double behavior; // high behavior metric means more likely to produce positive interactions and vice versa
-	private final Random RAND;
-	private static ConcurrentHashMap<Integer,Merchant> merchants;
-	private int id;
-	private double salary;
 
-	public Client(int id, long seed, ConcurrentHashMap<Integer,Merchant> MERCHANTS){
+	@State(Scope.Benchmark)
+		public static class GameState {
+			public ConcurrentHashMap<Integer,Merchant> merchants = new ConcurrentHashMap<Integer, Merchant>(100);
+			public Random rand = new Random();
+		}
+
+	@State(Scope.Thread)
+		public static class MyState {
+			public Random rand = new Random();
+			public double behavior = rand.nextDouble();
+			public double salary = (rand.nextDouble() * rand.nextInt(100000));
+	}
+
+	public Client(int id, long seed, ConcurrentHashMap<Integer,Merchant> merchants, GameState state, MyState mystate){
 		RAND = new Random(seed);
 		behavior = RAND.nextDouble();
 		salary = (RAND.nextDouble() * RAND.nextInt(100000));
-		//System.out.printf("Salary: $%.2f", salary);
-		//System.out.println();
-		this.merchants = MERCHANTS;
-		this.id = id;
+		state.merchants = merchants;
+		MyState.id = id;
 	}
 
 	public void run(){
@@ -83,6 +90,7 @@ public class Client implements Runnable {
 		while (myMerchant == null){
 			myMerchant = merchants.get(RAND.nextInt(Merchant.getCount()));
 		}
+
 		Good good = myMerchant.getGoods()[RAND.nextInt(myMerchant.getGoodCount())];
 
 		if (good.getPrice() < salary){
@@ -147,8 +155,10 @@ public class Client implements Runnable {
 
 		Merchant myMerchant = null;
     	while(myMerchant == null){
+    		System.out.println("GETTING NEW MERCHANT");
     		myMerchant = merchants.get(RAND.nextInt(Merchant.getCount()));
     	}
+
 		if (Math.random() >= behavior){
 			if (myMerchant.badInteraction()){
 				// remove
