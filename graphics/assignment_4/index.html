@@ -72,23 +72,21 @@
 		Camera Eye Z:
 		<input type="range" id="eyeCamZ" max="-1" min="-10" step="1" value="-3" onchange="run()"><br>
 
-		Camera Ceneter X:
+		Camera Center X:
 		<input type="range" id="centCamX" max="2" min="-2" step=".01" value="0" onchange="run()"><br>
-		Camera Ceneter Y:
+		Camera Center Y:
 		<input type="range" id="centCamY" max="2" min="-2" step=".01" value="0" onchange="run()"><br>
 
 		Light Intensity:
 		<input type="range" id="lightInt" max="3" min="-1" step=".01" value=".7" onchange="run()"><br>
 
-		Light Direction X:
-		<input type="range" id="lightDirX" max="5" min="-5" step=".1" value="3.0" onchange="run()"><br>
-		Light Direction Y:
-		<input type="range" id="lightDirY" max="5" min="-5" step=".1" value="4.0" onchange="run()"><br>
+		<input type="hidden" id="lightDirX" max="5" min="-5" step=".1" value="3.0" onchange="run()"><br>
+		<input type="hidden" id="lightDirY" max="5" min="-5" step=".1" value="4.0" onchange="run()"><br>
 
 
 		<input type="range" id="depth" max="5" step="1" value="0" onchange="run()">
 		<input type="button" id="button" value="Press to rotate." onClick="change_rotation()"><br>
-		<img id="box_image" src="box.jpg" width="0" height="0"></img>
+		<img id="box_image" src="img.png" width="0" height="0"></img>
 		<script src="gl-matrix.js"></script>
 		<script src="carpet.js"></script>
 	</body>
