@@ -1,12 +1,11 @@
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
+//import java.util.concurrent.ConcurrentHashMap;
 
 public class main{
 
 	private static final Random RAND = new Random();
-	private static final int NUM_CLIENTS = 100;
+	private static final int NUM_CLIENTS = 1000;
 	private static final int NUM_MERCHANTS = 10;
-	private static final float LOAD_FACTOR = .75f;
 	private static final ConcurrentHashMap<Integer,Merchant> MERCHANTS = new ConcurrentHashMap<Integer,Merchant>(100);
 	private static final Thread[] CLIENTS = new Thread[NUM_CLIENTS];
 
@@ -20,15 +19,50 @@ public class main{
 		on two different platforms use JMH
 		Plot results as a graph on a web page
 		*/
+		
 		init();
-		while (true){
-			if (System.currentTimeMillis() % 5000 == 0){
-				//System.out.println("\n" + MERCHANTS.toString() + "\n");
-				//System.out.println("here");
-			} 
-		}
+		//test();
 	}
 
+	private static void test(){
+		Thread t = new Thread(new Runnable(){
+			public void run(){
+				for (int i = 0; i < 100000; i++){
+					while(MERCHANTS.put(i, new Merchant(RAND.nextLong(), i)) != null){
+					}
+					//System.out.println("adding..." + i);
+				}
+			}
+		});
+
+		Thread t2 = new Thread(new Runnable(){
+			public void run(){
+				for (int i = 0; i < 100000; i++){
+					while (MERCHANTS.remove(i) == null){
+					}
+					//System.out.println("removing..." + i);
+				}
+			}
+		});
+
+		long start = System.currentTimeMillis();
+		t.start();
+		t2.start();
+
+		try {
+			t.join();
+			t2.join();	
+			System.out.println("Size: " + MERCHANTS.size() + "\n");// + MERCHANTS.toString());	
+		} catch (InterruptedException e){
+
+		}
+
+		long end = System.currentTimeMillis();
+		System.out.println("Took: {" + (end - start) + "} milliseconds.");
+		// me - 403 / 11225 / 822
+		// dl - 139 / 16225 / 781 ~ 804 
+		
+	}
 	private static void init(){
 		initMerchants();
 		initClients();

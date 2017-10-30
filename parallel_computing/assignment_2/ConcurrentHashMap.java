@@ -6,7 +6,7 @@ public class ConcurrentHashMap<Key, Value> {
 	private volatile LinkedList<Key, Value>[] buckets;
 	private volatile int size;
 	private volatile int maxCapacity;
-	private volatile Random rand = new Random();
+	private final Random rand = new Random();
 	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	public ConcurrentHashMap(int maxCapacity){
@@ -23,16 +23,20 @@ public class ConcurrentHashMap<Key, Value> {
 	}
 
 	public Value get(Key key) {
+		if (!containsKey(key)){
+			return null;
+		}
+
 		int index = hashCode(key);
-		//System.out.println("I AM WAITING ON THE READ LOCK");
-		lock.readLock().lock();
 		Node<Key, Value> tmp = null;
+		lock.readLock().lock();
 		try{
-			//System.out.println("I HAVE THE READ LOCK");
 			tmp = buckets[index].get(key);
 		} finally {
+			if (tmp == null){
+				return null;
+			}
 			lock.readLock().unlock();
-			//System.out.println("I HAVE GIVEN UP THE READ LOCK");
 			return tmp.getValue();
 		}
 	}
@@ -44,29 +48,37 @@ public class ConcurrentHashMap<Key, Value> {
 		try{
 			//System.out.println("I HAVE THE ADD LOCK");
 			buckets[index].addFirst(new Node<Key, Value>(index, key, value));
-			//buckets[index].getFirst().display();
 			size++;
+			//incSize();
+			//buckets[index].getFirst().display();
 		} finally {
-			Value retVal = buckets[index].getFirst().getValue();
+			//Value retVal = buckets[index].getFirst().getValue();
 			lock.writeLock().unlock();
 			//System.out.println("I HAVE GIVEN UP THE ADD LOCK");
-			return retVal;
+			return null;
 		}
 	}
 
 	public Value remove(Key key){
 		int index = hashCode(key);
 		//System.out.println("I AM WAITING ON THE REMOVE LOCK");
-		lock.writeLock().lock();
+		if (!containsKey(key)){
+			return null;
+		}
+
 		Value retVal = null;
+		lock.writeLock().lock();
 		try {
 			//System.out.println("I HAVE THE REMOVE LOCK");
 			retVal = buckets[index].removeByKey(key).getValue();
+			//decSize();
 			if (retVal != null){
 				size--;
 			}
 		} finally {
+
 			lock.writeLock().unlock();
+
 			//System.out.println("I HAVE GIVEN UP THE REMOVE LOCK");
 			return retVal;
 		}
@@ -78,8 +90,8 @@ public class ConcurrentHashMap<Key, Value> {
 	}
 
 	public boolean containsKey(Key key){
-		lock.readLock().lock();
 		boolean retVal = false;
+		lock.readLock().lock();
 		try {
 			retVal = (buckets[hashCode(key)].containsKey(key));
 		} finally {
@@ -98,8 +110,14 @@ public class ConcurrentHashMap<Key, Value> {
 	}*/
 
 	public void clear(){
-		for (int i = 0; i < maxCapacity; i++){
-			buckets[i].clear();
+		lock.writeLock().lock();
+		try {
+			for (int i = 0; i < maxCapacity; i++){
+				buckets[i].clear();
+			}
+		} finally {
+			size = 0;
+			lock.writeLock().unlock();
 		}
 	}
 
