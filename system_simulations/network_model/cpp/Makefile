@@ -1,16 +1,16 @@
-output: main.o network.o xormodel.o memorymodel.o
-	g++ main.o network.o xormodel.o memorymodel.o -o network
+output: main.o Network.o XORModel.o MemoryModel.o
+	g++ main.o Network.o XORModel.o MemoryModel.o -o network
 
 main.o: main.cpp
 	g++ -std=c++11 -c main.cpp
 
-network.o: Network.cpp Network.h
+Network.o: Network.cpp Network.h
 	g++ -std=c++11 -c Network.cpp
 
-xormodel.o: XORModel.cpp XORModel.h
+XORModel.o: XORModel.cpp XORModel.h
 	g++ -std=c++11 -c XORModel.cpp
 
-memorymodel.o: MemoryModel.cpp MemoryModel.h
+MemoryModel.o: MemoryModel.cpp MemoryModel.h
 	g++ -std=c++11 -c MemoryModel.cpp
 
 clean:
