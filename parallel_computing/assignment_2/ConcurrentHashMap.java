@@ -49,9 +49,7 @@ public class ConcurrentHashMap<Key, Value> {
 		try{
 			buckets[index].addFirst(new Node<Key, Value>(index, key, value));
 			size++;
-			//buckets[index].getFirst().display();
 		} finally {
-			//Value retVal = buckets[index].getFirst().getValue();
 			lock.writeLock().unlock();
 			return null;
 		}
@@ -72,8 +70,7 @@ public class ConcurrentHashMap<Key, Value> {
 			}
 		} finally {
 			lock.writeLock().unlock();
-			//System.out.println("I HAVE GIVEN UP THE REMOVE LOCK");
-			return retVal;
+]			return retVal;
 		}
 	}
 
@@ -91,15 +88,6 @@ public class ConcurrentHashMap<Key, Value> {
 			return retVal;
 		}
 	}
-
-	/*public boolean containsValue(Object value){
-		for (int i = 0; i < nodes.length; i++){
-			if (nodes[i].getValue() == value){
-				return true;
-			}
-		}
-		return false;
-	}*/
 
 	public void clear(){
 		lock.writeLock().lock();
