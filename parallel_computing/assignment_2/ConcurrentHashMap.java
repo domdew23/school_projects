@@ -70,7 +70,7 @@ public class ConcurrentHashMap<Key, Value> {
 			}
 		} finally {
 			lock.writeLock().unlock();
-]			return retVal;
+			return retVal;
 		}
 	}
 
