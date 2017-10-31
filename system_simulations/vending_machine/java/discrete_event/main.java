@@ -7,10 +7,11 @@ public class main {
 			File file = new File(args[0]);
 			Scanner sc = new Scanner(file);
 			VendingMachine VM = new VendingMachine(5, 5, 5);
+			Scheduler sched = new Scheduler(VM);
 			while (sc.hasNext()){
 				double e = sc.nextDouble() - VM.getReal();
 				String x = sc.next();
-				VM.run(x.charAt(0), e);
+				sched.schedule(x.charAt(0), e);
 				VM.printState();
 			}
 		} catch (Exception e){
