@@ -18,8 +18,6 @@ public class Client implements Runnable {
 		RAND = new Random(seed);
 		behavior = RAND.nextDouble();
 		salary = (RAND.nextDouble() * RAND.nextInt(100000));
-		//System.out.printf("Salary: $%.2f", salary);
-		//System.out.println();
 		this.merchants = MERCHANTS;
 		this.id = id;
 	}
@@ -27,50 +25,15 @@ public class Client implements Runnable {
 	public void run(){
 		/* execute one action per loop */
 		while (true){
-			if (Math.random() <= .25){
-				if (Math.random() <= .85){
-					buy();
-				} else {
-					interact();
-				}
-			} else {
-				travel();
+			if (merchants.isEmpty()){
+				System.out.println("You lose.\nAll merchants have left the simulation.\n");
+				System.exit(0);
 			}
-		}
-	}
-
-	/* most common action of clients */
-	private void travel(){
-		/* simulates clients traveling the world and
-		earning salary. This function has no influence 
-		on game state and does not need to read game state.
-		Sleeps for random amount of time between 0 - 5 seconds. */
-		try {
-			if (Math.random() <= .9){
-				// simulate completing quests/missions for money
-				double earnings = RAND.nextDouble() * RAND.nextInt(1000);
-				salary += (earnings);
-				if (Math.random() >= behavior){
-					behavior += RAND.nextDouble()/20;
-					if (behavior >= 1){
-						behavior = .75;
-					}
-				} else {
-					behavior -= RAND.nextDouble()/20;
-					if (behavior <= 0){
-						behavior = .5;
-					}
-				}
-				Thread.sleep(RAND.nextInt(500));
-				//System.out.printf("Earned: $%.2f", earnings);
-				//System.out.println();
+			if (Math.random() <= .95){
+				buy();
 			} else {
-				// simulate doing nothing
-				//System.out.println("Client " + id + " traveling...");
-				Thread.sleep(RAND.nextInt(2500));
+				interact();
 			}
-		} catch (InterruptedException e){
-			return;
 		}
 	}
 
@@ -103,16 +66,6 @@ public class Client implements Runnable {
 
 		}
 	}
-
-	private void reFill(){
-		if (!(merchants.isEmpty())){
-			return;
-		}
-		System.out.println("Refilling...");
-		while (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) != null){
-		}	
-		System.out.println("done refilling");	
-	}
 	
 	/* least common action of clients */
 	private void interact(){
@@ -128,22 +81,6 @@ public class Client implements Runnable {
 
 		// chemistry below 0 - remove
 		// when chemistry is high more merchants are added
-		
-
-
-		/*int index = RAND.nextInt(Merchant.getCount());
-		while (merchants.get(index) == null){
-			if (merchants.isEmpty()){
-				//reFill();
-				return;
-			}
-			index = RAND.nextInt(Merchant.getCount());
-		}
-
-		Merchant myMerchant = merchants.get(index);
-		if (myMerchant == null){
-			return;
-		}*/
 
 		Merchant myMerchant = null;
     	while(myMerchant == null){
@@ -154,7 +91,6 @@ public class Client implements Runnable {
 				// remove
 				//System.out.println("Client " + id + " started bad interaction");
 				while (merchants.remove(myMerchant.id()) == null){
-					//reFill();
 					return;
 				}
 				System.out.println("removed " + myMerchant.id() + " - Size: " + merchants.size());
