@@ -9,14 +9,15 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.openjdk.jmh.annotations.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadLocalRandom;
 
-public class Client implements Runnable {
+public class BenchmarkClient implements Runnable {
 
 	@State(Scope.Benchmark)
 		public static class GameState {
 			public ConcurrentHashMap<Integer,Merchant> merchants = new ConcurrentHashMap<Integer, Merchant>(100);
 			public Random r = new Random();
-
+	
 			public GameState(){
 				for (int i = 0; i < 60; i++){
 					long seed = r.nextLong();
@@ -40,7 +41,7 @@ public class Client implements Runnable {
 		GameState s = new GameState();
 		MyState ms = new MyState();
 		for (int i = 0; i < 500; i++){
-		       if (Math.random() <= .92){
+		    if (ThreadLocalRandom.current().nextDouble() <= .92){
 			    	buy(s, ms);
 		       } else {
 			    	interact(s, ms);

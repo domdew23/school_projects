@@ -32,8 +32,8 @@ import org.openjdk.jmh.results.ScalarResult;
 import org.openjdk.jmh.results.AggregationPolicy;
 import org.openjdk.jmh.runner.FailureAssistException;
 
-import com.Dom.generated.Client_jmhType;
-public final class Client_run_jmhTest {
+import com.Dom.generated.BenchmarkClient_jmhType;
+public final class BenchmarkClient_run_jmhTest {
 
     boolean p000, p001, p002, p003, p004, p005, p006, p007, p008, p009, p010, p011, p012, p013, p014, p015;
     boolean p016, p017, p018, p019, p020, p021, p022, p023, p024, p025, p026, p027, p028, p029, p030, p031;
@@ -68,24 +68,24 @@ public final class Client_run_jmhTest {
         }
         if (threadParams.getSubgroupIndex() == 0) {
             RawResults res = new RawResults();
-            Client_jmhType l_client0_0 = _jmh_tryInit_f_client0_0(control);
+            BenchmarkClient_jmhType l_benchmarkclient0_0 = _jmh_tryInit_f_benchmarkclient0_0(control);
 
             control.preSetup();
 
 
             control.announceWarmupReady();
             while (control.warmupShouldWait) {
-                l_client0_0.run();
+                l_benchmarkclient0_0.run();
                 res.allOps++;
             }
 
             notifyControl.startMeasurement = true;
-            run_thrpt_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, l_client0_0);
+            run_thrpt_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, l_benchmarkclient0_0);
             notifyControl.stopMeasurement = true;
             control.announceWarmdownReady();
             try {
                 while (control.warmdownShouldWait) {
-                    l_client0_0.run();
+                    l_benchmarkclient0_0.run();
                     res.allOps++;
                 }
                 control.preTearDown();
@@ -94,7 +94,7 @@ public final class Client_run_jmhTest {
             }
 
             if (control.isLastIteration()) {
-                f_client0_0 = null;
+                f_benchmarkclient0_0 = null;
             }
             res.allOps += res.measuredOps;
             int batchSize = iterationParams.getBatchSize();
@@ -111,12 +111,12 @@ public final class Client_run_jmhTest {
             throw new IllegalStateException("Harness failed to distribute threads among groups properly");
     }
 
-    public static void run_thrpt_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, Client_jmhType l_client0_0) throws Throwable {
+    public static void run_thrpt_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
         long operations = 0;
         long realTime = 0;
         result.startTime = System.nanoTime();
         do {
-            l_client0_0.run();
+            l_benchmarkclient0_0.run();
             operations++;
         } while(!control.isDone);
         result.stopTime = System.nanoTime();
@@ -135,24 +135,24 @@ public final class Client_run_jmhTest {
         }
         if (threadParams.getSubgroupIndex() == 0) {
             RawResults res = new RawResults();
-            Client_jmhType l_client0_0 = _jmh_tryInit_f_client0_0(control);
+            BenchmarkClient_jmhType l_benchmarkclient0_0 = _jmh_tryInit_f_benchmarkclient0_0(control);
 
             control.preSetup();
 
 
             control.announceWarmupReady();
             while (control.warmupShouldWait) {
-                l_client0_0.run();
+                l_benchmarkclient0_0.run();
                 res.allOps++;
             }
 
             notifyControl.startMeasurement = true;
-            run_avgt_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, l_client0_0);
+            run_avgt_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, l_benchmarkclient0_0);
             notifyControl.stopMeasurement = true;
             control.announceWarmdownReady();
             try {
                 while (control.warmdownShouldWait) {
-                    l_client0_0.run();
+                    l_benchmarkclient0_0.run();
                     res.allOps++;
                 }
                 control.preTearDown();
@@ -161,7 +161,7 @@ public final class Client_run_jmhTest {
             }
 
             if (control.isLastIteration()) {
-                f_client0_0 = null;
+                f_benchmarkclient0_0 = null;
             }
             res.allOps += res.measuredOps;
             int batchSize = iterationParams.getBatchSize();
@@ -178,12 +178,12 @@ public final class Client_run_jmhTest {
             throw new IllegalStateException("Harness failed to distribute threads among groups properly");
     }
 
-    public static void run_avgt_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, Client_jmhType l_client0_0) throws Throwable {
+    public static void run_avgt_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
         long operations = 0;
         long realTime = 0;
         result.startTime = System.nanoTime();
         do {
-            l_client0_0.run();
+            l_benchmarkclient0_0.run();
             operations++;
         } while(!control.isDone);
         result.stopTime = System.nanoTime();
@@ -202,14 +202,14 @@ public final class Client_run_jmhTest {
         }
         if (threadParams.getSubgroupIndex() == 0) {
             RawResults res = new RawResults();
-            Client_jmhType l_client0_0 = _jmh_tryInit_f_client0_0(control);
+            BenchmarkClient_jmhType l_benchmarkclient0_0 = _jmh_tryInit_f_benchmarkclient0_0(control);
 
             control.preSetup();
 
 
             control.announceWarmupReady();
             while (control.warmupShouldWait) {
-                l_client0_0.run();
+                l_benchmarkclient0_0.run();
                 res.allOps++;
             }
 
@@ -218,12 +218,12 @@ public final class Client_run_jmhTest {
             int batchSize = iterationParams.getBatchSize();
             int opsPerInv = benchmarkParams.getOpsPerInvocation();
             SampleBuffer buffer = new SampleBuffer();
-            run_sample_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, buffer, targetSamples, opsPerInv, batchSize, l_client0_0);
+            run_sample_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, buffer, targetSamples, opsPerInv, batchSize, l_benchmarkclient0_0);
             notifyControl.stopMeasurement = true;
             control.announceWarmdownReady();
             try {
                 while (control.warmdownShouldWait) {
-                    l_client0_0.run();
+                    l_benchmarkclient0_0.run();
                     res.allOps++;
                 }
                 control.preTearDown();
@@ -232,7 +232,7 @@ public final class Client_run_jmhTest {
             }
 
             if (control.isLastIteration()) {
-                f_client0_0 = null;
+                f_benchmarkclient0_0 = null;
             }
             res.allOps += res.measuredOps * batchSize;
             res.allOps *= opsPerInv;
@@ -246,7 +246,7 @@ public final class Client_run_jmhTest {
             throw new IllegalStateException("Harness failed to distribute threads among groups properly");
     }
 
-    public static void run_sample_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, SampleBuffer buffer, int targetSamples, long opsPerInv, int batchSize, Client_jmhType l_client0_0) throws Throwable {
+    public static void run_sample_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, SampleBuffer buffer, int targetSamples, long opsPerInv, int batchSize, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
         long realTime = 0;
         long operations = 0;
         int rnd = (int)System.nanoTime();
@@ -261,7 +261,7 @@ public final class Client_run_jmhTest {
             }
             for (int b = 0; b < batchSize; b++) {
                 if (control.volatileSpoiler) return;
-                l_client0_0.run();
+                l_benchmarkclient0_0.run();
             }
             if (sample) {
                 buffer.add((System.nanoTime() - time) / opsPerInv);
@@ -288,7 +288,7 @@ public final class Client_run_jmhTest {
             this.blackhole = new Blackhole("Today's password is swordfish. I understand instantiating Blackholes directly is dangerous.");
         }
         if (threadParams.getSubgroupIndex() == 0) {
-            Client_jmhType l_client0_0 = _jmh_tryInit_f_client0_0(control);
+            BenchmarkClient_jmhType l_benchmarkclient0_0 = _jmh_tryInit_f_benchmarkclient0_0(control);
 
             control.preSetup();
 
@@ -296,11 +296,11 @@ public final class Client_run_jmhTest {
             notifyControl.startMeasurement = true;
             RawResults res = new RawResults();
             int batchSize = iterationParams.getBatchSize();
-            run_ss_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, batchSize, l_client0_0);
+            run_ss_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, batchSize, l_benchmarkclient0_0);
             control.preTearDown();
 
             if (control.isLastIteration()) {
-                f_client0_0 = null;
+                f_benchmarkclient0_0 = null;
             }
             int opsPerInv = control.benchmarkParams.getOpsPerInvocation();
             long totalOps = opsPerInv;
@@ -312,26 +312,26 @@ public final class Client_run_jmhTest {
             throw new IllegalStateException("Harness failed to distribute threads among groups properly");
     }
 
-    public static void run_ss_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, int batchSize, Client_jmhType l_client0_0) throws Throwable {
+    public static void run_ss_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, int batchSize, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
         long realTime = 0;
         result.startTime = System.nanoTime();
         for (int b = 0; b < batchSize; b++) {
             if (control.volatileSpoiler) return;
-            l_client0_0.run();
+            l_benchmarkclient0_0.run();
         }
         result.stopTime = System.nanoTime();
         result.realTime = realTime;
     }
 
     
-    Client_jmhType f_client0_0;
+    BenchmarkClient_jmhType f_benchmarkclient0_0;
     
-    Client_jmhType _jmh_tryInit_f_client0_0(InfraControl control) throws Throwable {
+    BenchmarkClient_jmhType _jmh_tryInit_f_benchmarkclient0_0(InfraControl control) throws Throwable {
         if (control.isFailing) throw new FailureAssistException();
-        Client_jmhType val = f_client0_0;
+        BenchmarkClient_jmhType val = f_benchmarkclient0_0;
         if (val == null) {
-            val = new Client_jmhType();
-            f_client0_0 = val;
+            val = new BenchmarkClient_jmhType();
+            f_benchmarkclient0_0 = val;
         }
         return val;
     }
