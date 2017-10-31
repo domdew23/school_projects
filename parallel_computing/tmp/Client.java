@@ -10,9 +10,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Client implements Runnable {
 
-	@State(Scope.Benchmark)
+	/*@State(Scope.Benchmark)
 		public static class GameState {
-			public ConcurrentHashMap<Integer,Merchant> merchants = new ConcurrentHashMap<Integer, Merchant>(100);
+			public ConcurrentHashMap<Integer,Merchant> merchants;// = new ConcurrentHashMap<Integer, Merchant>(100);
 			public Random rand = new Random();
 		}
 
@@ -21,14 +21,21 @@ public class Client implements Runnable {
 			public Random rand = new Random();
 			public double behavior = rand.nextDouble();
 			public double salary = (rand.nextDouble() * rand.nextInt(100000));
-	}
+	}*/
+	
+	private double behavior;
+	private final Random RAND;
+	private static ConcurrentHashMap<Integer,Merchant> merchants;
+	private int id;
+	private double salary;
 
-	public Client(int id, long seed, ConcurrentHashMap<Integer,Merchant> merchants, GameState state, MyState mystate){
+	public Client(int id, long seed, ConcurrentHashMap<Integer,Merchant> merchants){
 		RAND = new Random(seed);
 		behavior = RAND.nextDouble();
 		salary = (RAND.nextDouble() * RAND.nextInt(100000));
-		state.merchants = merchants;
-		MyState.id = id;
+		this.merchants = merchants;
+		this.id = id;
+		
 	}
 
 	public void run(){
@@ -82,6 +89,7 @@ public class Client implements Runnable {
 	}
 
 	/* second most common action of clients */
+    @Benchmark @OutputTimeUnit(TimeUnit.MICROSECONDS)
 	private void buy(){
 		/* must read game state to get the prices of goods
 		before trying to make a purchase. (read -> buy) */
@@ -108,21 +116,11 @@ public class Client implements Runnable {
 			output2 +=		"    |\n";//\t|\n|\t\t|\t\t|\t\t|\t\t\t|\t\t|\t\t\t\t|\n";
 			output2 +=		"-----------------------------------------------------------------------------------------------------------------\n";
 			System.out.print(output2);*/
-
 		}
-	}
-
-	private void reFill(){
-		if (!(merchants.isEmpty())){
-			return;
-		}
-		System.out.println("Refilling...");
-		while (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) != null){
-		}	
-		System.out.println("done refilling");	
 	}
 	
 	/* least common action of clients */
+    @Benchmark @OutputTimeUnit(TimeUnit.MICROSECONDS)
 	private void interact(){
 		/* has an interaction with a merchant based on
 		this clients behavior metric and based on this
@@ -134,48 +132,21 @@ public class Client implements Runnable {
 		of the game. If merchant chemistry reaches below 0 they leave
 		the game. */
 
-		// chemistry below 0 - remove
-		// when chemistry is high more merchants are added
-		
-
-
-		/*int index = RAND.nextInt(Merchant.getCount());
-		while (merchants.get(index) == null){
-			if (merchants.isEmpty()){
-				//reFill();
-				return;
-			}
-			index = RAND.nextInt(Merchant.getCount());
-		}
-
-		Merchant myMerchant = merchants.get(index);
-		if (myMerchant == null){
-			return;
-		}*/
-
 		Merchant myMerchant = null;
     	while(myMerchant == null){
-    		System.out.println("GETTING NEW MERCHANT");
     		myMerchant = merchants.get(RAND.nextInt(Merchant.getCount()));
     	}
 
 		if (Math.random() >= behavior){
 			if (myMerchant.badInteraction()){
-				// remove
-				//System.out.println("Client " + id + " started bad interaction");
 				while (merchants.remove(myMerchant.id()) == null){
-					//reFill();
 					return;
 				}
-				System.out.println("removed " + myMerchant.id() + " - Size: " + merchants.size());
 			}
 		} else {
 			if(myMerchant.goodInteraction()){
-				//add
-				//System.out.println("Client " + id + " started good interaction");
 				while (merchants.put(Merchant.getCount(), new Merchant(RAND.nextLong(), Merchant.getCount())) != null){
 				}
-				System.out.println("added: " + (Merchant.getCount() - 1) + " - Size: " + merchants.size());
 			}
 		}
 	}

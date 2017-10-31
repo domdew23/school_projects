@@ -1,36 +1,31 @@
+package com.Dom;
+
 import java.util.Random;
-//import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+//import java.util.concurrent.ConcurrentHashMap;
+
 public class main{
 
 	private static final Random RAND = new Random();
-	private static final int NUM_CLIENTS = 5000;
+	private static final int NUM_CLIENTS = 500;
 	private static final int NUM_MERCHANTS = 30;
 	private static final ConcurrentHashMap<Integer,Merchant> MERCHANTS = new ConcurrentHashMap<Integer,Merchant>(100);
 	private static final Thread[] CLIENTS = new Thread[NUM_CLIENTS];
 
 	public static void main(String[] args){
-		/*
-		~10 Merchants, ~50 clients
-		Non-blocking data structure to store game state
-		Game state is collection of Merchants
-		Solution using a data struture and/or locking scheme - use standard JDK components
-		Compare throughput (amount of items passed to system) across two different loads 
-		on two different platforms use JMH
-		Plot results as a graph on a web page
-		*/
-
-		initMerchants();
+	
+		//initMerchants();
 		ExecutorService executor = Executors.newFixedThreadPool(NUM_CLIENTS);
 		for (int i = 0; i < NUM_CLIENTS; i++){
-			executor.submit(new Client(i, RAND.nextLong(), MERCHANTS));	
+			executor.submit(new Client());	
 		}
 		
-		try { Thread.sleep(5000); } catch (InterruptedException e) {};
-		System.out.println("DONE SLEEPING");
+		try { Thread.sleep(10000); } catch (InterruptedException e) {};
 		executor.shutdownNow();
 		System.exit(0);
+		
+		//init();
 		/*while (true){
 			if (MERCHANTS.isEmpty()){
 				System.out.println("YOU LOST!\nAll merchants have left the world.");
@@ -99,7 +94,6 @@ public class main{
 	}
 	private static void init(){
 		initMerchants();
-		initClients();
 		for (int i = 0; i < NUM_CLIENTS; i++){
 			CLIENTS[i].start();
 		}
@@ -114,11 +108,11 @@ public class main{
 		}
 	}
 
-	private static void initClients(){
+	/*private static void initClients(){
 		for (int i = 0; i < NUM_CLIENTS; i++){
 			long seed = RAND.nextLong();
 			Thread t = new Thread(new Client(i, seed, MERCHANTS));
 			CLIENTS[i] = t;
 		}
-	}
+	}*/
 }
