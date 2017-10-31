@@ -18,7 +18,7 @@ public class Client implements Runnable {
 			public Random r = new Random();
 
 			public GameState(){
-				for (int i = 0; i < 30; i++){
+				for (int i = 0; i < 60; i++){
 					long seed = r.nextLong();
 					Integer id = new Integer(i);
 					Merchant m = new Merchant(seed, i);
@@ -44,21 +44,18 @@ public class Client implements Runnable {
 		
 	}*/
 
-	public void run(){
+    @Benchmark @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    public void run(){
 		/* execute one action per loop */
-		/*GameState s = new GameState();
+		GameState s = new GameState();
 		MyState ms = new MyState();
-		while (true){
-			if (Math.random() <= .25){
-				if (Math.random() <= .85){
-					buy(s, ms);
-				} else {
-					interact(s, ms);
-				}
-			} else {
-				travel(ms);
-			}
-		}*/
+		for (int i = 0; i < 500; i++){
+		       if (Math.random() <= .92){
+			     buy(s, ms);
+		       } else {
+			     interact(s, ms);
+		    }
+		}
 	}
 
 	/* most common action of clients */
@@ -88,14 +85,12 @@ public class Client implements Runnable {
 		}
 	}
    
-    @Benchmark @OutputTimeUnit(TimeUnit.MICROSECONDS)
 	public void interact(GameState state, MyState mystate){
-		if (state.merchants.isEmpty()){
-			System.out.println("You lose");
-			System.exit(0);
-		}
-		mystate.behavior = mystate.rand.nextDouble();
-		System.out.println("Size: " + state.merchants.size() + " | behavior: " + mystate.behavior);
+	if (state.merchants.size() < 10){
+	    state.merchants.put(Merchant.getCount(), new Merchant(mystate.rand.nextLong(), Merchant.getCount()));
+       }
+		//mystate.behavior = mystate.rand.nextDouble();
+		//System.out.println("Size: " + state.merchants.size() + " | behavior: " + mystate.behavior);
 		Merchant myMerchant = null;
     	while(myMerchant == null){
     		myMerchant = state.merchants.get(mystate.rand.nextInt(Merchant.getCount()));
@@ -116,7 +111,6 @@ public class Client implements Runnable {
 	}
 
 	/* second most common action of clients */
-    @Benchmark @OutputTimeUnit(TimeUnit.MICROSECONDS)
 	public void buy(GameState state, MyState mystate){
 		Merchant myMerchant = null;
 		while (myMerchant == null){
