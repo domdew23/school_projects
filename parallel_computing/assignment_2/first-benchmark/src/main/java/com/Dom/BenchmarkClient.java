@@ -60,7 +60,7 @@ public class BenchmarkClient implements Runnable {
     		myMerchant = state.merchants.get(mystate.rand.nextInt(Merchant.getCount()));
     	}
 
-		if (Math.random() >= mystate.behavior){
+		if (ThreadLocalRandom.current.nextDouble() >= mystate.behavior){
 			if (myMerchant.badInteraction()){
 				while (state.merchants.remove(myMerchant.id()) == null){
 					return;
