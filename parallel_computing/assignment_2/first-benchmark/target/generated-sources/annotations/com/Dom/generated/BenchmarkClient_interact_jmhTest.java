@@ -33,7 +33,9 @@ import org.openjdk.jmh.results.AggregationPolicy;
 import org.openjdk.jmh.runner.FailureAssistException;
 
 import com.Dom.generated.BenchmarkClient_jmhType;
-public final class BenchmarkClient_run_jmhTest {
+import com.Dom.generated.BenchmarkClient_GameState_jmhType;
+import com.Dom.generated.BenchmarkClient_MyState_jmhType;
+public final class BenchmarkClient_interact_jmhTest {
 
     boolean p000, p001, p002, p003, p004, p005, p006, p007, p008, p009, p010, p011, p012, p013, p014, p015;
     boolean p016, p017, p018, p019, p020, p021, p022, p023, p024, p025, p026, p027, p028, p029, p030, p031;
@@ -58,7 +60,7 @@ public final class BenchmarkClient_run_jmhTest {
     Blackhole blackhole;
     Control notifyControl;
 
-    public BenchmarkTaskResult run_Throughput(InfraControl control, ThreadParams threadParams) throws Throwable {
+    public BenchmarkTaskResult interact_Throughput(InfraControl control, ThreadParams threadParams) throws Throwable {
         this.benchmarkParams = control.benchmarkParams;
         this.iterationParams = control.iterationParams;
         this.threadParams    = threadParams;
@@ -69,23 +71,25 @@ public final class BenchmarkClient_run_jmhTest {
         if (threadParams.getSubgroupIndex() == 0) {
             RawResults res = new RawResults();
             BenchmarkClient_jmhType l_benchmarkclient0_0 = _jmh_tryInit_f_benchmarkclient0_0(control);
+            BenchmarkClient_MyState_jmhType l_mystate2_1 = _jmh_tryInit_f_mystate2_1(control);
+            BenchmarkClient_GameState_jmhType l_gamestate1_G = _jmh_tryInit_f_gamestate1_G(control);
 
             control.preSetup();
 
 
             control.announceWarmupReady();
             while (control.warmupShouldWait) {
-                l_benchmarkclient0_0.run();
+                l_benchmarkclient0_0.interact(l_gamestate1_G, l_mystate2_1);
                 res.allOps++;
             }
 
             notifyControl.startMeasurement = true;
-            run_thrpt_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, l_benchmarkclient0_0);
+            interact_thrpt_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, l_gamestate1_G, l_mystate2_1, l_benchmarkclient0_0);
             notifyControl.stopMeasurement = true;
             control.announceWarmdownReady();
             try {
                 while (control.warmdownShouldWait) {
-                    l_benchmarkclient0_0.run();
+                    l_benchmarkclient0_0.interact(l_gamestate1_G, l_mystate2_1);
                     res.allOps++;
                 }
                 control.preTearDown();
@@ -94,6 +98,10 @@ public final class BenchmarkClient_run_jmhTest {
             }
 
             if (control.isLastIteration()) {
+                synchronized(this.getClass()) {
+                    f_gamestate1_G = null;
+                }
+                f_mystate2_1 = null;
                 f_benchmarkclient0_0 = null;
             }
             res.allOps += res.measuredOps;
@@ -104,19 +112,19 @@ public final class BenchmarkClient_run_jmhTest {
             res.measuredOps *= opsPerInv;
             res.measuredOps /= batchSize;
             BenchmarkTaskResult results = new BenchmarkTaskResult(res.allOps, res.measuredOps);
-            results.add(new ThroughputResult(ResultRole.PRIMARY, "run", res.measuredOps, res.getTime(), benchmarkParams.getTimeUnit()));
+            results.add(new ThroughputResult(ResultRole.PRIMARY, "interact", res.measuredOps, res.getTime(), benchmarkParams.getTimeUnit()));
             this.blackhole.evaporate("Yes, I am Stephen Hawking, and know a thing or two about black holes.");
             return results;
         } else
             throw new IllegalStateException("Harness failed to distribute threads among groups properly");
     }
 
-    public static void run_thrpt_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
+    public static void interact_thrpt_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, BenchmarkClient_GameState_jmhType l_gamestate1_G, BenchmarkClient_MyState_jmhType l_mystate2_1, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
         long operations = 0;
         long realTime = 0;
         result.startTime = System.nanoTime();
         do {
-            l_benchmarkclient0_0.run();
+            l_benchmarkclient0_0.interact(l_gamestate1_G, l_mystate2_1);
             operations++;
         } while(!control.isDone);
         result.stopTime = System.nanoTime();
@@ -125,7 +133,7 @@ public final class BenchmarkClient_run_jmhTest {
     }
 
 
-    public BenchmarkTaskResult run_AverageTime(InfraControl control, ThreadParams threadParams) throws Throwable {
+    public BenchmarkTaskResult interact_AverageTime(InfraControl control, ThreadParams threadParams) throws Throwable {
         this.benchmarkParams = control.benchmarkParams;
         this.iterationParams = control.iterationParams;
         this.threadParams    = threadParams;
@@ -136,23 +144,25 @@ public final class BenchmarkClient_run_jmhTest {
         if (threadParams.getSubgroupIndex() == 0) {
             RawResults res = new RawResults();
             BenchmarkClient_jmhType l_benchmarkclient0_0 = _jmh_tryInit_f_benchmarkclient0_0(control);
+            BenchmarkClient_MyState_jmhType l_mystate2_1 = _jmh_tryInit_f_mystate2_1(control);
+            BenchmarkClient_GameState_jmhType l_gamestate1_G = _jmh_tryInit_f_gamestate1_G(control);
 
             control.preSetup();
 
 
             control.announceWarmupReady();
             while (control.warmupShouldWait) {
-                l_benchmarkclient0_0.run();
+                l_benchmarkclient0_0.interact(l_gamestate1_G, l_mystate2_1);
                 res.allOps++;
             }
 
             notifyControl.startMeasurement = true;
-            run_avgt_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, l_benchmarkclient0_0);
+            interact_avgt_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, l_gamestate1_G, l_mystate2_1, l_benchmarkclient0_0);
             notifyControl.stopMeasurement = true;
             control.announceWarmdownReady();
             try {
                 while (control.warmdownShouldWait) {
-                    l_benchmarkclient0_0.run();
+                    l_benchmarkclient0_0.interact(l_gamestate1_G, l_mystate2_1);
                     res.allOps++;
                 }
                 control.preTearDown();
@@ -161,6 +171,10 @@ public final class BenchmarkClient_run_jmhTest {
             }
 
             if (control.isLastIteration()) {
+                synchronized(this.getClass()) {
+                    f_gamestate1_G = null;
+                }
+                f_mystate2_1 = null;
                 f_benchmarkclient0_0 = null;
             }
             res.allOps += res.measuredOps;
@@ -171,19 +185,19 @@ public final class BenchmarkClient_run_jmhTest {
             res.measuredOps *= opsPerInv;
             res.measuredOps /= batchSize;
             BenchmarkTaskResult results = new BenchmarkTaskResult(res.allOps, res.measuredOps);
-            results.add(new AverageTimeResult(ResultRole.PRIMARY, "run", res.measuredOps, res.getTime(), benchmarkParams.getTimeUnit()));
+            results.add(new AverageTimeResult(ResultRole.PRIMARY, "interact", res.measuredOps, res.getTime(), benchmarkParams.getTimeUnit()));
             this.blackhole.evaporate("Yes, I am Stephen Hawking, and know a thing or two about black holes.");
             return results;
         } else
             throw new IllegalStateException("Harness failed to distribute threads among groups properly");
     }
 
-    public static void run_avgt_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
+    public static void interact_avgt_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, BenchmarkClient_GameState_jmhType l_gamestate1_G, BenchmarkClient_MyState_jmhType l_mystate2_1, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
         long operations = 0;
         long realTime = 0;
         result.startTime = System.nanoTime();
         do {
-            l_benchmarkclient0_0.run();
+            l_benchmarkclient0_0.interact(l_gamestate1_G, l_mystate2_1);
             operations++;
         } while(!control.isDone);
         result.stopTime = System.nanoTime();
@@ -192,7 +206,7 @@ public final class BenchmarkClient_run_jmhTest {
     }
 
 
-    public BenchmarkTaskResult run_SampleTime(InfraControl control, ThreadParams threadParams) throws Throwable {
+    public BenchmarkTaskResult interact_SampleTime(InfraControl control, ThreadParams threadParams) throws Throwable {
         this.benchmarkParams = control.benchmarkParams;
         this.iterationParams = control.iterationParams;
         this.threadParams    = threadParams;
@@ -203,13 +217,15 @@ public final class BenchmarkClient_run_jmhTest {
         if (threadParams.getSubgroupIndex() == 0) {
             RawResults res = new RawResults();
             BenchmarkClient_jmhType l_benchmarkclient0_0 = _jmh_tryInit_f_benchmarkclient0_0(control);
+            BenchmarkClient_MyState_jmhType l_mystate2_1 = _jmh_tryInit_f_mystate2_1(control);
+            BenchmarkClient_GameState_jmhType l_gamestate1_G = _jmh_tryInit_f_gamestate1_G(control);
 
             control.preSetup();
 
 
             control.announceWarmupReady();
             while (control.warmupShouldWait) {
-                l_benchmarkclient0_0.run();
+                l_benchmarkclient0_0.interact(l_gamestate1_G, l_mystate2_1);
                 res.allOps++;
             }
 
@@ -218,12 +234,12 @@ public final class BenchmarkClient_run_jmhTest {
             int batchSize = iterationParams.getBatchSize();
             int opsPerInv = benchmarkParams.getOpsPerInvocation();
             SampleBuffer buffer = new SampleBuffer();
-            run_sample_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, buffer, targetSamples, opsPerInv, batchSize, l_benchmarkclient0_0);
+            interact_sample_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, buffer, targetSamples, opsPerInv, batchSize, l_gamestate1_G, l_mystate2_1, l_benchmarkclient0_0);
             notifyControl.stopMeasurement = true;
             control.announceWarmdownReady();
             try {
                 while (control.warmdownShouldWait) {
-                    l_benchmarkclient0_0.run();
+                    l_benchmarkclient0_0.interact(l_gamestate1_G, l_mystate2_1);
                     res.allOps++;
                 }
                 control.preTearDown();
@@ -232,6 +248,10 @@ public final class BenchmarkClient_run_jmhTest {
             }
 
             if (control.isLastIteration()) {
+                synchronized(this.getClass()) {
+                    f_gamestate1_G = null;
+                }
+                f_mystate2_1 = null;
                 f_benchmarkclient0_0 = null;
             }
             res.allOps += res.measuredOps * batchSize;
@@ -239,14 +259,14 @@ public final class BenchmarkClient_run_jmhTest {
             res.allOps /= batchSize;
             res.measuredOps *= opsPerInv;
             BenchmarkTaskResult results = new BenchmarkTaskResult(res.allOps, res.measuredOps);
-            results.add(new SampleTimeResult(ResultRole.PRIMARY, "run", buffer, benchmarkParams.getTimeUnit()));
+            results.add(new SampleTimeResult(ResultRole.PRIMARY, "interact", buffer, benchmarkParams.getTimeUnit()));
             this.blackhole.evaporate("Yes, I am Stephen Hawking, and know a thing or two about black holes.");
             return results;
         } else
             throw new IllegalStateException("Harness failed to distribute threads among groups properly");
     }
 
-    public static void run_sample_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, SampleBuffer buffer, int targetSamples, long opsPerInv, int batchSize, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
+    public static void interact_sample_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, SampleBuffer buffer, int targetSamples, long opsPerInv, int batchSize, BenchmarkClient_GameState_jmhType l_gamestate1_G, BenchmarkClient_MyState_jmhType l_mystate2_1, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
         long realTime = 0;
         long operations = 0;
         int rnd = (int)System.nanoTime();
@@ -261,7 +281,7 @@ public final class BenchmarkClient_run_jmhTest {
             }
             for (int b = 0; b < batchSize; b++) {
                 if (control.volatileSpoiler) return;
-                l_benchmarkclient0_0.run();
+                l_benchmarkclient0_0.interact(l_gamestate1_G, l_mystate2_1);
             }
             if (sample) {
                 buffer.add((System.nanoTime() - time) / opsPerInv);
@@ -279,7 +299,7 @@ public final class BenchmarkClient_run_jmhTest {
     }
 
 
-    public BenchmarkTaskResult run_SingleShotTime(InfraControl control, ThreadParams threadParams) throws Throwable {
+    public BenchmarkTaskResult interact_SingleShotTime(InfraControl control, ThreadParams threadParams) throws Throwable {
         this.benchmarkParams = control.benchmarkParams;
         this.iterationParams = control.iterationParams;
         this.threadParams    = threadParams;
@@ -289,6 +309,8 @@ public final class BenchmarkClient_run_jmhTest {
         }
         if (threadParams.getSubgroupIndex() == 0) {
             BenchmarkClient_jmhType l_benchmarkclient0_0 = _jmh_tryInit_f_benchmarkclient0_0(control);
+            BenchmarkClient_MyState_jmhType l_mystate2_1 = _jmh_tryInit_f_mystate2_1(control);
+            BenchmarkClient_GameState_jmhType l_gamestate1_G = _jmh_tryInit_f_gamestate1_G(control);
 
             control.preSetup();
 
@@ -296,33 +318,62 @@ public final class BenchmarkClient_run_jmhTest {
             notifyControl.startMeasurement = true;
             RawResults res = new RawResults();
             int batchSize = iterationParams.getBatchSize();
-            run_ss_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, batchSize, l_benchmarkclient0_0);
+            interact_ss_jmhStub(control, res, benchmarkParams, iterationParams, threadParams, blackhole, notifyControl, startRndMask, batchSize, l_gamestate1_G, l_mystate2_1, l_benchmarkclient0_0);
             control.preTearDown();
 
             if (control.isLastIteration()) {
+                synchronized(this.getClass()) {
+                    f_gamestate1_G = null;
+                }
+                f_mystate2_1 = null;
                 f_benchmarkclient0_0 = null;
             }
             int opsPerInv = control.benchmarkParams.getOpsPerInvocation();
             long totalOps = opsPerInv;
             BenchmarkTaskResult results = new BenchmarkTaskResult(totalOps, totalOps);
-            results.add(new SingleShotResult(ResultRole.PRIMARY, "run", res.getTime(), benchmarkParams.getTimeUnit()));
+            results.add(new SingleShotResult(ResultRole.PRIMARY, "interact", res.getTime(), benchmarkParams.getTimeUnit()));
             this.blackhole.evaporate("Yes, I am Stephen Hawking, and know a thing or two about black holes.");
             return results;
         } else
             throw new IllegalStateException("Harness failed to distribute threads among groups properly");
     }
 
-    public static void run_ss_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, int batchSize, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
+    public static void interact_ss_jmhStub(InfraControl control, RawResults result, BenchmarkParams benchmarkParams, IterationParams iterationParams, ThreadParams threadParams, Blackhole blackhole, Control notifyControl, int startRndMask, int batchSize, BenchmarkClient_GameState_jmhType l_gamestate1_G, BenchmarkClient_MyState_jmhType l_mystate2_1, BenchmarkClient_jmhType l_benchmarkclient0_0) throws Throwable {
         long realTime = 0;
         result.startTime = System.nanoTime();
         for (int b = 0; b < batchSize; b++) {
             if (control.volatileSpoiler) return;
-            l_benchmarkclient0_0.run();
+            l_benchmarkclient0_0.interact(l_gamestate1_G, l_mystate2_1);
         }
         result.stopTime = System.nanoTime();
         result.realTime = realTime;
     }
 
+    
+    static volatile BenchmarkClient_GameState_jmhType f_gamestate1_G;
+    
+    BenchmarkClient_GameState_jmhType _jmh_tryInit_f_gamestate1_G(InfraControl control) throws Throwable {
+        BenchmarkClient_GameState_jmhType val = f_gamestate1_G;
+        if (val != null) {
+            return val;
+        }
+        synchronized(this.getClass()) {
+            try {
+            if (control.isFailing) throw new FailureAssistException();
+            val = f_gamestate1_G;
+            if (val != null) {
+                return val;
+            }
+            val = new BenchmarkClient_GameState_jmhType();
+            val.readyTrial = true;
+            f_gamestate1_G = val;
+            } catch (Throwable t) {
+                control.isFailing = true;
+                throw t;
+            }
+        }
+        return val;
+    }
     
     BenchmarkClient_jmhType f_benchmarkclient0_0;
     
@@ -332,6 +383,18 @@ public final class BenchmarkClient_run_jmhTest {
         if (val == null) {
             val = new BenchmarkClient_jmhType();
             f_benchmarkclient0_0 = val;
+        }
+        return val;
+    }
+    
+    BenchmarkClient_MyState_jmhType f_mystate2_1;
+    
+    BenchmarkClient_MyState_jmhType _jmh_tryInit_f_mystate2_1(InfraControl control) throws Throwable {
+        if (control.isFailing) throw new FailureAssistException();
+        BenchmarkClient_MyState_jmhType val = f_mystate2_1;
+        if (val == null) {
+            val = new BenchmarkClient_MyState_jmhType();
+            f_mystate2_1 = val;
         }
         return val;
     }

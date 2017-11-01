@@ -1,3 +1,4 @@
+
 package com.Dom;
 
 /* Clients are guilty by assoication (if one has a bad 
@@ -35,7 +36,7 @@ public class BenchmarkClient implements Runnable {
 			public double salary = (rand.nextDouble() * rand.nextInt(100000));
 	}
 
-    @Benchmark @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    // @Benchmark @OutputTimeUnit(TimeUnit.MILLISECONDS)
     public void run(){
 		/* execute one action per loop */
 		GameState s = new GameState();
@@ -49,7 +50,7 @@ public class BenchmarkClient implements Runnable {
 		}
 	}
   
-    //@Benchmark @OutputTimeUnit(TimeUnit.MICROSECONDS)
+    @Benchmark @OutputTimeUnit(TimeUnit.MICROSECONDS)
 	public void interact(GameState state, MyState mystate){
 		if (state.merchants.size() < 10){
 		    state.merchants.put(Merchant.getCount(), new Merchant(mystate.rand.nextLong(), Merchant.getCount()));
@@ -60,7 +61,7 @@ public class BenchmarkClient implements Runnable {
     		myMerchant = state.merchants.get(mystate.rand.nextInt(Merchant.getCount()));
     	}
 
-		if (ThreadLocalRandom.current.nextDouble() >= mystate.behavior){
+	if (ThreadLocalRandom.current().nextDouble() >= mystate.behavior){
 			if (myMerchant.badInteraction()){
 				while (state.merchants.remove(myMerchant.id()) == null){
 					return;
