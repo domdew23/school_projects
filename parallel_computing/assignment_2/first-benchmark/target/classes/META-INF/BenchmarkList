@@ -1,1 +1,1 @@
-JMH S 14 com.Dom.Client S 36 com.Dom.generated.Client_run_jmhTest S 3 run S 10 Throughput E A 1 1 1 E E E E E E E E E E E E E E U 12 MILLISECONDS E E 
+JMH S 23 com.Dom.BenchmarkClient S 45 com.Dom.generated.BenchmarkClient_run_jmhTest S 3 run S 10 Throughput E A 1 1 1 E E E E E E E E E E E E E E U 12 MILLISECONDS E E 
