@@ -37,7 +37,7 @@ public class Client implements Runnable {
 		}
 	}
 
-	/* second most common action of clients */
+	/* most common action of clients */
 	private void buy(){
 		/* must read game state to get the prices of goods
 		before trying to make a purchase. (read -> buy) */
