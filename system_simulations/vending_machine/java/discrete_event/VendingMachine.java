@@ -59,7 +59,7 @@ public class VendingMachine{
 			int[] y = {coffee, change[0], change[1], change[2]};
 			return y;
 		} catch (AtomicModelException e){
-			e.printStackTrace();
+			.printStackTrace();
 			System.out.println("OUT OF ORDER");
 			System.exit(0);
 			return null;
