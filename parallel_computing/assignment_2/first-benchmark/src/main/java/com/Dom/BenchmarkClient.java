@@ -64,7 +64,7 @@ public class BenchmarkClient implements Runnable {
 	if (ThreadLocalRandom.current().nextDouble() >= mystate.behavior){
 			if (myMerchant.badInteraction()){
 				while (state.merchants.remove(myMerchant.id()) == null){
-					return;
+
 				}
 			}
 		} else {
