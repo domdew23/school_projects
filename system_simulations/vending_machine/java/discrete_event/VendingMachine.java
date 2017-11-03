@@ -24,6 +24,7 @@ public class VendingMachine{
 		if (value >= 100){
 			value %= 100;
 		}
+		
 		try {
 			int[] change = dispense_change();
 			for (int i = 0; i < change[0]; i++){
@@ -59,7 +60,7 @@ public class VendingMachine{
 			int[] y = {coffee, change[0], change[1], change[2]};
 			return y;
 		} catch (AtomicModelException e){
-			.printStackTrace();
+			e.printStackTrace();
 			System.out.println("OUT OF ORDER");
 			System.exit(0);
 			return null;

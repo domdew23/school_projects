@@ -59,6 +59,54 @@ int VendingMachine::time_advance(){
 	}
 }
 
+int* VendingMachine::dispense_change(){
+	int q_count=0, n_count=0, d_count=0;
+	int tmp_value = value % 100;
+	while (tmp_value != 0){
+		while (tmp_value >= 25){
+			if (quarters > 0){
+				if (tmp_value < 50 && tmp_value % 10 == 0){
+					if (dimes > 0){
+						break;
+					}
+				}
+				q_count++;
+				tmp_value -= 25;
+			} else {
+				break;
+			}
+		}
+		while (tmp_value >= 10){
+			if (dimes > 0){
+				d_count++;
+				tmp_value -= 10;
+			} else {
+				break;
+			}
+		}
+		while (tmp_value >= 5){
+			if (nickels > 0){
+				n_count++;
+				tmp_value -= 5;
+			} else {
+				break;
+			}
+		}
+		if (tmp_value != 0){
+			cout << "OUT OF SUFFICIENT CHANGE" << endl;
+			break;
+		}
+	}
+
+	int* pointer = new int[3]{q_count, n_count, d_count};
+	return pointer;
+}
+
+void VendingMachine::print_state(){
+	cout << "Quarters: " << quarters << " || Nickels: " << nickels << 
+	" || Dimes: " << dimes << " || Value: " << value << endl;
+}
+
 double VendingMachine::get_real(){
 	return current->get_real();
 }

@@ -7,11 +7,11 @@ Time::Time(double real, int discrete){
 	this->discrete = discrete;
 }
 
-Time* Time::advance(Time interval){
-	if (interval.real > 0){
-		return new Time(real + interval.real, 0); // go right
+Time* Time::advance(Time* interval){
+	if (interval->real > 0){
+		return new Time(real + interval->real, 0);
 	} else {
-		return new Time(real, discrete + interval.discrete);
+		return new Time(real, discrete + interval->discrete);
 	}
 }
 

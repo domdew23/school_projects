@@ -5,7 +5,7 @@ using namespace std;
 class Time {
 	public:
 		Time(double real, int discrete);
-		Time* advance(Time interval);
+		Time* advance(Time* interval);
 		double get_real();
 		int get_discrete();	
 	private:
