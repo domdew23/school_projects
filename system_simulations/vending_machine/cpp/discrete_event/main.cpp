@@ -8,7 +8,7 @@ using namespace std;
 int main(int argc, char** argv){
 	if (argc <= 1){
 		cout << "Please supply and input file" << endl;
-		exit(0);	
+		return 0;	
 	} else {
 		double time;
 		char x;
@@ -24,4 +24,5 @@ int main(int argc, char** argv){
 			VM->print_state();
 		}
 	}
+	return 0;
 }
