@@ -1,7 +1,7 @@
 /* Component */
 public interface AtomicModel{
 
-	public boolean lambda();
+	public int lambda();
 
 	/* internal state transition function */
 	public void deltaInternal();

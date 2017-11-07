@@ -6,8 +6,8 @@ public class Drill implements AtomicModel {
 
 	}
 
-	public boolean lambda(){
-
+	public int lambda(){
+		return 1;
 	}
 
 	public void deltaInternal(){
@@ -29,5 +29,9 @@ public class Drill implements AtomicModel {
 		} else {
 			return Integer.MAX_VALUE;
 		}
+	}
+
+	public String toString(){
+		return "Drill";
 	}
 }

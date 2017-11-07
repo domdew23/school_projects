@@ -15,7 +15,10 @@ public class main {
 		- output from the drill is coupled with the output from the network 
 		state:
 		p - parts for the machine process
-		s - tune remaining to process the first of those parts
+		s - time remaining to process the first of those parts0.
+
 		*/
+		AtomicModel press = new Press();
+		AtomicModel drill = new Drill();
 	}
 }
