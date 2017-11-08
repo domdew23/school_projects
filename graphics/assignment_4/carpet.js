@@ -38,11 +38,6 @@ var matShine;
 var lightX;
 var lightY;
 var lightZ;
-/* Need to add:
-	- light (parallel or point)
-	- material (random or uniform on each square)
-	- camera motion
-*/
 
 //-1 means light is pointing directly opposite at the object
 // 1 means light is pointing directly at the object

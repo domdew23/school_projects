@@ -234,7 +234,7 @@ function create_buffer(gl, data, program, canvas, num_items, vertices, centers, 
 	);
 
 	// create texture
-	var texture;/*var texture = gl.createTexture();
+	var texture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_2D, texture); // bind to GPU
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // s - u, t - v
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -244,7 +244,8 @@ function create_buffer(gl, data, program, canvas, num_items, vertices, centers, 
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("box_image"));
 
 	gl.bindTexture(gl.TEXTURE_2D, null); // unbind
-	*/
+	
+
 	// grab theta from the shader
 	theta_var = gl.getUniformLocation(program, "theta");
 
@@ -297,8 +298,8 @@ function render(gl, num_items, texture){
 	// draw to the screen
 	gl.clear(gl.DEPTH_BUFFER_BIT | gl.COLOR_BUFFER_BIT);
 	var offset = 0;
-	//gl.bindTexture(gl.TEXTURE_2D, texture);
-	//gl.activeTexture(gl.TEXTURE0);
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.activeTexture(gl.TEXTURE0);
 	for (i = 0; i < num_items; i++){
 		gl.drawArrays(gl.TRIANGLE_FAN, offset, 4);
 		offset += 4;

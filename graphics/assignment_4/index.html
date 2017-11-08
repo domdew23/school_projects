@@ -35,9 +35,9 @@
 											sin(theta),  cos(theta));
  
 				vec2 temp_position = coordinates;
-				//temp_position = temp_position - center; // translate to origin
+				temp_position = temp_position - center; // translate to origin
 				temp_position = rotation_matrix * temp_position; // rotate around origin
-				//temp_position = temp_position + center; // translate back to original position
+				temp_position = temp_position + center; // translate back to original position
 
 			    vec3 pos = -(mView * vec4(temp_position, 0.0, 1.0)).xyz;
 			 
