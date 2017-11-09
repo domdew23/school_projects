@@ -14,6 +14,7 @@ public class Machine implements AtomicModel {
 
 	public void deltaInternal(){
 		// new state -> (p - 1, t) where t = 1
+		// schedule events from deltas
 		p-=1;
 	}
 
