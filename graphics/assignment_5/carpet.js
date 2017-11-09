@@ -274,7 +274,7 @@ function create_buffer(gl, data, program, canvas, num_items, vertices, centers, 
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("box_image"));
 
 	gl.bindTexture(gl.TEXTURE_2D, null); // unbind
-	myRotate(gl, num_items, texture);
+	
 	// grab theta from the shader
 	theta_var = gl.getUniformLocation(program, "theta");
 
@@ -320,15 +320,8 @@ function create_buffer(gl, data, program, canvas, num_items, vertices, centers, 
 	gl.uniformMatrix4fv(matProjectionVar, gl.FALSE, projMatrix);
 	gl.uniformMatrix4fv(matViewVar, gl.FALSE, viewMatrix);
 
-	/*var texture = gl.createTexture();
-    gl.bindTexture( gl.TEXTURE_2D, texture);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, document.getElementById("box_image"));
-    gl.generateMipmap( gl.TEXTURE_2D);
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+	myRotate(gl, num_items, texture);
 
-    gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);*/
 }
 
 function myRotate(gl, num_items, texture) {

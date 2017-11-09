@@ -64,7 +64,7 @@
 		  	uniform float shininess;
 			varying vec2 fragTexCoord;
 
-			uniform sampler2D texture;
+			uniform sampler2D sampler;
 	 		varying vec3 N, L, E;
 
 			void main() {
@@ -87,7 +87,7 @@
 			    
 			    fragColor.a = 1.0;
 
-				gl_FragColor = (fragColor * texture2D(texture, fragTexCoord));
+				gl_FragColor = (fragColor * texture2D(sampler, fragTexCoord));
 			}
 		</script>
 		
