@@ -1,3 +1,7 @@
+import java.util.Scanner;
+import java.io.File;
+import java.io.FileNotFoundException;
+
 public class main {
 	public static void main(String[] args){
 		/* Network consists of two machines for working metal
@@ -10,27 +14,48 @@ public class main {
 		- has bin to hold disks waiting to be drilled
 		- needs two seconds to do job
 		Machines are connected sequentially:
-		- outpput from the press goes directly to the input of the drill
+		- output from the press goes directly to the input of the drill
 		- input to the network is coupled with input to the press
 		- output from the drill is coupled with the output from the network 
 		state:
 		p - parts for the machine process
-		s - time remaining to process the first of those parts0.
+		s - time remaining to process the first of those parts.
 
 		*/
 
-		AtomicModel press = new Machine(1);
-		AtomicModel drill = new Machine(2);
-		
-		Scheduler scheduler = new Scheduler(10);
-		for (int i = 0; i < 30; i++){
-			Time t = new Time(Math.random() * 100, 0);
-			Event e = new Event(t, "", "");
-			scheduler.put(e);
+		if (args.length < 1){
+			System.out.println("Please supply an input file.");
+			return;
 		}
+		
+		File file;
+		Scanner sc;
+
+		try{
+			file = new File(args[0]);
+			sc = new Scanner(file);
+		} catch (FileNotFoundException e){
+			System.out.println("File not found.");
+			return;
+		}
+
+		AtomicModel press = new Machine(1, "Press");
+		AtomicModel drill = new Machine(2, "Drill");
+		Machine.setScheduler(new Scheduler());
+		Machine.setTime(new Time(0, 0));
+
+		Network network = Network.builder().addComponent(press).addComponent(drill).build();
+
+		// file only contains input events
+		while (sc.hasNext()){
+			double time = sc.nextDouble();
+			int q = sc.nextInt();
+		}
+		
+		/*
 		System.out.println(scheduler.toString());
 		System.out.println(scheduler.pull().toString() + "\n");
 		System.out.println(scheduler.toString());
-
+		*/
 	}
 }
