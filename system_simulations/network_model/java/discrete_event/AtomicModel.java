@@ -7,9 +7,9 @@ public interface AtomicModel{
 	public void deltaInternal();
 
 	/* external state transition function */
-	public void deltaExternal();
+	public void deltaExternal(int e, int q);
 
-	public void deltaConfluent();
+	public void deltaConfluent(int q);
 
 	public int timeAdvance();
 }

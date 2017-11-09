@@ -2,9 +2,15 @@ public class Machine implements AtomicModel {
 	private int p; // number of parts for the machine to process
 	private int s; // time remaining to process first of the parts
 	private int t; // time it takes machine to finish a part
+	private String name;
+	private static Scheduler scheduler;
+	private static Time currentTime;
 
-	public Machine(int t){
+	public Machine(int t, String name){
 		this.t = t;
+		this.name = name;
+		this.p = 0;
+		this.s = 0;
 	}
 
 	public int lambda(){
@@ -14,17 +20,38 @@ public class Machine implements AtomicModel {
 
 	public void deltaInternal(){
 		// new state -> (p - 1, t) where t = 1
+<<<<<<< HEAD
 		// schedule events from deltas
 		p-=1;
 	}
+=======
+		p--;
+		s = t;
+>>>>>>> f42372934caad2146771af844283d693b993d353
 
-	public void deltaExternal(){
-
+		scheduleEvent("deltaInternal");
 	}
 
-	public void deltaConfluent(){
+	public void deltaExternal(int e, int q){
+		// e = elapsed time | q = # of parts
+		if (p > 0){
+			p += q;
+			s -= e;
+		} else {
+			p += q;
+			s = t;
+		}
+		
+		scheduleEvent("deltaExternal"); // maybe schedule deltaInternal here?
+	}
+
+	public void deltaConfluent(int q){
 		// executed when new part arrives and part is completed simultaneously
 		// should eject the completed part
+		p += (q - 1);
+		s = t;
+
+		scheduleEvent("deltaConfluent");
 	}
 
 	public int timeAdvance(){
@@ -35,7 +62,34 @@ public class Machine implements AtomicModel {
 		}
 	}
 
+	// main loop advances time
+	public void scheduleEvent(String kind){
+		Time t = new Time(currentTime.getReal() + timeAdvance(), 0);
+		Event e = new Event(t, kind, name);
+		scheduler.put(e);
+	}
+
+	public static void setTime(Time t){
+		currentTime = t;
+	}
+
+	public static Time getTime(){
+		return currentTime;
+	}
+
+	public static void setScheduler(Scheduler s){
+		scheduler = s;
+	}
+
+	public static Scheduler getScheduler(){
+		return scheduler;
+	}
+
+	public String name(){
+		return name;
+	}
+
 	public String toString(){
-		return "Press";
+		return name + ": | p: " + p + " | s: " + s + " | t: " + t;
 	}
 }

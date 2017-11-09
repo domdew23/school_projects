@@ -129,12 +129,20 @@ public class Scheduler {
 		return size == 0;
 	}
 
-	public boolean checkMerge(){
-		return false;
+	public void checkMerge(){
+		// merge once you reach that moment in time
+		for (Event e : events){
+			if (peek().time.getReal() == e.time.getReal() && peek().model == e.model){
+				merge(peek(), e);
+			}
+		}
 	}
 
-	public void merge(){
-
+	/* never compare floating point values for equality - don't use floats */
+	public void merge(Event one, Event two){
+		remove(one);
+		remove(two);
+		Event e = new Event(one.time, "deltaConfluent", one.model);
 	}
 
 	public String toString(){

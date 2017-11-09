@@ -1,6 +1,6 @@
 public class Event {
 	public Time time;
-	public String kind;
+	public String kind; // input or output
 	public String model;
 
 	public Event(Time time, String kind, String model){
