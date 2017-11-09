@@ -18,7 +18,19 @@ public class main {
 		s - time remaining to process the first of those parts0.
 
 		*/
-		AtomicModel press = new Press();
-		AtomicModel drill = new Drill();
+
+		AtomicModel press = new Machine(1);
+		AtomicModel drill = new Machine(2);
+		
+		Scheduler scheduler = new Scheduler(10);
+		for (int i = 0; i < 30; i++){
+			Time t = new Time(Math.random() * 100, 0);
+			Event e = new Event(t, "", "");
+			scheduler.put(e);
+		}
+		System.out.println(scheduler.toString());
+		System.out.println(scheduler.pull().toString() + "\n");
+		System.out.println(scheduler.toString());
+
 	}
 }

@@ -13,31 +13,19 @@ var eyeCamY;
 var eyeCamZ;
 var centCamX;
 var centCamY;
+var lightInt;
 
 var texCoordArr;
 var normalsArr;
-var AmbR;
-var AmbG;
-var AmbB;
-var diffR;
-var diffG;
-var diffB;
-var specR;
-var specG;
-var specB;
-var matAmbx;
-var matAmby;
-var matAmbz;
-var matDifx;
-var matDify;
-var matDifz;
-var matSpecx;
-var matSpecy;
-var matSpecz;
-var matShine;
-var lightX;
-var lightY;
-var lightZ;
+var lightDirX;
+var lightDirY;
+var lightDirZ;
+
+/* Need to add:
+	- light (parallel or point)
+	- material (random or uniform on each square)
+	- camera motion
+*/
 
 //-1 means light is pointing directly opposite at the object
 // 1 means light is pointing directly at the object
@@ -53,6 +41,9 @@ function run(){
 	var parent = [];
 	var vertices = [];
 	var centers = [];
+	var tmp_vertices = [];
+	texCoordArr = [];
+	normalsArr = [];
 
 	var canvas = document.getElementById('web_gl_canvas');
 	var depth = document.getElementById('depth').value;
@@ -61,20 +52,10 @@ function run(){
 	eyeCamZ = document.getElementById('eyeCamZ').value;
 	centCamX = document.getElementById('centCamX').value;
 	centCamY = document.getElementById('centCamY').value;
-	AmbR = document.getElementById('AmbR').value;
- 	AmbG = document.getElementById('AmbG').value;
- 	AmbB = document.getElementById('AmbB').value;
- 	diff = document.getElementById('diff').value;
-	spec = document.getElementById('spec').value;
-	matAmbx = document.getElementById('matAmbx').value;
-	matAmby = document.getElementById('matAmby').value;
-	matAmbz = document.getElementById('matAmbz').value;
-	matDif = document.getElementById('matDif').value;
-	matSpec = document.getElementById('matSpec').value;
-	matShine = document.getElementById('matShine').value;
-	lightX = document.getElementById('lightX').value;
-	lightY = document.getElementById('lightY').value;
-	lightZ = document.getElementById('lightZ').value;
+	lightInt = document.getElementById('lightInt').value;
+ 	lightDirX = document.getElementById('lightDirX').value;
+ 	lightDirY = document.getElementById('lightDirY').value;
+	//lightDirZ = document.getElementById('lightDirZ').value;
 
 	var gl = init(canvas);
 	canvas.onclick = change_direction;
@@ -87,7 +68,7 @@ function run(){
 	BASE = 1/3;
 	parent = [];
 	get_verts(parent, depth, true);
-	vertices = fill(vertices);
+	tmp_vertices = fill(tmp_vertices);
 
 	layers = [];
 	BASE = 0;
@@ -95,36 +76,38 @@ function run(){
 	get_verts(parent, depth, true);
 	centers = fill(centers);
 
-	data = vertices.concat(centers); // same amount of normals as there are vertices
-	num_items = (vertices.length / 8); // number of squares
+	data = tmp_vertices.concat(centers); // same amount of normals as there are vertices
+	num_items = (tmp_vertices.length / 8); // number of squares
 
 	var texCoord = [
-		0,0,
-		0,1,
 		1,1,
-		1,0
+		1,0,
+		0,0,
+		0,1
 	];
 
 	var normals = [
-      1.0, 1.0,
-      1.0, 1.0,
-      1.0 ,1.0,
-      1.0 ,1.0
+      0.0, 0.0,
+      0.0, 0.0,
+      0.0 ,0.0,
+      0.0 ,0.0
    ];
 
-	var texCount = 0;
+   	var texCount = 0;
 	for (i = 0; i < num_items; i++){
 		texCount++;
 		data = data.concat(texCoord);
 	}
 
+	var texLen = texCount * texCoord.length;
+
 	for (i = 0; i < num_items; i++){
 		data = data.concat(normals);
 	}
 
-	var texLen = texCount * texCoord.length;
-
-	create_buffer(gl, data, program, canvas, num_items, vertices, centers, texLen);
+	console.log(data);
+	console.log(texLen);
+	create_buffer(gl, data, program, canvas, num_items, tmp_vertices, centers, texLen);
 }
 
 function change_direction(){
@@ -195,18 +178,6 @@ function link_program(gl, canvas, vert_shader, frag_shader){
 	return program;
 }
 
-function hi(){
-    var result = _argumentsToArray(arguments);
-
-    switch (result.length) {
-    case 0: result.push( 0.0 );
-    case 1: result.push( 0.0 );
-    case 2: result.push( 0.0 );
-    case 3: result.push( 1.0 );
-    }
-    return result.splice( 0, 4 );
-}
-
 function create_buffer(gl, data, program, canvas, num_items, vertices, centers, texLen){
 	gl.useProgram(program);
 
@@ -250,22 +221,21 @@ function create_buffer(gl, data, program, canvas, num_items, vertices, centers, 
 		vertices.length*4
 	);
 
-	var texCoordVar = gl.getAttribLocation(program, "vertTexCoord");
+	var texCoordVar = gl.getAttribLocation(program, 'vertTexCoord');
 	gl.enableVertexAttribArray(texCoordVar);
 
 	gl.vertexAttribPointer(
-		texCoordVar,
-		2,
-		gl.FLOAT,
+		texCoordVar, // attribute location
+		2, // elements per attribute
+		gl.FLOAT, // type
 		false,
 		0,
 		(vertices.length*4) + (centers.length*4)
 	);
 
-	//create texture 
+	// create texture
 	var texture = gl.createTexture();
 	gl.bindTexture(gl.TEXTURE_2D, texture); // bind to GPU
-	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); // s - u, t - v
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
@@ -274,7 +244,8 @@ function create_buffer(gl, data, program, canvas, num_items, vertices, centers, 
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, document.getElementById("box_image"));
 
 	gl.bindTexture(gl.TEXTURE_2D, null); // unbind
-	myRotate(gl, num_items, texture);
+	
+
 	// grab theta from the shader
 	theta_var = gl.getUniformLocation(program, "theta");
 
@@ -289,56 +260,30 @@ function create_buffer(gl, data, program, canvas, num_items, vertices, centers, 
 	mat4.lookAt(viewMatrix, [eyeCamX, eyeCamY, eyeCamZ], [centCamX, centCamY, 0], [0, 1, 0]);
 	mat4.perspective(projMatrix, glMatrix.toRadian(45), canvas.width / canvas.height, 0.1, 1000.0);
 
-	/* Lighting Information */
-	var lightPosition = hi(lightX, lightY, lightZ, 1.0);
-	var lightAmbient = hi(AmbR, AmbG, AmbB, 1.0);
-	var lightDiffuse = hi(diff, diff, diff, 1.0);
-	var lightSpecular = hi(spec, spec, spec, 1.0);
-
-	var materialAmbient = hi(matAmbx, matAmbx, matAmbx, 1.0);
-	var materialDiffuse = hi(matDif, matDif, matDif, 1.0);
-	var materialSpecular = hi(matSpec, matSpec, matSpec, 1.0);
-	var materialShininess = matShine;
-
-	var ambientProduct = mult(lightAmbient, materialAmbient);
-	var diffuseProduct = mult(lightDiffuse, materialDiffuse);
-	var specularProduct = mult(lightSpecular, materialSpecular);
-	
-	var ambientVar = gl.getUniformLocation(program, 'ambientProduct');
-	var diffuseVar = gl.getUniformLocation(program, 'diffuseProduct');
-	var specularVar = gl.getUniformLocation(program, 'specularProduct');
-	var positionVar = gl.getUniformLocation(program, 'lightPosition');
-	var shininessVar = gl.getUniformLocation(program, 'shininess');
-
-	gl.uniform4fv(ambientVar, flatten(ambientProduct));
-    gl.uniform4fv(diffuseVar, flatten(diffuseProduct));
-    gl.uniform4fv(specularVar, flatten(specularProduct));
-    gl.uniform4fv(positionVar, flatten(lightPosition));
-
-    gl.uniform1f(shininessVar, materialShininess);
-
 	gl.uniformMatrix4fv(matProjectionVar, gl.FALSE, projMatrix);
 	gl.uniformMatrix4fv(matViewVar, gl.FALSE, viewMatrix);
 
-	/*var texture = gl.createTexture();
-    gl.bindTexture( gl.TEXTURE_2D, texture);
-    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-    gl.texImage2D( gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, document.getElementById("box_image"));
-    gl.generateMipmap( gl.TEXTURE_2D);
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_LINEAR);
-    gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+	/* Lighting Information */
+	gl.useProgram(program);
+	var ambientLightIntensityVar = gl.getUniformLocation(program, 'ambientLightIntensity');
+	var directionalLightDirVar = gl.getUniformLocation(program, 'directionalLightDirection');
+	var directionalLightColorVar = gl.getUniformLocation(program, 'directionalLightColor');
 
-    gl.uniform1i(gl.getUniformLocation(program, "texture"), 0);*/
+	gl.uniform3f(ambientLightIntensityVar, lightInt, lightInt, lightInt);
+	gl.uniform3f(directionalLightDirVar, lightDirX, lightDirY, -2.0);
+	gl.uniform3f(directionalLightColorVar, 0.1, 0.2, 0.2);
+
+	rotate(gl, num_items, texture);
 }
 
-function myRotate(gl, num_items, texture) {
+function rotate(gl, num_items, texture) {
 	var loop = function(){
 		old_time = new_time;
 		new_time = performance.now();
 		delta = new_time - old_time;
 		
 		if (is_rotating){
-			theta += (direction * (delta / 1000 / 6 * 2 *  Math.PI)); // miliseconds since window loaded
+			theta += (direction * (delta / 500 / 6 * 2 *  Math.PI)); // miliseconds since window loaded
 		}
 
 		// send theta to the shader
@@ -483,4 +428,3 @@ function get_verts(parent, depth, is_base){
 	get_verts(children, depth, false);
 	return;
 }
-

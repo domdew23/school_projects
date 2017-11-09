@@ -2,6 +2,11 @@
 <html>
 	<head>
 		<title>Rotating Sierpinski Carpet</title>
+
+		<script src="carpet.js"></script>
+		<script src="MV.js"></script>
+		<script src="gl-matrix.js"></script>
+
 		<script id="vertex_shader" type="x-shader/x-vertex">
 			// add materials and lighting to the scene
 			// material can be random or uniform throughout the entire program
@@ -13,6 +18,7 @@
 			attribute vec3 vertNormal;
 
 			varying vec3 fragNormal;
+			varying vec4 fragColor;
 			varying vec2 fragTexCoord;
 
 			attribute vec2 center;
@@ -20,45 +26,68 @@
 
 			uniform mat4 mProj;
 			uniform mat4 mView;
-			uniform mat4 mWorld;
+
+			uniform vec4 lightPos;
+			uniform float shininess;
+			uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+	 		varying vec3 N, L, E;
 
 			void main(){
 				mat2 rotation_matrix = mat2(cos(theta), -sin(theta),
 											sin(theta),  cos(theta));
  
 				vec2 temp_position = coordinates;
-				temp_position = temp_position - center; // translate to origin
+				//temp_position = temp_position - center; // translate to origin
 				temp_position = rotation_matrix * temp_position; // rotate around origin
-				temp_position = temp_position + center; // translate back to original position
-
-				fragTexCoord = vertTexCoord;
-				fragNormal = (mWorld * vec4(vertNormal, 0.0)).xyz;
-				gl_Position = mProj * mView * mWorld * vec4(temp_position, 0.0, 1.0);
+				//temp_position = temp_position + center; // translate back to original position
+			    
+			    gl_Position = mProj * mView * vec4(temp_position, 0.0, 1.0);
+			    fragTexCoord = vertTexCoord;
+			    
+			    vec3 pos = -(mView * vec4(temp_position, 0.0, 1.0)).xyz;
+			    vec3 light = lightPos.xyz;
+			    L = normalize(light - pos);
+			    E = normalize(-pos);
+			    N = normalize((vertNormal).xyz);
+			    //vec4 NN = vec4(vertNormal, 0);
+			       
+			    //vec3 N = normalize((mView*NN).xyz);
 			}
 		</script>
 
 		<script id="fragment_shader" type="x-shader/x-fragment">
 			precision mediump float;
 
+	  		uniform vec4 ambientProduct;
+		  	uniform vec4 diffuseProduct;
+		  	uniform vec4 specularProduct;
+		  	uniform float shininess;
 			varying vec2 fragTexCoord;
-			varying vec3 fragNormal;
 
-			uniform sampler2D sampler;
-
-			uniform vec3 ambientLightIntensity;
-			uniform vec3 directionalLightColor;
-			uniform vec3 directionalLightDirection;
+			uniform sampler2D texture;
+	 		varying vec3 N, L, E;
 
 			void main() {
-				vec3 surfaceNormal = normalize(fragNormal); 
-				vec3 normSunDir = normalize(directionalLightDirection);
-				vec4 texel = texture2D(sampler, fragTexCoord);
+				vec4 fragColor;
 
-				vec3 lightIntensity = ambientLightIntensity + directionalLightColor
-									 * max(dot(fragNormal, normSunDir), 0.0);
+				vec3 H = normalize(L + E);
+				vec4 ambient = ambientProduct;
 
-				gl_FragColor = vec4(lightIntensity, 1.0);
-				//gl_FragColor = vec4(texel.rgb * lightIntensity, texel.a); // texture rgb, texture alpha
+			    float Kd = max(dot(L, N), 0.0);
+			    vec4 diffuse = Kd*diffuseProduct;
+
+			    float Ks = pow(max(dot(N, H), 0.0), shininess);
+			    vec4 specular = Ks * specularProduct;
+			    
+			    if(dot(L, N) < 0.0) {
+					specular = vec4(0.0, 0.0, 0.0, 1.0);
+			    }
+
+			    fragColor = ambient + diffuse + specular;
+			    
+			    fragColor.a = 1.0;
+
+				gl_FragColor = (fragColor * texture2D(texture, fragTexCoord));
 			}
 		</script>
 		
@@ -67,29 +96,59 @@
 		<canvas id="web_gl_canvas" width="800px" height="800px">
 			Your browser does not support HTML 5.
 		</canvas>
-		Camera Eye X:
-		<input type="range" id="eyeCamX" max="10" min="-10" step="1" value="0" onchange="run()"><br>
+		<br>Camera Eye X:
+		<input type="range" id="eyeCamX" max="10" min="-10" step="1" value="0" onchange="run()">
 		Camera Eye Y:
-		<input type="range" id="eyeCamY" max="10" min="-10" step="1" value="0" onchange="run()"><br>
+		<input type="range" id="eyeCamY" max="10" min="-10" step="1" value="0" onchange="run()">
 		Camera Eye Z:
-		<input type="range" id="eyeCamZ" max="-1" min="-10" step="1" value="-3" onchange="run()"><br>
+		<input type="range" id="eyeCamZ" max="-2" min="-10" step="1" value="-3" onchange="run()"><br>
 
 		Camera Center X:
-		<input type="range" id="centCamX" max="2" min="-2" step=".01" value="0" onchange="run()"><br>
+		<input type="range" id="centCamX" max="2" min="-2" step=".01" value="0" onchange="run()">
 		Camera Center Y:
 		<input type="range" id="centCamY" max="2" min="-2" step=".01" value="0" onchange="run()"><br>
 
-		Light Intensity:
-		<input type="range" id="lightInt" max="3" min="-1" step=".01" value=".7" onchange="run()"><br>
+		Light Ambient Red Value:
+		<input type="range" id="AmbR" max="3" min="-1" step=".1" value=".7" onchange="run()">
 
-		<input type="hidden" id="lightDirX" max="5" min="-5" step=".1" value="3.0" onchange="run()"><br>
-		<input type="hidden" id="lightDirY" max="5" min="-5" step=".1" value="4.0" onchange="run()"><br>
+		Light Ambient Green Value:
+		<input type="range" id="AmbG" max="5" min="-5" step=".1" value="3.0" onchange="run()">
+		
+		Light Ambient Blue Value:
+		<input type="range" id="AmbB" max="5" min="-5" step=".1" value="4.0" onchange="run()">
 
+		Light Diffuse Value:
+		<input type="range" id="diff" max="1" min="0" step=".1" value="1" onchange="run()">
+
+		Light Specular Value:
+		<input type="range" id="spec" max="1" min="0" step=".1" value="1" onchange="run()"><br>
+
+		Material Ambient Red Value:
+		<input type="range" id="matAmbx" max="1" min="0" step=".1" value="1" onchange="run()">
+
+		Material Ambient Green Value:
+		<input type="range" id="matAmby" max="1" min="0" step=".1" value="1" onchange="run()">
+		
+		Material Ambient Blue Value:
+		<input type="range" id="matAmbz" max="1" min="0" step=".1" value="1" onchange="run()">
+
+		Material Diffuse Value:
+		<input type="range" id="matDif" max="1" min="0" step=".1" value="1" onchange="run()">
+
+		Material Specular Value:
+		<input type="range" id="matSpec" max="1" min="0" step=".1" value="1" onchange="run()"><br>
+
+		<input type="hidden" id="lightX" max="1" min="0" step=".1" value="1" onchange="run()">
+
+		<input type="hidden" id="lightY" max="1" min="0" step=".1" value="1" onchange="run()">
+		
+		<input type="hidden" id="lightZ" max="1" min="0" step=".1" value="1" onchange="run()"><br>
+
+		Material Shininess:
+		<input type="range" id="matShine" max="100" min="1" step=".05" value="100" onchange="run()"><br>
 
 		<input type="range" id="depth" max="5" step="1" value="0" onchange="run()">
 		<input type="button" id="button" value="Press to rotate." onClick="change_rotation()"><br>
-		<img id="box_image" src="img.png" width="0" height="0"></img>
-		<script src="gl-matrix.js"></script>
-		<script src="carpet.js"></script>
+		<img id="box_image" src="img3.gif" width="0" height="0"></img>
 	</body>
 </html>

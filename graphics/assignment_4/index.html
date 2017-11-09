@@ -29,6 +29,7 @@
 			uniform vec4 lightPos;
 			uniform float shininess;
 			uniform vec4 ambientProduct, diffuseProduct, specularProduct;
+	 		varying vec3 N, L, E;
 
 			void main(){
 				mat2 rotation_matrix = mat2(cos(theta), -sin(theta),
@@ -38,44 +39,50 @@
 				temp_position = temp_position - center; // translate to origin
 				temp_position = rotation_matrix * temp_position; // rotate around origin
 				temp_position = temp_position + center; // translate back to original position
+			    
+			    gl_Position = mProj * mView * vec4(temp_position, 0.0, 1.0);
 
 			    vec3 pos = -(mView * vec4(temp_position, 0.0, 1.0)).xyz;
-			 
 			    vec3 light = lightPos.xyz;
-			    vec3 L = normalize(light - pos);
-
-			    vec3 E = normalize(-pos);
-			    vec3 H = normalize(L + E);
-			    
-			    vec4 NN = vec4(vertNormal, 0);
+			    L = normalize(light - pos);
+			    E = normalize(-pos);
+			    N = normalize((vertNormal).xyz);
+			    //vec4 NN = vec4(vertNormal, 0);
 			       
-			    vec3 N = normalize((mView*NN).xyz);
-
-			    vec4 ambient = ambientProduct;
-
-			    float Kd = max(dot(L, N), 0.0);
-			    vec4  diffuse = Kd*diffuseProduct;
-
-			    float Ks = pow(max(dot(N, H), 0.0), shininess);
-			    vec4  specular = Ks * specularProduct;
-			    
-			    if(dot(L, N) < 0.0) {
-					specular = vec4(0.0, 0.0, 0.0, 1.0);
-			    } 
-
-			    gl_Position = mProj * mView * vec4(temp_position, 0.0, 1.0);
-			    fragColor = ambient + diffuse + specular;
-			    
-			    fragColor.a = 1.0;
+			    //vec3 N = normalize((mView*NN).xyz);
 			}
 		</script>
 
 		<script id="fragment_shader" type="x-shader/x-fragment">
 			precision mediump float;
 
-			varying vec4 fragColor;
+	  		uniform vec4 ambientProduct;
+		  	uniform vec4 diffuseProduct;
+		  	uniform vec4 specularProduct;
+		  	uniform float shininess;
+
+			uniform sampler2D texture;
+	 		varying vec3 N, L, E;
 
 			void main() {
+				vec4 fragColor;
+
+				vec3 H = normalize(L + E);
+				vec4 ambient = ambientProduct;
+
+			    float Kd = max(dot(L, N), 0.0);
+			    vec4 diffuse = Kd*diffuseProduct;
+
+			    float Ks = pow(max(dot(N, H), 0.0), shininess);
+			    vec4 specular = Ks * specularProduct;
+			    
+			    if(dot(L, N) < 0.0) {
+					specular = vec4(0.0, 0.0, 0.0, 1.0);
+			    }
+
+			    fragColor = ambient + diffuse + specular;
+			    
+			    fragColor.a = 1.0;
 
 				gl_FragColor = fragColor;
 			}
