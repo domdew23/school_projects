@@ -23,7 +23,7 @@ public class Machine implements AtomicModel {
 		p--;
 		s = t;
 
-		scheduleEvent("deltaInternal");
+		scheduleEvent("deltaInternal"); // sched event for coupled machines here, pass where its output goes as the new model
 	}
 
 	public void deltaExternal(int e, int q){
