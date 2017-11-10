@@ -20,8 +20,14 @@ public class Machine implements AtomicModel {
 
 	public void deltaInternal(){
 		// new state -> (p - 1, t) where t = 1
+<<<<<<< HEAD
+		// schedule events from deltas
+		p-=1;
+	}
+=======
 		p--;
 		s = t;
+>>>>>>> f42372934caad2146771af844283d693b993d353
 
 		scheduleEvent("deltaInternal"); // sched event for coupled machines here, pass where its output goes as the new model
 	}
