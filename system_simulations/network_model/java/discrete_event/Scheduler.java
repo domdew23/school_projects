@@ -17,7 +17,7 @@ public class Scheduler {
 	public boolean put(Event e){
 		try {
 			if (size == events.length - 1){
-				doubleSize();
+				reSize();
 			}
 			events[++size] = e;
 			check(size);
@@ -28,7 +28,7 @@ public class Scheduler {
 		return true;
 	}
 
-	private void doubleSize(){
+	private void reSize(){
 		Event[] old = events;
 		events = new Event[events.length * 2];
 		System.arraycopy(old, 1, events, 1, size);
@@ -142,7 +142,8 @@ public class Scheduler {
 	public void merge(Event one, Event two){
 		remove(one);
 		remove(two);
-		Event e = new Event(one.time, "deltaConfluent", one.model);
+		Event event = Event.builder(one.time, "deltaConfluent", one.model).build();
+		put(event);
 	}
 
 	public String toString(){
