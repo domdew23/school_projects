@@ -19,5 +19,7 @@ public interface AtomicModel<Input, Output>{
 
 	public void addOutput(Output O);
 
+	public void log(Event e);
+
 	public String name();
 }

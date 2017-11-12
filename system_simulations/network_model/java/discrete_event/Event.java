@@ -10,27 +10,29 @@ public class Event {
 	private Event(){
 	}
 
+	public void addE(BigDecimal e){
+		this.e = e;
+	}
+
 	public static EventBuilder builder(Time t, String k, AtomicModel m){
 		return new EventBuilder(t, k, m);
 	}
 
 	public String toString(){
-		return "Time: " + time.getReal() + " | Kind: " + kind + " | Model: " + model;
+		return "Time: " + time.getReal() + " | Kind: " + kind + " | Model: " + model + " | e: " + e;
 	}
 
 	public static class EventBuilder {
 		private Time time;
 		private String kind;
 		private AtomicModel model;
-		private int q;
-		private BigDecimal e;
+		private int q = -1;
+		private BigDecimal e = new BigDecimal("0.0");
 
 		public EventBuilder(Time t, String k, AtomicModel m){
 			time = t;
 			kind = k;
 			model = m;
-			q = -1;
-			e = new BigDecimal("-1.0");
 		}
 
 		public EventBuilder addParameter(int q){

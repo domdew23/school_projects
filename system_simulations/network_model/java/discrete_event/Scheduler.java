@@ -98,6 +98,7 @@ public class Scheduler {
 		/* swap root and bottom node - store root - sift root back to the bottom */
 		siftUp(1, size);
 		Event e = events[size--];
+		events[size + 1] = null;
 		siftDown(1);
 		return e;
 	}
@@ -111,11 +112,21 @@ public class Scheduler {
 			if (events[i] == e){
 				siftUp(i, size);
 				Event tmp = events[size--];
+				events[size + 1] = null;
 				siftDown(i);
 				return true;
 			}
 		}
 		return false;
+	}
+
+	public Event find(String kind, AtomicModel model){
+		for (Event e : events){
+			if (e != null && e.kind == kind && e.model == model){
+				return e;
+			}
+		}
+		return null;
 	}
 
 	public int size(){
@@ -135,8 +146,8 @@ public class Scheduler {
 		for (Event e : events){
 			if (e != null && e != peek()){
 				//System.out.println("Peek time: " + peek().time.getReal() + "| event time: " + e.time.getReal() + 
-				//	" peek model: " + peek().model.name() + " | e model: " + e.model.name());
-				if (peek().time.getReal() == e.time.getReal() && peek().model == e.model){
+					//" peek model: " + peek().model.name() + " | e model: " + e.model.name());
+				if (peek().time.getReal().compareTo(e.time.getReal()) == 0 && peek().model == e.model){
 					merge(peek(), e);
 				}	
 			}
@@ -147,7 +158,17 @@ public class Scheduler {
 	public void merge(Event one, Event two){
 		remove(one);
 		remove(two);
-		Event event = Event.builder(one.time, "deltaConfluent", one.model).build();
+
+		int q;
+		if (one.q != -1){
+			q = one.q;
+		} else if (two.q != -1){
+			q = two.q;
+		} else {
+			throw new NullPointerException("Something went wrong while merging.");
+		}
+
+		Event event = Event.builder(one.time, "deltaConfluent", one.model).addParameter(q).build();
 		put(event);
 	}
 

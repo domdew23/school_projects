@@ -10,6 +10,8 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 	private static Time currentTime;
 	private ArrayList<Input> inputs;
 	private ArrayList<Output> outputs;
+	private ArrayList<Event> eventLog;
+	private static int count = 0;
 
 	public Machine(BigDecimal t, String name){
 		this.name = name;
@@ -18,6 +20,7 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 		this.s = new BigDecimal("0.0");
 		this.inputs = new ArrayList<Input>();
 		this.outputs = new ArrayList<Output>();
+		this.eventLog = new ArrayList<Event>();
 	}
 
 	public int lambda(){
@@ -31,20 +34,23 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 		p--;
 		s = t;
 		
-		Event event;
 		for (Output o : outputs){
 			try {
-				event = Event.builder(new Time(currentTime.getReal(), 0), "deltaExternal", (AtomicModel) o).addParameter(new BigDecimal()).addParameter(lambda()).build();	
+				Event lastEvent = eventLog.get(eventLog.size() - 2);
+				BigDecimal e = currentTime.getReal().subtract(lastEvent.time.getReal());				
+				Event event = Event.builder(new Time(currentTime.getReal(), 0), "deltaExternal", (AtomicModel) o).addParameter(e).addParameter(lambda()).build();	
 				scheduler.put(event);
 			} catch (ClassCastException e){
-				System.out.println("Network output: " + lambda());
+				System.out.println("Network output: " + (++count));
 			}
 		}
+
 		if (p > 0){
-			event = Event.builder(new Time(currentTime.getReal().add(timeAdvance()), 0), "deltaInternal", this).build();	
+			Event event = Event.builder(new Time(currentTime.getReal().add(timeAdvance()), 0), "deltaInternal", this).build();	
 			scheduler.put(event);
 		}
 	}
+
 	// delete old event that was set with t, replace it with new event set with s
 
 	public void deltaExternal(BigDecimal e, int q){
@@ -75,15 +81,21 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 	}
 
 	public void deltaConfluent(int q){
-		// executed when new part arrives and part is completed simultaneously
+		// executed when ne+w part arrives and part is completed simultaneously
 		// should eject the completed part
 		p += (q - 1);
 		s = t;
 
-		scheduleEvent(new Time(currentTime.getReal().add(timeAdvance()), 0), "deltaInternal", this);
-		
+		Event event = Event.builder(new Time(currentTime.getReal().add(timeAdvance()), 0), "deltaInternal", this).build();
+		scheduler.put(event);
 		for (Output o : outputs){
-			scheduleEvent(new Time(currentTime.getReal(), 0), "deltaExternal", this);
+			try {
+				Event e1 = Event.builder(new Time(currentTime.getReal(), 0), "deltaExternal", (AtomicModel) o).addParameter(new BigDecimal("0.0")).addParameter(lambda()).build();
+				scheduler.put(e1);
+				log(e1);
+			} catch (ClassCastException e){
+				System.out.println("Network output: " + (++count));
+			}
 		}
 	}
 
@@ -95,26 +107,8 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 		}
 	}
 
-	// main loop advances time
-	public void scheduleEvent(Time t, String k, AtomicModel m){
-		/*Event event;
-		switch (e){
-			case -1:
-				if (q == -1){
-					event = Event.builder(t, k, m).build();
-					break;
-				}
-				event = Event.builder(t, k, m).addParameter(q).build();
-				break;
-			default:
-				if (q == -1){
-					event = Event.builder(t, k, m).addParameter(e).build();
-					break;
-				}
-				event = Event.builder(t, k, m).addParameter(e).addParameter(q).build();
-				break;
-		}
-		scheduler.put(event);*/
+	public void log(Event e){
+		eventLog.add(e);
 	}
 
 	public void addInput(Input I){
@@ -146,6 +140,6 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 	}
 
 	public String toString(){
-		return name + ": | p: " + p + " | s: " + s + " | t: " + t;
+		return name + ": | p: " + p + " | s: " + s;
 	}
 }
