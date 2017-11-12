@@ -1,9 +1,11 @@
+import java.math.BigDecimal;
+
 public class Event {
 	public Time time;
 	public String kind; // input or output
 	public AtomicModel model;
 	public int q;
-	public double e;
+	public BigDecimal e;
 
 	private Event(){
 	}
@@ -13,7 +15,7 @@ public class Event {
 	}
 
 	public String toString(){
-		return "Time: " + time.getReal() + " | Kind: " + kind + " | Model: " + model.name();
+		return "Time: " + time.getReal() + " | Kind: " + kind + " | Model: " + model;
 	}
 
 	public static class EventBuilder {
@@ -21,14 +23,14 @@ public class Event {
 		private String kind;
 		private AtomicModel model;
 		private int q;
-		private double e;
+		private BigDecimal e;
 
 		public EventBuilder(Time t, String k, AtomicModel m){
 			time = t;
 			kind = k;
 			model = m;
 			q = -1;
-			e = -1;
+			e = new BigDecimal("-1.0");
 		}
 
 		public EventBuilder addParameter(int q){
@@ -36,7 +38,7 @@ public class Event {
 			return this;
 		}
 
-		public EventBuilder addParameter(double e){
+		public EventBuilder addParameter(BigDecimal e){
 			this.e = e;
 			return this;
 		}

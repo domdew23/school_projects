@@ -1,17 +1,19 @@
 /* Component */
+import java.math.BigDecimal;
+
 public interface AtomicModel<Input, Output>{
 
 	public int lambda();
 
 	/* internal state transition function */
-	public void deltaInternal(int q);
+	public void deltaInternal();
 
 	/* external state transition function */
-	public void deltaExternal(double e, int q);
+	public void deltaExternal(BigDecimal e, int q);
 
-	public void deltaConfluent(int q, int output);
+	public void deltaConfluent(int q);
 
-	public int timeAdvance();
+	public BigDecimal timeAdvance();
 
 	public void addInput(Input I);
 

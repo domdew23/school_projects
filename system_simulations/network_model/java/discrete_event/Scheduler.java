@@ -34,8 +34,8 @@ public class Scheduler {
 		System.arraycopy(old, 1, events, 1, size);
 	}
 
-	private boolean greater(int i, int j){
-		return events[i].time.getReal() > events[j].time.getReal();
+	private int greater(int i, int j){
+		return events[i].time.getReal().compareTo(events[j].time.getReal());
 	}
 
 	private void siftUp(int i, int j){
@@ -48,11 +48,11 @@ public class Scheduler {
 		/* check it has a child - if so sift to the bottom of the heap */
 		while(2 * k <= size){
 			int j = 2 * k;
-			if (j < size && greater(j, j + 1)){
+			if (j < size && greater(j, j + 1) == 1){
 				j++;
 			} 
 
-			if (!greater(k, j)){
+			if (!(greater(k, j) == 1)){
 				break;
 			}
 
@@ -63,7 +63,7 @@ public class Scheduler {
 
 	private void check(int k){
 		/* check if root or greater than parent - if so swap with parent*/
-		while (k > 1 && greater(k/2, k)){
+		while (k > 1 && greater(k/2, k) == 1){
 			siftUp(k, k/2);
 			k /= 2;
 		}
@@ -107,14 +107,11 @@ public class Scheduler {
 			throw new NullPointerException("Trying to remove event that does not exist.");
 		}
 
-		for (int i = 0; i < size; i++){
+		for (int i = 1; i < size + 1; i++){
 			if (events[i] == e){
-				if (events[i+1] != null){
-					events[i] = events[i+1];
-					events[i+1] = null; 
-				} else {
-					events[i] = null;
-				}
+				siftUp(i, size);
+				Event tmp = events[size--];
+				siftDown(i);
 				return true;
 			}
 		}
@@ -129,11 +126,19 @@ public class Scheduler {
 		return size == 0;
 	}
 
+	public Event[] getEvents(){
+		return events;
+	}
+
 	public void checkMerge(){
 		// merge once you reach that moment in time
 		for (Event e : events){
-			if (peek().time.getReal() == e.time.getReal() && peek().model == e.model){
-				merge(peek(), e);
+			if (e != null && e != peek()){
+				//System.out.println("Peek time: " + peek().time.getReal() + "| event time: " + e.time.getReal() + 
+				//	" peek model: " + peek().model.name() + " | e model: " + e.model.name());
+				if (peek().time.getReal() == e.time.getReal() && peek().model == e.model){
+					merge(peek(), e);
+				}	
 			}
 		}
 	}
@@ -148,7 +153,7 @@ public class Scheduler {
 
 	public String toString(){
 		String retVal = "";
-		for (int i = 1; i < size+1; i++){
+		for (int i = 1; i < size + 1; i++){
 			retVal += "Event " + i + ": " + events[i].toString() + "\n";
 		}
 		return retVal;

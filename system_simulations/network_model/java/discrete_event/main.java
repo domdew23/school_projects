@@ -1,6 +1,8 @@
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
+import java.util.Random;
 
 public class main {
 	public static void main(String[] args){
@@ -31,14 +33,14 @@ public class main {
 			return;
 		}
 
-		AtomicModel<Network, Machine> press = new Machine<Network, Machine>(1, "Press");
-		AtomicModel<Machine, Network> drill = new Machine<Machine, Network>(2, "Drill");
+		AtomicModel<Network, Machine> press = new Machine<Network, Machine>(new BigDecimal("1.0"), "Press");
+		AtomicModel<Machine, Network> drill = new Machine<Machine, Network>(new BigDecimal("2.0"), "Drill");
 		Scheduler scheduler = new Scheduler();
 
 		Machine.setScheduler(scheduler);
-		Machine.setTime(new Time(0, 0));
+		Machine.setTime(new Time(new BigDecimal("0.0"), 0));
 
-		Network<AtomicModel, AtomicModel> network = Network.builder().addComponent(press).addComponent(drill).addInput(press).addOutput(drill).build();
+		Network network = Network.builder().addComponent(press).addComponent(drill).addInput(press).addOutput(drill).build();
 		network.addInputToOutput(press, drill);
 		press.addInput(network);
 		drill.addOutput(network);
@@ -47,15 +49,20 @@ public class main {
 		System.out.println(scheduler.toString());
 
 		while (!(scheduler.isEmpty())){
+			scheduler.checkMerge();
 			Event eventToExecute = scheduler.pull();
-			double time = eventToExecute.time.getReal();
-			double e = time - Machine.getTime().getReal();
+			BigDecimal time = eventToExecute.time.getReal();
+			BigDecimal e = time.subtract(Machine.getTime().getReal());
 
+			/* advance time */
 			Time interval = new Time(e, 1);
 			Machine.setTime(Machine.getTime().advance(interval));
+			System.out.println("Global time set to: " + Machine.getTime().getReal());
+			
 			for (AtomicModel model : network.getComponents()){
 				execute(eventToExecute, model);
-			} 
+			}
+			System.out.println("------------------------\n" + scheduler.toString());
 		}
 	}
 
@@ -83,11 +90,13 @@ public class main {
 					model.deltaExternal(event.e, event.q);
 					break;
 				case "deltaInternal":
-					model.deltaInternal(model.lambda());
+					model.deltaInternal();
 					break;
 				case "deltaConfluent":
-					model.deltaConfluent(event.q, model.lambda());
+					model.deltaConfluent(event.q);
 					break;
+				case "lambda":
+					model.lambda();
 				default:
 					System.out.println("Something went wrong");
 					break;
@@ -97,14 +106,20 @@ public class main {
 
 
 	private static void init(Scanner sc, Network network, Scheduler scheduler){
-		double lastTime = 0.0;
+		BigDecimal lastTime = new BigDecimal("0.0");
+		
+		Event[] events = new Event[10];
+		int i = 0;
+		
 		while (sc.hasNext()){
-			double time = sc.nextDouble();
+			BigDecimal time = new BigDecimal(sc.next());
 			int q = sc.nextInt();
-			double e = time - lastTime;
+			BigDecimal e = time.subtract(lastTime);
 			lastTime = time;
+
 			for (AtomicModel model : network.getInputs()){
 				Event event = Event.builder(new Time(time, 0), "deltaExternal", model).addParameter(e).addParameter(q).build();
+				events[i++] = event;
 				scheduler.put(event);
 			}
 		}
