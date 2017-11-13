@@ -160,9 +160,9 @@ public class Scheduler {
 		remove(two);
 
 		int q;
-		if (one.q != -1){
+		if (one.q != 0){
 			q = one.q;
-		} else if (two.q != -1){
+		} else if (two.q != 0){
 			q = two.q;
 		} else {
 			throw new NullPointerException("Something went wrong while merging.");

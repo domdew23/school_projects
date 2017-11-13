@@ -3,8 +3,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.util.Random;
+import java.util.ArrayList;
 
 public class main {
+
 	public static void main(String[] args){
 		/* Network consists of two machines for working metal
 		Machines are connected sequentially:
@@ -53,29 +55,33 @@ public class main {
 			scheduler.checkMerge();
 			Event eventToExecute = scheduler.pull();
 			BigDecimal e = eventToExecute.time.getReal().subtract(Machine.getTime().getReal());
-
+			
 			/* advance time */
 			Time interval = new Time(e, 1);
-			
 			Machine.setTime(Machine.getTime().advance(interval));
-			
+
+
 			for (AtomicModel model : network.getComponents()){
-				execute(eventToExecute, model);
+				execute(eventToExecute, model, e);
 			}
 			System.out.println("------------------------\n" + scheduler.toString());
 		}
 	}
 
-	private static void execute(Event event, AtomicModel model){
+	private static void execute(Event event, AtomicModel model, BigDecimal e){
 		int output = 0;
 		if (event.model == model){
 			System.out.println("Executing " + event);
+			event.addE(e);
 			model.log(event);
 			switch (event.kind){
 				case "lambda":
 					output = model.lambda();
 					break;
 				case "deltaExternal":
+					//BigDecimal e = model.getLast().time.getReal().subtract(Machine.getTime().getReal());
+					//System.out.println("Machine time: " + Machine.getTime().getReal());
+					//System.out.println("Last event time: " + model.getLast().time.getReal());
 					model.deltaExternal(event.e, event.q);
 					break;
 				case "deltaInternal":
@@ -101,8 +107,11 @@ public class main {
 			int q = sc.nextInt();
 			BigDecimal e = time.subtract(lastTime);
 			lastTime = time;
+
 			for (AtomicModel model : network.getInputs()){
-				Event event = Event.builder(new Time(time, 0), "deltaExternal", model).addParameter(e).addParameter(q).build();				scheduler.put(event);
+				Event event = Event.builder(new Time(time, 0), "deltaExternal", model).addParameter(e).addParameter(q).build();
+				model.log(event);
+				scheduler.put(event);
 			}
 		}
 	}

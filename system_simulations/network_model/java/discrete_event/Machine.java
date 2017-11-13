@@ -12,15 +12,17 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 	private ArrayList<Output> outputs;
 	private ArrayList<Event> eventLog;
 	private static int count = 0;
+	private Time lastTime;
 
 	public Machine(BigDecimal t, String name){
 		this.name = name;
 		this.t = t;
 		this.p = 0;
-		this.s = new BigDecimal("0.0");
+		this.s = new BigDecimal(0.0);
 		this.inputs = new ArrayList<Input>();
 		this.outputs = new ArrayList<Output>();
 		this.eventLog = new ArrayList<Event>();
+		this.lastTime = new Time(new BigDecimal(0.0), 0);
 	}
 
 	public int lambda(){
@@ -28,7 +30,12 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 		return 1;
 	}
 
+	public Event getLast(){
+		return eventLog.get(eventLog.size() - 1);
+	}
+
 	public void deltaInternal(){
+		lastTime = currentTime;
 		// new state -> (p - 1, t) where t = 1
 		// schedule events from deltas
 		p--;
@@ -36,9 +43,10 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 		
 		for (Output o : outputs){
 			try {
-				Event lastEvent = eventLog.get(eventLog.size() - 2);
-				BigDecimal e = currentTime.getReal().subtract(lastEvent.time.getReal());				
-				Event event = Event.builder(new Time(currentTime.getReal(), 0), "deltaExternal", (AtomicModel) o).addParameter(e).addParameter(lambda()).build();	
+				//Event lastEvent = eventLog.get(eventLog.size() - 1);
+				//BigDecimal e = currentTime.getReal().subtract(lastEvent.time.getReal());				
+				Event event = Event.builder(new Time(currentTime.getReal(), 0), "deltaExternal", (AtomicModel) o).addParameter(lambda()).build();	
+				
 				scheduler.put(event);
 			} catch (ClassCastException e){
 				System.out.println("Network output: " + (++count));
@@ -55,7 +63,11 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 
 	public void deltaExternal(BigDecimal e, int q){
 		// e = elapsed time | q = # of parts
+		e = currentTime.getReal().subtract(lastTime.getReal());
+		lastTime = currentTime;
+		
 		Event event = null;
+		System.out.println("in external e: " + e);
 		if (p > 0){
 			// busy
 			p += q;
@@ -65,9 +77,10 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 				if (ev == null){
 					continue;
 				}
+				//ev.addE(ev.model.timeAdvance())
 				if (ev.model == this && ev.kind == "deltaInternal"){
 					if (scheduler.remove(ev)){
-						event = Event.builder(new Time(currentTime.getReal().add(s), 0), "deltaInternal", this).build();
+						event = Event.builder(new Time(currentTime.getReal().add(timeAdvance()), 0), "deltaInternal", this).build();
 					}
 				}
 			}
@@ -81,6 +94,7 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 	}
 
 	public void deltaConfluent(int q){
+		lastTime = currentTime;
 		// executed when ne+w part arrives and part is completed simultaneously
 		// should eject the completed part
 		p += (q - 1);
@@ -103,7 +117,7 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 		if (p > 0){
 			return s;
 		} else {
-			return new BigDecimal("9999999999.9999999");
+			return new BigDecimal(9999999999.9999999);
 		}
 	}
 

@@ -19,15 +19,15 @@ public class Event {
 	}
 
 	public String toString(){
-		return "Time: " + time.getReal() + " | Kind: " + kind + " | Model: " + model + " | e: " + e;
+		return "Time: " + time.getReal() + " | Kind: " + kind + " | Model: " + model + " | e: " + e + " | q: " + q;
 	}
 
 	public static class EventBuilder {
 		private Time time;
 		private String kind;
 		private AtomicModel model;
-		private int q = -1;
-		private BigDecimal e = new BigDecimal("0.0");
+		private int q = 0;
+		private BigDecimal e = new BigDecimal(0.0);
 
 		public EventBuilder(Time t, String k, AtomicModel m){
 			time = t;
