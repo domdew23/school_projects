@@ -21,7 +21,7 @@ public interface AtomicModel<Input, Output>{
 
 	public void log(Event e);
 
-	public Event getLast();
+	public Time getLast();
 
 	public String name();
 }

@@ -10,7 +10,7 @@ public class Event {
 	private Event(){
 	}
 
-	public void addE(BigDecimal e){
+	public void updateE(BigDecimal e){
 		this.e = e;
 	}
 

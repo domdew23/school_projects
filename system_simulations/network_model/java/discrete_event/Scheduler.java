@@ -145,8 +145,6 @@ public class Scheduler {
 		// merge once you reach that moment in time
 		for (Event e : events){
 			if (e != null && e != peek()){
-				//System.out.println("Peek time: " + peek().time.getReal() + "| event time: " + e.time.getReal() + 
-					//" peek model: " + peek().model.name() + " | e model: " + e.model.name());
 				if (peek().time.getReal().compareTo(e.time.getReal()) == 0 && peek().model == e.model){
 					merge(peek(), e);
 				}	
@@ -175,7 +173,7 @@ public class Scheduler {
 	public String toString(){
 		String retVal = "";
 		for (int i = 1; i < size + 1; i++){
-			retVal += "Event " + i + ": " + events[i].toString() + "\n";
+			retVal += "Event " + i + ": " + events[i] + "\n";
 		}
 		return retVal;
 	}

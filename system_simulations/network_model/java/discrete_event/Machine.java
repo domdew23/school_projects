@@ -30,23 +30,15 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 		return 1;
 	}
 
-	public Event getLast(){
-		return eventLog.get(eventLog.size() - 1);
-	}
-
 	public void deltaInternal(){
 		lastTime = currentTime;
 		// new state -> (p - 1, t) where t = 1
-		// schedule events from deltas
 		p--;
 		s = t;
 		
 		for (Output o : outputs){
-			try {
-				//Event lastEvent = eventLog.get(eventLog.size() - 1);
-				//BigDecimal e = currentTime.getReal().subtract(lastEvent.time.getReal());				
+			try {			
 				Event event = Event.builder(new Time(currentTime.getReal(), 0), "deltaExternal", (AtomicModel) o).addParameter(lambda()).build();	
-				
 				scheduler.put(event);
 			} catch (ClassCastException e){
 				System.out.println("Network output: " + (++count));
@@ -59,15 +51,12 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 		}
 	}
 
-	// delete old event that was set with t, replace it with new event set with s
-
+	// delete old event that was set with t, replace it with new event set with timeAdvance
 	public void deltaExternal(BigDecimal e, int q){
 		// e = elapsed time | q = # of parts
-		e = currentTime.getReal().subtract(lastTime.getReal());
 		lastTime = currentTime;
 		
 		Event event = null;
-		System.out.println("in external e: " + e);
 		if (p > 0){
 			// busy
 			p += q;
@@ -77,7 +66,6 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 				if (ev == null){
 					continue;
 				}
-				//ev.addE(ev.model.timeAdvance())
 				if (ev.model == this && ev.kind == "deltaInternal"){
 					if (scheduler.remove(ev)){
 						event = Event.builder(new Time(currentTime.getReal().add(timeAdvance()), 0), "deltaInternal", this).build();
@@ -106,7 +94,6 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 			try {
 				Event e1 = Event.builder(new Time(currentTime.getReal(), 0), "deltaExternal", (AtomicModel) o).addParameter(new BigDecimal("0.0")).addParameter(lambda()).build();
 				scheduler.put(e1);
-				log(e1);
 			} catch (ClassCastException e){
 				System.out.println("Network output: " + (++count));
 			}
@@ -119,6 +106,10 @@ public class Machine<Input, Output> implements AtomicModel<Input, Output> {
 		} else {
 			return new BigDecimal(9999999999.9999999);
 		}
+	}
+
+	public Time getLast(){
+		return lastTime;
 	}
 
 	public void log(Event e){

@@ -71,17 +71,17 @@ public class main {
 	private static void execute(Event event, AtomicModel model, BigDecimal e){
 		int output = 0;
 		if (event.model == model){
-			System.out.println("Executing " + event);
-			event.addE(e);
+			if (model.getLast().getReal().compareTo(new BigDecimal(0.0)) == 0){
+				event.updateE(new BigDecimal(0.0));
+			} else {
+				event.updateE(Machine.getTime().getReal().subtract(model.getLast().getReal()));
+			}
 			model.log(event);
 			switch (event.kind){
 				case "lambda":
 					output = model.lambda();
 					break;
 				case "deltaExternal":
-					//BigDecimal e = model.getLast().time.getReal().subtract(Machine.getTime().getReal());
-					//System.out.println("Machine time: " + Machine.getTime().getReal());
-					//System.out.println("Last event time: " + model.getLast().time.getReal());
 					model.deltaExternal(event.e, event.q);
 					break;
 				case "deltaInternal":
@@ -96,6 +96,7 @@ public class main {
 					System.out.println("Something went wrong");
 					break;
 			}
+			System.out.println("Executing " + event);
 		}	
 	}
 
