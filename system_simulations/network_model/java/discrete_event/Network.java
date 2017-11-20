@@ -41,10 +41,11 @@ public class Network {
 		}
 
 		public NetworkBuilder addComponent(AtomicModel component){
-			//AtomicModel[] old = components;
-			//components = new AtomicModel[components.length + 1];
-			//System.arraycopy(old, 1, components, 1, componentCount);
-
+			/*AtomicModel[] old = components;
+			components = new AtomicModel[components.length + 1];
+			System.arraycopy(old, 1, components, 1, componentCount);
+			*/
+			
 			this.components[componentCount++] = component;
 			return this;
 		}

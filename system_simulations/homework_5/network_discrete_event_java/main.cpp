@@ -17,11 +17,8 @@ int main(int argc, char** argv){
 		ifstream file(argv[1]);
 		string line;
 		
-		while (1){
+		while (getline(file, line)){
 			file >> time >> x;
-			if (x == 'x'){
-				break;
-			}
 			double e = time - VM->get_real();
 			scheduler->schedule(x, e);
 			VM->print_state();

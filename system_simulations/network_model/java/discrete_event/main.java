@@ -8,7 +8,8 @@ import java.util.ArrayList;
 public class main {
 
 	public static void main(String[] args){
-		/* Network consists of two machines for working metal
+		/* 
+		Network consists of two machines for working metal
 		Machines are connected sequentially:
 		- output from the press goes directly to the input of the drill
 		- input to the network is coupled with input to the press
@@ -16,7 +17,6 @@ public class main {
 		state:
 		p - parts for the machine process
 		s - time remaining to process the first of those parts.
-
 		*/
 
 		if (args.length < 1){
@@ -48,7 +48,7 @@ public class main {
 		drill.addOutput(network);
 
 		init(sc, network, scheduler);
-		System.out.println(scheduler.toString());
+		System.out.println(scheduler);
 
 		while (!(scheduler.isEmpty())){
 			System.out.println("Global time: " + Machine.getTime().getReal());
@@ -64,7 +64,7 @@ public class main {
 			for (AtomicModel model : network.getComponents()){
 				execute(eventToExecute, model, e);
 			}
-			System.out.println("------------------------\n" + scheduler.toString());
+			System.out.println("------------------------\n" + scheduler);
 		}
 	}
 
