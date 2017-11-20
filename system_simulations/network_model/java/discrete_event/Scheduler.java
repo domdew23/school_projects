@@ -1,16 +1,16 @@
 public class Scheduler {
 
-	private int DEFAULT_MAX_SIZE = 50;
+	private int DEFAULT_INIT_SIZE = 50;
 	private Event[] events;
 	private int size;
 
-	public Scheduler(int maxSize){
-		events = new Event[maxSize + 1];
+	public Scheduler(int initSize){
+		events = new Event[initSize + 1];
 		size = 0;
 	}
 
 	public Scheduler(){
-		events = new Event[DEFAULT_MAX_SIZE + 1];
+		events = new Event[DEFAULT_INIT_SIZE + 1];
 		size = 0;
 	}
 
