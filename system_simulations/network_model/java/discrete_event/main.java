@@ -9,14 +9,10 @@ public class main {
 
 	public static void main(String[] args){
 		/* 
-		Network consists of two machines for working metal
-		Machines are connected sequentially:
-		- output from the press goes directly to the input of the drill
-		- input to the network is coupled with input to the press
-		- output from the drill is coupled with the output from the network 
-		state:
-		p - parts for the machine process
-		s - time remaining to process the first of those parts.
+		HW 6:
+		implement this in C++
+		make HW 3 discrete event (XOR model)
+		make this homework perfect, more generic
 		*/
 
 		if (args.length < 1){
@@ -37,7 +33,7 @@ public class main {
 
 		AtomicModel<Network, Machine> press = new Machine<Network, Machine>(new BigDecimal(1.0), "Press");
 		AtomicModel<Machine, Network> drill = new Machine<Machine, Network>(new BigDecimal(2.0), "Drill");
-		Scheduler scheduler = new Scheduler();
+		Scheduler<Machine> scheduler = new Scheduler();
 
 		Machine.setScheduler(scheduler);
 		Machine.setTime(new Time(new BigDecimal(0.0), 0));
@@ -51,15 +47,12 @@ public class main {
 		System.out.println(scheduler);
 
 		while (!(scheduler.isEmpty())){
-			System.out.println("Global time: " + Machine.getTime().getReal());
-			scheduler.checkMerge();
+			System.out.println("Global time: " + Machine.getRealTime());
 			Event eventToExecute = scheduler.pull();
-			BigDecimal e = eventToExecute.time.getReal().subtract(Machine.getTime().getReal());
+			BigDecimal e = eventToExecute.time.getReal().subtract(Machine.getRealTime());
 			
-			/* advance time */
 			Time interval = new Time(e, 1);
 			Machine.setTime(Machine.getTime().advance(interval));
-
 
 			for (AtomicModel model : network.getComponents()){
 				execute(eventToExecute, model, e);
@@ -70,11 +63,11 @@ public class main {
 
 	private static void execute(Event event, AtomicModel model, BigDecimal e){
 		int output = 0;
-		if (event.model == model){
+		if (event.obj == model){
 			if (model.getLast().getReal().compareTo(new BigDecimal(0.0)) == 0){
 				event.updateE(new BigDecimal(0.0));
 			} else {
-				event.updateE(Machine.getTime().getReal().subtract(model.getLast().getReal()));
+				event.updateE(Machine.getRealTime().subtract(model.getLast().getReal()));
 			}
 			model.log(event);
 			switch (event.kind){
@@ -110,7 +103,7 @@ public class main {
 			lastTime = time;
 
 			for (AtomicModel model : network.getInputs()){
-				Event event = Event.builder(new Time(time, 0), "deltaExternal", model).addParameter(e).addParameter(q).build();
+				Event<AtomicModel> event = Event.builder(new Time(time, 0), "deltaExternal", model).addParameter(e).addParameter(q).build();
 				model.log(event);
 				scheduler.put(event);
 			}
