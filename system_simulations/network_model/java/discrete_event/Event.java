@@ -1,9 +1,9 @@
 import java.math.BigDecimal;
 
-public class Event<Type> implements Comparable<Event>{
+public class Event<T> implements Comparable<Event<T>>{
 	public Time time;
 	public String kind; // input or output
-	public Type obj;
+	public T obj;
 	public int q;
 	public BigDecimal e;
 
@@ -14,11 +14,11 @@ public class Event<Type> implements Comparable<Event>{
 		this.e = e;
 	}
 
-	public static<Type>EventBuilder builder(Time t, String k, Type obj){
-		return new EventBuilder(t, k, obj);
+	public static<T>EventBuilder builder(Time t, String k, T o){
+		return new EventBuilder<T>(t, k, o);
 	}
 
-	public int compareTo(Event other){
+	public int compareTo(Event<T> other){
 		return time.getReal().compareTo(other.time.getReal());
 	}
 
@@ -26,14 +26,14 @@ public class Event<Type> implements Comparable<Event>{
 		return "Time: " + time.getReal() + " | Kind: " + kind + " | Object: " + obj + " | e: " + e + " | q: " + q;
 	}
 
-	public static class EventBuilder<Type>{
+	public static class EventBuilder<T>{
 		private Time time;
 		private String kind;
-		private Type obj;
+		private T obj;
 		private int q = 0;
 		private BigDecimal e = new BigDecimal(0.0);
 
-		public EventBuilder(Time t, String k, Type o){
+		public EventBuilder(Time t, String k, T o){
 			time = t;
 			kind = k;
 			obj = o;
@@ -50,7 +50,7 @@ public class Event<Type> implements Comparable<Event>{
 		}
 
 		public Event build(){
-			Event<Type>event = new Event<Type>();
+			Event<T> event = new Event<T>();
 			event.time = this.time;
 			event.kind = this.kind;
 			event.obj = this.obj;

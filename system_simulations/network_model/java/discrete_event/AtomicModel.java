@@ -1,7 +1,7 @@
 /* Component */
 import java.math.BigDecimal;
 
-public interface AtomicModel<Input, Output>{
+public interface AtomicModel<I,O>{
 
 	public int lambda();
 
@@ -15,9 +15,9 @@ public interface AtomicModel<Input, Output>{
 
 	public BigDecimal timeAdvance();
 
-	public void addInput(Input I);
+	public void addInput(I I);
 
-	public void addOutput(Output O);
+	public void addOutput(O O);
 
 	public void log(Event e);
 

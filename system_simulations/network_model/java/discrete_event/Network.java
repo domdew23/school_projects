@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 
-public class Network {
-	private ArrayList<AtomicModel> components;
-	private ArrayList<AtomicModel> inputs;
-	private ArrayList<AtomicModel> outputs;
+public class Network<T>{
+	private ArrayList<T> components;
+	private ArrayList<T> inputs;
+	private ArrayList<T> outputs;
 	private int componentCount;
 
 	private Network(){}
@@ -12,42 +12,37 @@ public class Network {
 		return new NetworkBuilder();
 	}
 
-	public void addInputToOutput(AtomicModel I, AtomicModel O){
-		I.addOutput(O);
-		O.addInput(I);
-	}
-
-	public ArrayList<AtomicModel> getComponents(){
+	public ArrayList<T> getComponents(){
 		return components;
 	}
 
-	public ArrayList<AtomicModel> getInputs(){
+	public ArrayList<T> getInputs(){
 		return inputs;
 	}
 
-	public ArrayList<AtomicModel> getOutputs(){
+	public ArrayList<T> getOutputs(){
 		return outputs;
 	}
 
-	public static class NetworkBuilder{
-		private ArrayList<AtomicModel> components = new ArrayList<AtomicModel>();
-		private ArrayList<AtomicModel> inputs = new ArrayList<AtomicModel>();
-		private ArrayList<AtomicModel> outputs = new ArrayList<AtomicModel>();
+	public static class NetworkBuilder<T>{
+		private ArrayList<T> components = new ArrayList<T>();
+		private ArrayList<T> inputs = new ArrayList<T>();
+		private ArrayList<T> outputs = new ArrayList<T>();
 		private int componentCount = 0;
 
 		public NetworkBuilder(){}
 
-		public NetworkBuilder addComponent(AtomicModel component){
+		public NetworkBuilder addComponent(T component){
 			this.components.add(component);
 			return this;
 		}
 
-		public NetworkBuilder addInput(AtomicModel I){
+		public NetworkBuilder addInput(T I){
 			this.inputs.add(I);
 			return this;
 		}
 
-		public NetworkBuilder addOutput(AtomicModel O){
+		public NetworkBuilder addOutput(T O){
 			this.outputs.add(O);
 			return this;
 		}

@@ -31,24 +31,22 @@ public class main {
 			return;
 		}
 
-		AtomicModel<Network, Machine> press = new Machine<Network, Machine>(new BigDecimal(1.0), "Press");
-		AtomicModel<Machine, Network> drill = new Machine<Machine, Network>(new BigDecimal(2.0), "Drill");
-		Scheduler<Machine> scheduler = new Scheduler();
+		AtomicModel<Network, AtomicModel> press = new Machine<Network, AtomicModel>(new BigDecimal(1.0), "Press");
+		AtomicModel<AtomicModel, Network> drill = new Machine<AtomicModel, Network>(new BigDecimal(2.0), "Drill");
+		Scheduler<AtomicModel> scheduler = new Scheduler();
 
 		Machine.setScheduler(scheduler);
 		Machine.setTime(new Time(new BigDecimal(0.0), 0));
 
-		Network network = Network.builder().addComponent(press).addComponent(drill).addInput(press).addOutput(drill).build();
-		network.addInputToOutput(press, drill);
-		press.addInput(network);
-		drill.addOutput(network);
+		Network<AtomicModel> network = Network.builder().addComponent(press).addComponent(drill).addInput(press).addOutput(drill).build();
+		createCouples(press, drill, network);
 
 		init(sc, network, scheduler);
 		System.out.println(scheduler);
 
 		while (!(scheduler.isEmpty())){
 			System.out.println("Global time: " + Machine.getRealTime());
-			Event eventToExecute = scheduler.pull();
+			Event<AtomicModel> eventToExecute = scheduler.pull();
 			BigDecimal e = eventToExecute.time.getReal().subtract(Machine.getRealTime());
 			
 			Time interval = new Time(e, 1);
@@ -61,7 +59,15 @@ public class main {
 		}
 	}
 
-	private static void execute(Event event, AtomicModel model, BigDecimal e){
+	private static void createCouples(AtomicModel one, AtomicModel two, Network<AtomicModel> network){
+		one.addInput(network);
+		one.addOutput(two);
+		
+		two.addInput(one);
+		two.addOutput(network);
+	}
+
+	private static void execute(Event<AtomicModel> event, AtomicModel model, BigDecimal e){
 		int output = 0;
 		if (event.obj == model){
 			if (model.getLast().getReal().compareTo(new BigDecimal(0.0)) == 0){
@@ -94,7 +100,7 @@ public class main {
 	}
 
 
-	private static void init(Scanner sc, Network network, Scheduler scheduler){
+	private static void init(Scanner sc, Network<AtomicModel> network, Scheduler<AtomicModel> scheduler){
 		BigDecimal lastTime = new BigDecimal(0.0);
 		while (sc.hasNext()){
 			BigDecimal time = new BigDecimal(sc.next());
