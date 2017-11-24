@@ -20,10 +20,8 @@ class Machine : public AtomicModel {
 			this->p = 0;
 			this->last_time = new Time(0.0, 0);
 			this->scheduler = scheduler;
-			cout << "hi1" << endl;
 			inputs.push_back(input);
 			outputs.push_back(output);
-			cout << "hi2" << endl;
 		}
 
 		int lambda(){

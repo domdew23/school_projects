@@ -13,29 +13,21 @@ class Network {
 				}
 
 				NetworkBuilder& add_component(T* component){
-					cout << "start add " << component << endl;
-					if (component == NULL || component == nullptr){
-						cout << "null for some reason"<< endl;
-					} else {
-						this->components.push_back(component);
-						cout << "end add" << endl;
-					}
+					this->components.push_back(component);
+					return *this;
 				}
 
 				NetworkBuilder& add_input(T* input){
-					cout << "start inp" << endl;
 					this->inputs.push_back(input);
-					cout << "end inp" << endl;
+					return *this;
 				}
 
 				NetworkBuilder& add_output(T* output){
-					cout << "start out" << endl;
 					this->outputs.push_back(output);
-					cout << "end out" << endl;
+					return *this;
 				}
 
 				Network* build(){
-					cout << "start build" << endl;
 					return new Network(this);
 				}
 

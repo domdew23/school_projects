@@ -19,15 +19,14 @@ int main(int argc, char** argv){
 
 	Scheduler<AtomicModel>* scheduler = new Scheduler<AtomicModel>();
 
-	AtomicModel* press = NULL;
-	AtomicModel* drill = NULL;
-	Network<AtomicModel>* network = NULL;
+	AtomicModel* press;
+	AtomicModel* drill;
+	Network<AtomicModel>* network;
 
 	press = new Machine<Network<AtomicModel>, AtomicModel>(1.0, "Press", scheduler, network, drill);
 	drill = new Machine<AtomicModel,Network<AtomicModel>>(2.0, "Drill", scheduler, press, network);
 
 	network = Network<AtomicModel>::NetworkBuilder().add_component(press).add_component(drill).add_input(press).add_output(drill).build();
-	cout << "hi down here" << endl;
 
 	ifstream file(argv[1]);
 	double time = 0;
@@ -37,7 +36,6 @@ int main(int argc, char** argv){
 	
 	while(1){
 		file >> time >> q;
-		cout << time << " | " << q << endl;
 		if (time == -1.0){
 			break;
 		}

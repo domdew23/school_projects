@@ -25,10 +25,6 @@ class Scheduler {
 		}
 
 		Event<T>* pull(){
-			if (is_empty()){
-				return NULL;
-			}
-
 			sift_up(1, size);
 			Event<T>* e = events[size];
 			size--;
@@ -37,10 +33,6 @@ class Scheduler {
 		}
 
 		bool remove(Event<T>* e){
-			if (is_empty()){
-				return NULL;
-			}
-
 			for (int i = 1; i < size + 1; i++){
 				if (events[i] == e){
 					sift_up(i, size);
@@ -53,10 +45,6 @@ class Scheduler {
 		}
 
 		Event<T>* find(string kind, T* obj){
-			if (is_empty()){
-				return NULL;
-			}
-
 			for (Event<T>* e : events){
 				if (e != NULL && e->kind == kind && e->obj == obj){
 					return e;
