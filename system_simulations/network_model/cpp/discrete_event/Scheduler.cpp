@@ -1,6 +1,8 @@
 #ifndef SCHEDULER
 #define SCHEDULER
 #include "Event.cpp"
+#include "Network.cpp"
+#include "AtomicModel.cpp"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -23,6 +25,10 @@ class Scheduler {
 		}
 
 		Event<T>* pull(){
+			if (is_empty()){
+				return NULL;
+			}
+
 			sift_up(1, size);
 			Event<T>* e = events[size];
 			size--;
@@ -31,6 +37,10 @@ class Scheduler {
 		}
 
 		bool remove(Event<T>* e){
+			if (is_empty()){
+				return NULL;
+			}
+
 			for (int i = 1; i < size + 1; i++){
 				if (events[i] == e){
 					sift_up(i, size);
@@ -40,6 +50,19 @@ class Scheduler {
 				}
 			}
 			return 0;
+		}
+
+		Event<T>* find(string kind, T* obj){
+			if (is_empty()){
+				return NULL;
+			}
+
+			for (Event<T>* e : events){
+				if (e != NULL && e->kind == kind && e->obj == obj){
+					return e;
+				}
+			}
+			return NULL;
 		}
 
 		bool contains(Event<T>* e){
@@ -56,7 +79,10 @@ class Scheduler {
 		}
 
 		Event<T>* peek(){
-			return events[1];
+			if (!is_empty()){
+				return events[1];
+			}
+			return NULL;
 		}
 
 		int get_size(){

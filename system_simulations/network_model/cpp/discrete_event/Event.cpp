@@ -11,10 +11,10 @@ class Event {
 		Time* time;
 		string kind;
 		T* obj;
-		int* q;
+		int q;
 		double e;
 
-		Event(Time* time, string kind, T* obj, double e, int* q){
+		Event(Time* time, string kind, T* obj, double e, int q){
 			this->time = time;
 			this->kind = kind;
 			this->obj = obj;
@@ -22,11 +22,19 @@ class Event {
 			this->q = q;
 		}
 
-		Event(Time* time, string kind, T* obj, int* q){
+		Event(Time* time, string kind, T* obj, int q){
 			this->time = time;
 			this->kind = kind;
 			this->obj = obj;
 			this->q = q;
+			this->e = 0;
+		}
+
+		Event(Time* time, string kind, T* obj){
+			this->time = time;
+			this->kind = kind;
+			this->obj = obj;
+			this->q = 0;
 			this->e = 0;
 		}
 
@@ -35,7 +43,7 @@ class Event {
 		}
 
 		void print(){
-			cout << "Time: " << time->get_real() << " | Kind: " << kind << " | Object: " << obj << " | e: " << e << " | q: " << *q;
+			cout << "Time: " << time->get_real() << " | Kind: " << kind << " | Object: " << obj << " | e: " << e << " | q: " << q;
 		}
 };
 
