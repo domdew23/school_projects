@@ -71,7 +71,7 @@ public class main{
 			for (int j = 0; j < height; j++){
 				Region r = new Region(C1, C2, C3, i, j);
 				alloy[i][j] = r;
-				r.setTemp(0.0);
+				r.setTemp(1.0);
 			}
 		}
 

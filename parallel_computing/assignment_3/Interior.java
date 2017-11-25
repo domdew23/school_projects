@@ -1,6 +1,6 @@
 public class Interior extends Tree {
 	private final Tree[] quads;
-	public Tree q1,q2,q3,q4;
+	public final Tree q1,q2,q3,q4;
 	
 	Interior(Tree q1, Tree q2, Tree q3, Tree q4){
 		quads = new Tree[]{q1, q2, q3, q4};
@@ -12,6 +12,10 @@ public class Interior extends Tree {
 
 	public void compute(){
 		for (int i = 0; i < quads.length; i++){
+			// create threads here with their respective indices and compute
+			Runner r = new Runner(quads[i]);
+			Thread t = new Thread(r);
+			t.start();
 			quads[i].compute();
 		}
 	}

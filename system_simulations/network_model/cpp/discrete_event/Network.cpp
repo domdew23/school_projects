@@ -51,6 +51,15 @@ class Network {
 		vector<T*> get_outputs(){
 			return outputs;
 		}
+
+		vector<T*> get_components(){
+			return components;
+		}
+
+		string get_name(){
+			return "Network";
+		}
+		
 	private:
 		vector<T*> components;
 		vector<T*> inputs;

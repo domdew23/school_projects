@@ -43,7 +43,7 @@ class Event {
 		}
 
 		void print(){
-			cout << "Time: " << time->get_real() << " | Kind: " << kind << " | Object: " << obj << " | e: " << e << " | q: " << q;
+			cout << "Time: " << time->get_real() << " | Kind: " << kind << " | Object: " << obj->get_name() << " | e: " << e << " | q: " << q;
 		}
 };
 

@@ -17,27 +17,35 @@ class Scheduler {
 		}
 
 		bool put(Event<T>* e){
+			//cout << "adding event: ";
+			//e->print();
+			//cout << " | size: " << size << endl;
 			events.push_back(e);
 			size++;
 			check(size);
-			check_merge();
 			return 1;
 		}
 
 		Event<T>* pull(){
+			check_merge();
 			sift_up(1, size);
-			Event<T>* e = events[size];
-			size--;
+			Event<T>* e = events[size--];
 			sift_down(1);
+			events.pop_back();
 			return e;
 		}
 
 		bool remove(Event<T>* e){
+			if (e == NULL){
+				return 0;
+			}
+
 			for (int i = 1; i < size + 1; i++){
 				if (events[i] == e){
 					sift_up(i, size);
+					events.pop_back();
+					delete events[size--];
 					sift_down(i);
-					delete events[i];
 					return 1;
 				}
 			}
@@ -82,11 +90,19 @@ class Scheduler {
 		}
 
 		void print(){
-			for (int i = 1; i < size + 1; i++){
+			int i = 0;
+			for (Event<T>* e : events){
+				if (e != NULL && e != nullptr){
+					cout << "Event " << (++i) << ": ";
+					e->print();
+					cout << endl;
+				}
+			}
+			/*for (int i = 1; i <= size; i++){
 				cout << "Event " << i << ": ";
 				events[i]->print();
 				cout << endl;
-			}
+			}*/
 		}
 
 	private:
@@ -97,7 +113,7 @@ class Scheduler {
 		void check(int k){
 			while (k > 1 && greater(k/2, k)){
 				sift_up(k, k/2);
-				k /=2;
+				k /= 2;
 			}
 		}
 
@@ -138,11 +154,13 @@ class Scheduler {
 		}
 
 		void merge(Event<T>* one, Event<T>* two){
+			Time* time = one->time;
+			T* obj = one->obj;
 			remove(one);
 			remove(two);
 
-			string str = "deltaConfluent";
-			Event<T>* event = new Event<T>(one->time, str, one->obj, one->q);
+			string str = "delta_confluent";
+			Event<T>* event = new Event<T>(time, str, obj, 1);
 			put(event);
 		}
 };
