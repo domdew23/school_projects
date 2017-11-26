@@ -178,7 +178,7 @@ public class Region{
 			bottomY = bottomNeighbor.getY();
 		}
 
-		return "x: " + x + " | y: " + y + " | temp: " + temp + " | C1: " + C1 + " | C2: " + C2 + " | C3: " + C3 + 
+		return "x: " + x + " | y: " + y + " | temp: " + temp + // " | C1: " + C1 + " | C2: " + C2 + " | C3: " + C3 + 
 		"\nNeighbors:\nleft: " + leftX + "," + leftY + " | top: " + topX + "," + topY +" | right: " 
 		+ rightX + "," + rightY + " | bottom: " + bottomX + "," + bottomY + "\nRGB:\nr: " + red + " | g: " + green + " | b: " + blue + "\n"; 
 	}

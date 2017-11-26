@@ -38,15 +38,8 @@ public class main{
 		Region[][] alloy = init(C1, C2, C3, S, T, width, height);
 		Region[][] A = init(C1, C2, C3, S, T, width, height);
 		Region[][] B = new Region[width][height];
-
 		Jacobi j = new Jacobi(A, B, 0, height, 0, width, 1, threshold);
-		//System.out.println(j.root);
 		j.compute();
-
-		//Region r = alloy[0][0];
-		//System.out.println(r.getTemp());
-		//alloy[0][0].compute();
-		//System.out.println(r.getTemp());
 
 		// split up work (quads) each thread gets certain indices to work on
 		// threshold - when to stop dividing
@@ -59,7 +52,7 @@ public class main{
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame.add(g);
 				frame.setSize((width*(2*scale)), (height*(2*scale)));
-				frame.setVisible(true);	
+				frame.setVisible(true);
 			}
 		});
 	}

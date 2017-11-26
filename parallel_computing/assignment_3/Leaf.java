@@ -27,9 +27,10 @@ public class Leaf extends Tree {
 		for (int i = loRow; i < hiRow; i++){
 			for (int j = loCol; j < hiCol; j++){
 				//System.out.println("col: " + j + " | row: " + i);
-				System.out.println("Before: " + a[j][i]);
+				// convergence -> converge all the new versions of the Alloy
+				//System.out.println("Before: " + a[j][i]);
 				b[j][i] = a[j][i].compute();
-				System.out.println("After: " + b[j][i]);
+				//System.out.println("After: " + b[j][i]);
 			}
 		}
 		System.out.println();

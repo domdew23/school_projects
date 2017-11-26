@@ -1,5 +1,4 @@
 abstract class Tree {
-	public void compute(){
-		
+	public void compute(){	
 	}
 }

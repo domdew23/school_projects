@@ -1,6 +1,9 @@
+import java.util.concurrent.CyclicBarrier;
+
 public class Interior extends Tree {
 	private final Tree[] quads;
 	public final Tree q1,q2,q3,q4;
+	public CyclicBarrier synchPoint = new CyclicBarrier(4);
 	
 	Interior(Tree q1, Tree q2, Tree q3, Tree q4){
 		quads = new Tree[]{q1, q2, q3, q4};
@@ -13,10 +16,10 @@ public class Interior extends Tree {
 	public void compute(){
 		for (int i = 0; i < quads.length; i++){
 			// create threads here with their respective indices and compute
-			Runner r = new Runner(quads[i]);
-			Thread t = new Thread(r);
+			// threads share instance of cyclicbarrier
+			Worker worker = new Worker(quads[i], synchPoint);
+			Thread t = new Thread(worker);
 			t.start();
-			quads[i].compute();
 		}
 	}
 

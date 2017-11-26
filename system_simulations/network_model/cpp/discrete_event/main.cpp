@@ -44,7 +44,6 @@ int main(int argc, char** argv){
 	}
 
 	Scheduler<AtomicModel>* scheduler = new Scheduler<AtomicModel>();
-
 	
 	Machine<Network<AtomicModel>,AtomicModel>* ptr = new Machine<Network<AtomicModel>, AtomicModel>(1.0, "Press", scheduler);
 	Machine<AtomicModel,Network<AtomicModel>>* ptr2 = new Machine<AtomicModel,Network<AtomicModel>>(2.0, "Drill", scheduler);
