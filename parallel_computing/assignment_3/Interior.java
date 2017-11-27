@@ -3,7 +3,7 @@ import java.util.concurrent.CyclicBarrier;
 public class Interior extends Tree {
 	private final Tree[] quads;
 	public final Tree q1,q2,q3,q4;
-	public CyclicBarrier synchPoint = new CyclicBarrier(4);
+	public CyclicBarrier synchPoint = new CyclicBarrier(4, new Runner());
 	
 	Interior(Tree q1, Tree q2, Tree q3, Tree q4){
 		quads = new Tree[]{q1, q2, q3, q4};
@@ -21,10 +21,15 @@ public class Interior extends Tree {
 			Thread t = new Thread(worker);
 			t.start();
 		}
+		System.out.println("back in main thread");
 	}
 
 	public void reinitialize(){
 		// get ready for next iteration of the computations
+		Region[][] alloy;
+		for (int i = 0; i < quads.length; i++){
+
+		}
 	}
 
 	public String toString(){
