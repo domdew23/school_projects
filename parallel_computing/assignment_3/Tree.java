@@ -1,4 +1,4 @@
 abstract class Tree {
-	public void compute(){	
-	}
+	volatile double maxDiff;
+	public void compute(){}
 }

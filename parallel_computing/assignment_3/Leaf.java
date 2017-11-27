@@ -4,10 +4,8 @@ public class Leaf extends Tree {
 	private int hiRow;
 	private int hiCol;
 	private int steps;
-	private Region[][] A;
-	private Region[][] B;
-	// A - old version
-	// B - updated version
+	public Region[][] A;
+	public Region[][] B;
 
 	Leaf(Region[][] A, Region[][] B, int loRow, int hiRow, int loCol, int hiCol){
 		this.A = A;
@@ -23,7 +21,8 @@ public class Leaf extends Tree {
 		boolean AtoB = (steps++ % 2) == 0;
 		Region[][] a = (AtoB) ? A : B;
 		Region[][] b = (AtoB) ? B : A;
-		
+		double md = 0.0;
+
 		for (int i = loRow; i < hiRow; i++){
 			for (int j = loCol; j < hiCol; j++){
 				//System.out.println("col: " + j + " | row: " + i);
@@ -33,7 +32,12 @@ public class Leaf extends Tree {
 				//System.out.println("After: " + b[j][i]);
 			}
 		}
+		maxDiff = md;
 		System.out.println();
+	}
+
+	public void reset(){
+		maxDiff = 0.0;
 	}
 
 	public String toString(){

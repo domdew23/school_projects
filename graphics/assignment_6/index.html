@@ -27,25 +27,36 @@
 			uniform vec4 lightPos;
 			uniform float shininess;
 			uniform vec4 ambientProduct, diffuseProduct, specularProduct;
-	 		varying vec3 N, surfToLight, surfToCam;
+	 		varying vec3 N, surfaceLight, surfaceCam;
 
 			void main(){
-				mat2 rotation_matrix = mat2(cos(theta), -sin(theta),
-											sin(theta),  cos(theta));
+				mat3 rotationX = mat3(1.0, 0.0, 0.0,
+							          0.0, cos(theta), -sin(theta),
+							          0.0, sin(theta), cos(theta));
+
+				mat3 rotationY = mat3(cos(theta), 0.0, sin(theta),
+							          0.0, 1.0, 0.0,
+							          sin(theta), 0.0, cos(theta));
+
+				mat3 rotationZ = mat3(cos(theta), -sin(theta), 0.0,
+							          sin(theta), cos(theta), 0.0,
+							          0.0,  0.0, 1.0);
+
  
-				vec2 temp_position = coordinates;
-				//temp_position = temp_position - center; // translate to origin
-				temp_position = rotation_matrix * temp_position; // rotate around origin
-				//temp_position = temp_position + center; // translate back to original position
-			    
-			    gl_Position = mProj * mView * vec4(temp_position, 0.0, 1.0);
+				vec3 tempPosition = vec3(coordinates, 0.0);
+				//tempPosition = tempPosition - vec3(center,0.0); // translate to origin				
+				tempPosition = rotationZ * rotationY * rotationX * tempPosition;
+				//tempPosition = tempPosition + vec3(center,0.0); // translate back to original position
+			   
+			    vec4 finalPosition = vec4(tempPosition, 1.0); 
+			    gl_Position = mProj * mView * finalPosition;
 			    fragTexCoord = vertTexCoord;
 			    
-			    vec3 pos = -(mView * vec4(temp_position, 0.0, 1.0)).xyz;
+			    vec3 pos = -(mView * finalPosition).xyz;
 			    vec3 light = lightPos.xyz;
 			    
-			    surfToLight = normalize(light - pos);
-			    surfToCam = normalize(-pos);
+			    surfaceLight = normalize(light - pos);
+			    surfaceCam = normalize(-pos);
 			    N = normalize((vertNormal).xyz);
 			}
 		</script>
@@ -61,25 +72,25 @@
 
 			uniform sampler2D sampler;
 			uniform sampler2D normalSampler;
-	 		varying vec3 N, surfToLight, surfToCam;
+	 		varying vec3 N, surfaceLight, surfaceCam;
 
 			void main() {
 				vec3 normal = normalize(2.0 * (texture2D(normalSampler, fragTexCoord).xyz - 1.0));
 								
 				vec4 fragColor;
 
-				vec3 H = normalize(surfToLight + surfToCam);
-				vec3 R = normalize(reflect(-surfToLight, normal));
+				vec3 H = normalize(surfaceLight + surfaceCam);
+				vec3 R = normalize(reflect(-surfaceLight, normal));
 
 				vec4 ambient = ambientProduct;
 
-			    float Kd = max(dot(surfToLight, normal), 0.0);
+			    float Kd = max(dot(surfaceLight, normal), 0.0);
 			    vec4 diffuse = Kd*diffuseProduct;
 
-			    float Ks = pow(max(dot(surfToCam, R), 0.0), shininess);
+			    float Ks = pow(max(dot(surfaceCam, R), 0.0), shininess);
 			    vec4 specular = Ks * specularProduct;
 			    
-			    if(dot(surfToLight, normal) < 0.0) {
+			    if(dot(surfaceLight, normal) < 0.0) {
 					specular = vec4(0.0, 0.0, 0.0, 1.0);
 			    }
 

@@ -23,6 +23,10 @@ public class Interior extends Tree {
 		}
 	}
 
+	public void reinitialize(){
+		// get ready for next iteration of the computations
+	}
+
 	public String toString(){
 		return "q1:\n" + q1 + "\n\nq2:\n" + q2 + "\n\nq3:\n" + q3 + "\n\nq4:\n" + q4;
 	}

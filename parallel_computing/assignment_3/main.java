@@ -32,8 +32,9 @@ public class main{
 		double T = sc.nextDouble();
 		int width = sc.nextInt();
 		int scale = sc.nextInt();
-		int threshold = sc.nextInt(); /* number of cells per leaf */
+		//int threshold = sc.nextInt(); /* number of cells per leaf */
 		int height = width/2;
+		int threshold = (width * height)/4;
 
 		Region[][] alloy = init(C1, C2, C3, S, T, width, height);
 		Region[][] A = init(C1, C2, C3, S, T, width, height);
