@@ -1,9 +1,9 @@
 import java.math.BigDecimal;
 
-public class Event {
+public class Event<T> implements Comparable<Event<T>>{
 	public Time time;
 	public String kind; // input or output
-	public AtomicModel model;
+	public T obj;
 	public int q;
 	public BigDecimal e;
 
@@ -14,25 +14,29 @@ public class Event {
 		this.e = e;
 	}
 
-	public static EventBuilder builder(Time t, String k, AtomicModel m){
-		return new EventBuilder(t, k, m);
+	public static<T>EventBuilder builder(Time t, String k, T o){
+		return new EventBuilder<T>(t, k, o);
+	}
+
+	public int compareTo(Event<T> other){
+		return time.getReal().compareTo(other.time.getReal());
 	}
 
 	public String toString(){
-		return "Time: " + time.getReal() + " | Kind: " + kind + " | Model: " + model + " | e: " + e + " | q: " + q;
+		return "Time: " + time.getReal() + " | Kind: " + kind + " | Object: " + obj + " | e: " + e + " | q: " + q;
 	}
 
-	public static class EventBuilder {
+	public static class EventBuilder<T>{
 		private Time time;
 		private String kind;
-		private AtomicModel model;
+		private T obj;
 		private int q = 0;
 		private BigDecimal e = new BigDecimal(0.0);
 
-		public EventBuilder(Time t, String k, AtomicModel m){
+		public EventBuilder(Time t, String k, T o){
 			time = t;
 			kind = k;
-			model = m;
+			obj = o;
 		}
 
 		public EventBuilder addParameter(int q){
@@ -46,10 +50,10 @@ public class Event {
 		}
 
 		public Event build(){
-			Event event = new Event();
+			Event<T> event = new Event<T>();
 			event.time = this.time;
 			event.kind = this.kind;
-			event.model = this.model;
+			event.obj = this.obj;
 			event.q = q;
 			event.e = e;
 			return event;

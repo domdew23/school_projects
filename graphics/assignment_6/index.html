@@ -8,9 +8,6 @@
 		<script src="gl-matrix.js"></script>
 
 		<script id="vertex_shader" type="x-shader/x-vertex">
-			// add materials and lighting to the scene
-			// material can be random or uniform throughout the entire program
-
 			precision mediump float;
 
 			attribute vec2 coordinates;
@@ -30,24 +27,36 @@
 			uniform vec4 lightPos;
 			uniform float shininess;
 			uniform vec4 ambientProduct, diffuseProduct, specularProduct;
-	 		varying vec3 N, L, E;
+	 		varying vec3 N, surfaceLight, surfaceCam;
 
 			void main(){
-				mat2 rotation_matrix = mat2(cos(theta), -sin(theta),
-											sin(theta),  cos(theta));
+				mat3 rotationX = mat3(1.0, 0.0, 0.0,
+							          0.0, cos(theta), -sin(theta),
+							          0.0, sin(theta), cos(theta));
+
+				mat3 rotationY = mat3(cos(theta), 0.0, sin(theta),
+							          0.0, 1.0, 0.0,
+							          sin(theta), 0.0, cos(theta));
+
+				mat3 rotationZ = mat3(cos(theta), -sin(theta), 0.0,
+							          sin(theta), cos(theta), 0.0,
+							          0.0,  0.0, 1.0);
+
  
-				vec2 temp_position = coordinates;
-				//temp_position = temp_position - center; // translate to origin
-				temp_position = rotation_matrix * temp_position; // rotate around origin
-				//temp_position = temp_position + center; // translate back to original position
-			    
-			    gl_Position = mProj * mView * vec4(temp_position, 0.0, 1.0);
+				vec3 tempPosition = vec3(coordinates, 0.0);
+				//tempPosition = tempPosition - vec3(center,0.0); // translate to origin				
+				tempPosition = rotationZ * rotationY * rotationX * tempPosition;
+				//tempPosition = tempPosition + vec3(center,0.0); // translate back to original position
+			   
+			    vec4 finalPosition = vec4(tempPosition, 1.0); 
+			    gl_Position = mProj * mView * finalPosition;
 			    fragTexCoord = vertTexCoord;
 			    
-			    vec3 pos = -(mView * vec4(temp_position, 0.0, 1.0)).xyz;
+			    vec3 pos = -(mView * finalPosition).xyz;
 			    vec3 light = lightPos.xyz;
-			    L = normalize(light - pos);
-			    E = normalize(-pos);
+			    
+			    surfaceLight = normalize(light - pos);
+			    surfaceCam = normalize(-pos);
 			    N = normalize((vertNormal).xyz);
 			}
 		</script>
@@ -63,31 +72,32 @@
 
 			uniform sampler2D sampler;
 			uniform sampler2D normalSampler;
-	 		varying vec3 N, L, E;
+	 		varying vec3 N, surfaceLight, surfaceCam;
 
 			void main() {
-				// vec3 normal = normalize(2.0 * (texture2D(normalSampler, textureCoord).rbg - 0.5));
-				// float lambertTerm? = max(dot(normal, lightDirection), .20);
+				vec3 normal = normalize(2.0 * (texture2D(normalSampler, fragTexCoord).xyz - 1.0));
+								
 				vec4 fragColor;
 
-				vec3 H = normalize(L + E);
+				vec3 H = normalize(surfaceLight + surfaceCam);
+				vec3 R = normalize(reflect(-surfaceLight, normal));
+
 				vec4 ambient = ambientProduct;
 
-			    float Kd = max(dot(L, N), 0.0);
+			    float Kd = max(dot(surfaceLight, normal), 0.0);
 			    vec4 diffuse = Kd*diffuseProduct;
 
-			    float Ks = pow(max(dot(N, H), 0.0), shininess);
+			    float Ks = pow(max(dot(surfaceCam, R), 0.0), shininess);
 			    vec4 specular = Ks * specularProduct;
 			    
-			    if(dot(L, N) < 0.0) {
+			    if(dot(surfaceLight, normal) < 0.0) {
 					specular = vec4(0.0, 0.0, 0.0, 1.0);
 			    }
 
 			    fragColor = ambient + diffuse + specular;
-			    
 			    fragColor.a = 1.0;
 
-				gl_FragColor = (fragColor * texture2D(sampler, fragTexCoord));
+				gl_FragColor = fragColor;
 			}
 		</script>
 		
@@ -109,13 +119,13 @@
 		<input type="range" id="centCamY" max="2" min="-2" step=".01" value="0" onchange="run()"><br>
 
 		Light Ambient Red Value:
-		<input type="range" id="AmbR" max="3" min="-1" step=".1" value=".7" onchange="run()">
+		<input type="range" id="AmbR" max="3" min="-1" step=".1" value=".3" onchange="run()">
 
 		Light Ambient Green Value:
-		<input type="range" id="AmbG" max="5" min="-5" step=".1" value="3.0" onchange="run()">
+		<input type="range" id="AmbG" max="5" min="-5" step=".1" value="2.0" onchange="run()">
 		
 		Light Ambient Blue Value:
-		<input type="range" id="AmbB" max="5" min="-5" step=".1" value="4.0" onchange="run()">
+		<input type="range" id="AmbB" max="5" min="-5" step=".1" value="2.0" onchange="run()">
 
 		Light Diffuse Value:
 		<input type="range" id="diff" max="1" min="0" step=".1" value="1" onchange="run()">
@@ -124,31 +134,32 @@
 		<input type="range" id="spec" max="1" min="0" step=".1" value="1" onchange="run()"><br>
 
 		Material Ambient Red Value:
-		<input type="range" id="matAmbx" max="1" min="0" step=".1" value="1" onchange="run()">
+		<input type="range" id="matAmbx" max="1" min="0" step=".1" value=".2" onchange="run()">
 
 		Material Ambient Green Value:
-		<input type="range" id="matAmby" max="1" min="0" step=".1" value="1" onchange="run()">
+		<input type="range" id="matAmby" max="1" min="0" step=".1" value=".2" onchange="run()">
 		
 		Material Ambient Blue Value:
-		<input type="range" id="matAmbz" max="1" min="0" step=".1" value="1" onchange="run()">
+		<input type="range" id="matAmbz" max="1" min="0" step=".1" value=".8" onchange="run()">
 
 		Material Diffuse Value:
-		<input type="range" id="matDif" max="1" min="0" step=".1" value="1" onchange="run()">
+		<input type="range" id="matDif" max="1" min="0" step=".1" value=".5" onchange="run()">
 
 		Material Specular Value:
-		<input type="range" id="matSpec" max="1" min="0" step=".1" value="1" onchange="run()"><br>
+		<input type="range" id="matSpec" max="1" min="0" step=".1" value=".5" onchange="run()"><br>
 
-		<input type="hidden" id="lightX" max="1" min="0" step=".1" value="1" onchange="run()">
+		<input type="hidden" id="lightX" max="1" min="0" step=".1" value=".5" onchange="run()">
 
-		<input type="hidden" id="lightY" max="1" min="0" step=".1" value="1" onchange="run()">
+		<input type="hidden" id="lightY" max="1" min="0" step=".1" value=".5" onchange="run()">
 		
-		<input type="hidden" id="lightZ" max="1" min="0" step=".1" value="1" onchange="run()"><br>
+		<input type="hidden" id="lightZ" max="1" min="0" step=".1" value=".5" onchange="run()"><br>
 
 		Material Shininess:
-		<input type="range" id="matShine" max="100" min="1" step=".05" value="100" onchange="run()"><br>
+		<input type="range" id="matShine" max="100" min="1" step=".05" value="1" onchange="run()"><br>
 
-		<input type="range" id="depth" max="5" step="1" value="0" onchange="run()">
+		<input type="range" id="depth" max="5" step="1" value="2" onchange="run()">
 		<input type="button" id="button" value="Press to rotate." onClick="changeRotation()"><br>
-		<img id="box_image" src="img3.gif" width="0" height="0"></img>
+		<img id="box_image" src="img.jpg" width="0" height="0"></img>
+		<img id="normal_map" src="normal_map.jpg" width="0" height="0"></img>
 	</body>
 </html>

@@ -1,7 +1,7 @@
-public class Scheduler {
+public class Scheduler<T>{
 
 	private int DEFAULT_INIT_SIZE = 50;
-	private Event[] events;
+	private Event<T>[] events;
 	private int size;
 
 	public Scheduler(int initSize){
@@ -14,7 +14,7 @@ public class Scheduler {
 		size = 0;
 	}
 
-	public boolean put(Event e){
+	public boolean put(Event<T> e){
 		try {
 			if (size == events.length - 1){
 				reSize();
@@ -29,17 +29,17 @@ public class Scheduler {
 	}
 
 	private void reSize(){
-		Event[] old = events;
+		Event<T>[] old = events;
 		events = new Event[events.length * 2];
 		System.arraycopy(old, 1, events, 1, size);
 	}
 
 	private int greater(int i, int j){
-		return events[i].time.getReal().compareTo(events[j].time.getReal());
+		return events[i].compareTo(events[j]);
 	}
 
 	private void siftUp(int i, int j){
-		Event tmp = events[i];
+		Event<T> tmp = events[i];
 		events[i] = events[j];
 		events[j] = tmp;
 	}
@@ -69,12 +69,12 @@ public class Scheduler {
 		}
 	}
 
-	public boolean contains(Event e){
+	public boolean contains(Event<T> e){
 		if (isEmpty()){
 			return false;
 		}
 
-		for (Event tmp : events){
+		for (Event<T> tmp : events){
 			if (tmp == e){
 				return true;
 			}
@@ -90,28 +90,29 @@ public class Scheduler {
 		return events[1];
 	}
 
-	public Event pull(){
+	public Event<T> pull(){
 		if (isEmpty()){
 			throw new NullPointerException("Cannot poll an empty queue.");
 		}
 
 		/* swap root and bottom node - store root - sift root back to the bottom */
+		checkMerge();
 		siftUp(1, size);
-		Event e = events[size--];
+		Event<T> e = events[size--];
 		events[size + 1] = null;
 		siftDown(1);
 		return e;
 	}
 
-	public boolean remove(Event e){
+	public boolean remove(Event<T> e){
 		if (isEmpty() || !contains(e)){
-			throw new NullPointerException("Trying to remove event that does not exist.");
+			return false;
 		}
 
 		for (int i = 1; i < size + 1; i++){
 			if (events[i] == e){
 				siftUp(i, size);
-				Event tmp = events[size--];
+				Event<T> tmp = events[size--];
 				events[size + 1] = null;
 				siftDown(i);
 				return true;
@@ -120,9 +121,9 @@ public class Scheduler {
 		return false;
 	}
 
-	public Event find(String kind, AtomicModel model){
-		for (Event e : events){
-			if (e != null && e.kind == kind && e.model == model){
+	public Event<T> find(String kind, T obj){
+		for (Event<T> e : events){
+			if (e != null && e.kind == kind && e.obj == obj){
 				return e;
 			}
 		}
@@ -141,11 +142,10 @@ public class Scheduler {
 		return events;
 	}
 
-	public void checkMerge(){
-		// merge once you reach that moment in time
-		for (Event e : events){
+	private void checkMerge(){
+		for (Event<T> e : events){
 			if (e != null && e != peek()){
-				if (peek().time.getReal().compareTo(e.time.getReal()) == 0 && peek().model == e.model){
+				if (peek().time.getReal() == e.time.getReal() && peek().obj == e.obj){
 					merge(peek(), e);
 				}	
 			}
@@ -153,20 +153,12 @@ public class Scheduler {
 	}
 
 	/* never compare floating point values for equality - don't use floats */
-	public void merge(Event one, Event two){
+	private void merge(Event<T> one, Event<T> two){
+		boolean[] X = one.X;
 		remove(one);
 		remove(two);
 
-		int q;
-		if (one.q != 0){
-			q = one.q;
-		} else if (two.q != 0){
-			q = two.q;
-		} else {
-			throw new NullPointerException("Something went wrong while merging.");
-		}
-
-		Event event = Event.builder(one.time, "deltaConfluent", one.model).addParameter(q).build();
+		Event<T> event = Event.builder(one.time, "deltaConfluent", one.obj).addParameter(X).build();
 		put(event);
 	}
 
