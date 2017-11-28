@@ -17,7 +17,7 @@ public class Control extends Canvas implements Runnable{
 		Region[][] B = new Region[s.width][s.height];
 		Jacobi j = new Jacobi(A, B, 0, s.height, 0, s.width, 1, s.threshold);
 		
-		//j.compute();
+		j.compute();
 		display(A);
 	}
 
@@ -41,7 +41,9 @@ public class Control extends Canvas implements Runnable{
 	private void display(Region[][] A){
 		SwingUtilities.invokeLater(new Runnable(){
 			public void run(){
-				JFrame frame = new JFrame("Alloy"); // main window of the application
+				JFrame frame = new JFrame(); // main window of the application
+				frame.setResizable(false);
+				frame.setTitle("Alloy");
 				GraphicsModule g = new GraphicsModule(s.width, s.height, s.scale, A);
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				frame.add(g);

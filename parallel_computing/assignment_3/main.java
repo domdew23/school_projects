@@ -7,7 +7,6 @@ public class main{
 			System.out.println("Please supply an input file.");
 			return;
 		}
-
 		Settings settings = new Settings(args[0]);
 		Control control = new Control(settings);
 	}
