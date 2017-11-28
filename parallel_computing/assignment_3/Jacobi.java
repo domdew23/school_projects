@@ -8,7 +8,6 @@ public class Jacobi {
 	}
 
 	public void compute(){
-		// have cyclic barrier here maybe
 		for (int i = 0; i < maxSteps; i++){
 			root.compute();
 		}

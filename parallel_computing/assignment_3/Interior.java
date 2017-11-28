@@ -3,29 +3,39 @@ import java.util.concurrent.CyclicBarrier;
 public class Interior extends Tree {
 	private final Tree[] quads;
 	public final Tree q1,q2,q3,q4;
-	public CyclicBarrier synchPoint = new CyclicBarrier(4, new Runner());
+	private final Worker[] workers;
+	public CyclicBarrier synchPoint;
 	
 	Interior(Tree q1, Tree q2, Tree q3, Tree q4){
 		quads = new Tree[]{q1, q2, q3, q4};
+		this.synchPoint = new CyclicBarrier(quads.length, new Merger());
+		this.workers = new Worker[quads.length];
 		this.q1 = q1;
 		this.q2 = q2;
 		this.q3 = q3;
 		this.q4 = q4;
+		invoke();
+	}
+
+	private void invoke(){
+		for (int i = 0; i < quads.length; i++){
+			workers[i] = new Worker(synchPoint);
+		}
 	}
 
 	public void compute(){
 		for (int i = 0; i < quads.length; i++){
-			// create threads here with their respective indices and compute
-			// threads share instance of cyclicbarrier
-			Worker worker = new Worker(quads[i], synchPoint);
-			Thread t = new Thread(worker);
-			t.start();
+			// resuse threads don't make new ones (too much overhead)
+			Thread thread = new Thread(workers[i]);
+			workers[i].setSection(quads[i]);
+			thread.start();
 		}
-		System.out.println("back in main thread");
+		try {Thread.sleep(1000);} catch (InterruptedException e){}
 	}
 
 	public void reinitialize(){
 		// get ready for next iteration of the computations
+		// get same threads ready
 		Region[][] alloy;
 		for (int i = 0; i < quads.length; i++){
 

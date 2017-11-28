@@ -8,6 +8,6 @@ public class main{
 			return;
 		}
 		Settings settings = new Settings(args[0]);
-		Control control = new Control(settings);
+		Control control = new Control();
 	}
 }

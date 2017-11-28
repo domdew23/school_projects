@@ -4,22 +4,49 @@ import java.util.concurrent.BrokenBarrierException;
 public class Worker implements Runnable {
 	Tree section;
 	CyclicBarrier synchPoint;
-	public Worker(Tree section, CyclicBarrier barrier){
-		this.section = section;
+	Region[][] myPart;
+	boolean running;
+	public Worker(CyclicBarrier barrier){
+		this.section = null;
 		this.synchPoint = barrier;
+		this.myPart = null;
+		this.running = true;
 	}
 
 	public void run(){
-		try{
-			System.out.println(Thread.currentThread().getName() + " running " + section);
-			section.compute();
-			try {
-				synchPoint.await();
-			} catch (BrokenBarrierException e){
+		while (running){
+			try{
+				section.compute(); // returns its parts of the alloy
+				//printPart();
+				Merger.addPart(myPart);
+				System.out.println(Thread.currentThread().getName() + " added my part");
+				try {
+					synchPoint.await();
+				} catch (BrokenBarrierException e){
+					e.printStackTrace();
+				}
+			} catch (InterruptedException e){
 				e.printStackTrace();
 			}
-		} catch (InterruptedException e){
-			e.printStackTrace();
+			running = false;	
+		}
+	}
+
+	public void setSection(Tree section){
+		this.section = section;
+		this.section.setWorker(this);
+	}
+
+	public void setPart(Region[][] part){
+		myPart = part;
+	}
+
+	public void printPart(){
+		System.out.println(Thread.currentThread().getName() + ":\n");
+		for (int i = 0; i < Settings.WIDTH; i++){
+			for (int j = 0; j < Settings.HEIGHT; j++){
+				System.out.println(myPart[i][j]);
+			}
 		}
 	}
 }

@@ -3,12 +3,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Settings {
-	public double C1,C2,C3,S,T;
-	public int width,height,scale,threshold;
-
+	public static double C1,C2,C3,S,T;
+	public static int WIDTH,HEIGHT,SCALE,THRESHOLD,MAX_STEPS;
+	private File file = null;
+	private Scanner sc = null;
+	private String fileName;
+	
 	public Settings(String fileName){
-		File file = null;
-		Scanner sc = null;
+		this.fileName = fileName;
 		try{
 			file = new File(fileName);
 			sc = new Scanner(file);
@@ -16,15 +18,16 @@ public class Settings {
 			System.out.println("File not found.");
 			System.exit(0);
 		}
-
+		
 		C1 = sc.nextDouble();
 		C2 = sc.nextDouble();
 		C3 = sc.nextDouble();
 		S = sc.nextDouble();
 		T = sc.nextDouble();
-		width = sc.nextInt();
-		scale = sc.nextInt();
-		height = width/2;
-		threshold = (width * height)/4;
+		WIDTH = sc.nextInt();
+		SCALE = sc.nextInt();
+		HEIGHT = WIDTH/2;
+		THRESHOLD = (WIDTH * HEIGHT)/4;
+		MAX_STEPS = 2;
 	}
 }

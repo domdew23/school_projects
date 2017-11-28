@@ -45,8 +45,9 @@ public class Region{
 			total /= neighborCount;
 			total += tmpTotal;
 		}
-		Region retVal = this;
+		Region retVal = new Region(this.C1, this.C2, this.C3, this.x, this.y);
 		retVal.setTemp(total);
+		//this.setTemp(total);
 		return retVal;
 	}
 
