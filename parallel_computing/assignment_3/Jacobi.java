@@ -1,15 +1,29 @@
-public class Jacobi {
+public class Jacobi implements Runnable {
 	Tree root;
 	int maxSteps;
-
+	Thread thread;
+	
 	Jacobi(Region[][] A, Region[][] B, int firstRow, int lastRow, int firstCol, int lastCol, int maxSteps, int cellsPerLeaf){
 		this.maxSteps = maxSteps;
 		root = build(A, B, firstRow, lastRow, firstCol, lastCol, cellsPerLeaf);
 	}
 
-	public void compute(){
+	public void run(){
 		for (int i = 0; i < maxSteps; i++){
 			root.compute();
+		}
+	}
+
+	public synchronized void start(){
+		thread = new Thread(this, "Jacobi");
+		thread.start();
+	}
+
+	public synchronized void stop(){
+		try {
+			thread.join();
+		} catch (InterruptedException e){
+			e.printStackTrace();
 		}
 	}
 

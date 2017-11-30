@@ -1,15 +1,19 @@
 import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.BrokenBarrierException;
 
 public class Interior extends Tree {
 	private final Tree[] quads;
 	public final Tree q1,q2,q3,q4;
 	private final Worker[] workers;
+	private final Thread[] threads;
 	public CyclicBarrier synchPoint;
 	
 	Interior(Tree q1, Tree q2, Tree q3, Tree q4){
 		quads = new Tree[]{q1, q2, q3, q4};
-		this.synchPoint = new CyclicBarrier(quads.length, new Merger());
+		Merger merger = new Merger();
+		this.synchPoint = new CyclicBarrier(5, merger);
 		this.workers = new Worker[quads.length];
+		this.threads = new Thread[quads.length];
 		this.q1 = q1;
 		this.q2 = q2;
 		this.q3 = q3;
@@ -20,17 +24,31 @@ public class Interior extends Tree {
 	private void invoke(){
 		for (int i = 0; i < quads.length; i++){
 			workers[i] = new Worker(synchPoint);
+			threads[i] = new Thread(workers[i]);
+			threads[i].start();
 		}
 	}
 
 	public void compute(){
 		for (int i = 0; i < quads.length; i++){
-			// resuse threads don't make new ones (too much overhead)
-			Thread thread = new Thread(workers[i]);
 			workers[i].setSection(quads[i]);
-			thread.start();
+			workers[i].wakeUp();
 		}
-		try {Thread.sleep(1000);} catch (InterruptedException e){}
+		waitUntilComplete();
+		synchPoint.reset();
+		System.out.println(Thread.currentThread().getName() + " all done.");
+	}
+
+	private void waitUntilComplete(){
+		try {
+			try {
+				synchPoint.await();
+			} catch (BrokenBarrierException e){
+				e.printStackTrace();
+			}
+		} catch (InterruptedException e){
+			e.printStackTrace();
+		}
 	}
 
 	public void reinitialize(){

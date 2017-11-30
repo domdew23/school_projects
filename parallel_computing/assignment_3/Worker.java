@@ -14,10 +14,10 @@ public class Worker implements Runnable {
 	}
 
 	public void run(){
-		while (running){
+		//while (running){
 			try{
+				wait();
 				section.compute(); // returns its parts of the alloy
-				//printPart();
 				Merger.addPart(myPart);
 				System.out.println(Thread.currentThread().getName() + " added my part");
 				try {
@@ -28,8 +28,11 @@ public class Worker implements Runnable {
 			} catch (InterruptedException e){
 				e.printStackTrace();
 			}
-			running = false;	
-		}
+		//}
+	}
+
+	public void wakeUp(){
+		notify();
 	}
 
 	public void setSection(Tree section){

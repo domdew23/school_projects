@@ -3,8 +3,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Settings {
-	public static double C1,C2,C3,S,T;
-	public static int WIDTH,HEIGHT,SCALE,THRESHOLD,MAX_STEPS;
+	public static double C1, C2, C3, S, T;
+	public static int WIDTH, HEIGHT, SCALE, THRESHOLD, MAX_STEPS;
+	public static boolean RUNNING;
 	private File file = null;
 	private Scanner sc = null;
 	private String fileName;
@@ -28,6 +29,7 @@ public class Settings {
 		SCALE = sc.nextInt();
 		HEIGHT = WIDTH/2;
 		THRESHOLD = (WIDTH * HEIGHT)/4;
-		MAX_STEPS = 2;
+		MAX_STEPS = 4;
+		RUNNING = true;
 	}
 }

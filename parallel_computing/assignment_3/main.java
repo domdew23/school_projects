@@ -9,5 +9,21 @@ public class main{
 		}
 		Settings settings = new Settings(args[0]);
 		Control control = new Control();
+		GraphicsEngine graphicsEngine = new GraphicsEngine();
+		Jacobi jacobi = new Jacobi(control.A, control.B, 0, Settings.HEIGHT, 0, Settings.WIDTH, Settings.MAX_STEPS, Settings.THRESHOLD);
+
+		graphicsEngine.start();
+		jacobi.start();
+		run();
+	}
+
+	private static void run(){
+		while (true){
+			for (int i = 0; i < Settings.WIDTH; i++){
+				for (int j = 0; j < Settings.HEIGHT; j++){
+					//System.out.println(Merger.getUpdatedAlloy()[i][j]);
+				}
+			}
+		}
 	}
 }

@@ -3,15 +3,16 @@ import java.awt.Graphics;
 import java.awt.Color;
 
 public class GraphicsModule extends JPanel {
-	private int width;
-	private int height;
-	private int scale;
+	private static int width = Settings.WIDTH;
+	private static int height = width * 16 / 9;
+	int columns = width/2;
+	private static int scale = Settings.SCALE;
 	private Region[][] alloy;
 
-	public GraphicsModule(int width, int height, int scale, Region[][] alloy){
-		this.width = width;
-		this.height = height;
-		this.scale = scale;
+	public GraphicsModule(Region[][] alloy){
+		//this.width = width;
+		//this.height = height;
+		//this.scale = scale;
 		this.alloy = alloy;
 	}
 
@@ -20,7 +21,7 @@ public class GraphicsModule extends JPanel {
 		this.setBackground(Color.GRAY);
 
 		for (int i = 0; i < width; i++){
-			for (int j = 0; j < height; j++){
+			for (int j = 0; j < columns; j++){
 				Region r = alloy[i][j];
 				r.calcRGB();
 				int red = (int) Math.round(r.red);

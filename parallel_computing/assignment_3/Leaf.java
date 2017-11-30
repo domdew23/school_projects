@@ -27,7 +27,6 @@ public class Leaf extends Tree {
 
 		for (int i = loCol; i < hiCol; i++){
 			for (int j = loRow; j < hiRow; j++){
-				//System.out.println("col: " + j + " | row: " + i);
 				//System.out.println("Before: " + a[j][i]);
 				b[i][j] = a[i][j].compute();
 				myWorker.setPart(b);
