@@ -104,21 +104,21 @@ public class Scheduler<T>{
 		return e;
 	}
 
-	public boolean remove(Event<T> e){
+	public Event<T> remove(Event<T> e){
 		if (isEmpty() || !contains(e)){
-			return false;
+			return null;
 		}
 
 		for (int i = 1; i < size + 1; i++){
 			if (events[i] == e){
 				siftUp(i, size);
 				Event<T> tmp = events[size--];
-				events[size + 1] = null;
+				//events[size + 1] = null;
 				siftDown(i);
-				return true;
+				return tmp;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	public Event<T> find(String kind, T obj){
@@ -145,7 +145,7 @@ public class Scheduler<T>{
 	private void checkMerge(){
 		for (Event<T> e : events){
 			if (e != null && e != peek()){
-				if (peek().time.getReal() == e.time.getReal() && peek().obj == e.obj){
+				if (peek().time.getReal() == e.time.getReal() && peek().obj == e.obj && (peek().kind == "deltaInternal" || e.kind == "deltaInternal")){
 					merge(peek(), e);
 				}	
 			}
@@ -154,11 +154,11 @@ public class Scheduler<T>{
 
 	/* never compare floating point values for equality - don't use floats */
 	private void merge(Event<T> one, Event<T> two){
-		boolean[] X = one.X;
+		boolean x = one.x;
 		remove(one);
 		remove(two);
 
-		Event<T> event = Event.builder(one.time, "deltaConfluent", one.obj).addParameter(X).build();
+		Event<T> event = Event.builder(one.time, "deltaConfluent", one.obj).addParameter(x).build();
 		put(event);
 	}
 

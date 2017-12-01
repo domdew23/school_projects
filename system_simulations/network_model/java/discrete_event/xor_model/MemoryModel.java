@@ -28,9 +28,9 @@ public class MemoryModel<I,O> implements AtomicModel<I,O>{
 		System.out.println("M New State: " + ((state[0]) ? 1 : 0) + " || " + ((state[1]) ? 1 : 0) + "\n==================");
 	}
 
-	public void deltaExternal(boolean[] X){
+	public void deltaExternal(boolean x){
 		state[0] = state[1];
-		state[1] = X[1];
+		state[1] = x;
 		/*double t = currentTime.getReal() + timeAdvance();
 		Event<AtomicModel> event = Event.builder(new Time(t, 0), "deltaInternal", this).build();
 		scheduler.put(event);*/
@@ -43,8 +43,8 @@ public class MemoryModel<I,O> implements AtomicModel<I,O>{
 		}*/
 	}
 
-	public void deltaConfluent(boolean[] X){
-		deltaExternal(X);
+	public void deltaConfluent(boolean x){
+		deltaExternal(x);
 		deltaInternal();
 	}
 

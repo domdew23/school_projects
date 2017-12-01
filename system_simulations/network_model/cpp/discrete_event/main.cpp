@@ -11,6 +11,7 @@ using namespace std;
 
 Time* AtomicModel::current_time = new Time(0.0,0);
 
+// solve floating point numbers problem
 void execute(Event<AtomicModel>* event, AtomicModel* model, double e){
 	if (event->obj == model){
 		if (model->last_time->get_real() == 0){
@@ -86,6 +87,7 @@ int main(int argc, char** argv){
 		double e = event->time->get_real() - AtomicModel::current_time->get_real();
 
 		Time* interval = new Time(e, 1);
+
 		AtomicModel::current_time = AtomicModel::current_time->advance(interval);
 
 		for (AtomicModel* model : network->get_components()){

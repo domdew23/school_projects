@@ -31,6 +31,18 @@ public class Region{
 	}
 
 	public Region compute(){
+		boolean isTopLeft = (x == 0 && y == 0);
+		boolean isBottomRight = (x == Settings.WIDTH - 1 && y == Settings.HEIGHT - 1);
+		
+		if (isTopLeft || isBottomRight){
+			//System.out.println("I am a corner:\n" + this);
+			Region retVal = new Region(this.C1, this.C2, this.C3, this.x, this.y);
+			retVal.setTemp(this.temp);
+			retVal.setNeighbors(this.leftNeighbor, this.topNeighbor, this.rightNeighbor, this.bottomNeighbor);
+			retVal.calcRGB();
+			return retVal;
+		}
+
 		double total = 0.0;
 		double tmpTotal = 0.0;
 
@@ -46,9 +58,27 @@ public class Region{
 			total += tmpTotal;
 		}
 		Region retVal = new Region(this.C1, this.C2, this.C3, this.x, this.y);
+		retVal.setNeighbors(this.leftNeighbor, this.topNeighbor, this.rightNeighbor, this.bottomNeighbor);
 		retVal.setTemp(total);
-		this.setTemp(total);
+		//this.setTemp(total);
+		//this.calcRGB();
+		retVal.calcRGB();
+		if (temp != 0){
+			System.out.println(x + "," + y + " Old temp: " + temp);
+			System.out.println(retVal.getX() + "," + retVal.getY() + " New temp: " + retVal.getTemp());
+		}
 		return retVal;
+	}
+
+	private boolean hasNonZeroNeighbor(){
+		for (int i = 0; i < neighbors.length; i++){
+			if (neighbors[i] != null){
+				if (neighbors[i].getTemp() != 0.0){
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public void setNeighbors(Region left, Region top, Region right, Region bottom){
@@ -105,11 +135,13 @@ public class Region{
     	} else if (red > 255){
     		red = 255;
     	}
+
     	if (green < 0 || Double.isNaN(green)){
     		green = 0;
     	} else if (green > 255){
     		green = 255;
     	}
+
     	if (blue < 0 || Double.isNaN(blue)){
     		blue = 0;
     	} else if (blue > 255){

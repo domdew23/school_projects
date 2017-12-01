@@ -27,7 +27,7 @@ public class main {
 		// state of M is a pair of bits (q1, q2)
 
 		// make sure lambda and delta are independent of each other
-		// lambda and delta can have similar functions to one another
+		// lambda and delta can have similar functions to one another Couple<I,O> -> network has array of couples/loop through couples to find match then send
 
 		if (args.length < 1){
 			System.out.println("Please supply an input file.");
@@ -58,7 +58,7 @@ public class main {
 		createCouples(xor1, xor2, memoryModel, network);
 		init(sc, scheduler, network, currentTime);
 		System.out.println(scheduler);
-
+		int c = 1;
 		while (!(scheduler.isEmpty())){
 			System.out.println("Global time: " + currentTime.getReal());
 			Event<AtomicModel> event = scheduler.pull();
@@ -72,6 +72,8 @@ public class main {
 				execute(event, model, network);
 			}
 			System.out.println("------------------------\n" + scheduler);
+			if (c==4){return;}
+			c++;
 		}
 	}
 
@@ -79,7 +81,7 @@ public class main {
 		if (event.obj == model){
 			switch (event.kind){
 				case "deltaExternal":
-					model.deltaExternal(event.X);
+					model.deltaExternal(event.x);
 					break;
 				case "deltaInternal":
 					model.lambda();
@@ -87,7 +89,7 @@ public class main {
 					break;
 				case "deltaConfluent":
 					model.lambda();
-					model.deltaConfluent(event.X);
+					model.deltaConfluent(event.x);
 					break;
 				default:
 					System.out.println("Something went wrong");
@@ -131,8 +133,10 @@ public class main {
 				}
 			}
 			for (AtomicModel model : network.getInputs()){
-				Event<AtomicModel> event = Event.builder(new Time(time, 0), "deltaExternal", model).addParameter(X).build();
-				scheduler.put(event);
+				Event<AtomicModel> eventOne = Event.builder(new Time(time, 0), "deltaExternal", model).addParameter(X[0]).build();
+				Event<AtomicModel> eventTwo = Event.builder(new Time(time, 0), "deltaExternal", model).addParameter(X[1]).build();
+				scheduler.put(eventOne);
+				scheduler.put(eventTwo);
 			}
 		}
 	}

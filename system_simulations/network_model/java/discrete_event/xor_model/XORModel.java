@@ -10,12 +10,14 @@ public class XORModel<I,O> implements AtomicModel<I,O>{
 	private int id;
 	private ArrayList<I> inputs;
 	private ArrayList<O> outputs;
+	private ArrayList<Boolean> bits;
 
 	public XORModel(){
 		this.state = false;
 		this.id = ++count;
 		this.inputs = new ArrayList<I>();
 		this.outputs = new ArrayList<O>();
+		this.bits = new ArrayList<Boolean>();
 	}
 
 	public boolean lambda(){
@@ -29,18 +31,39 @@ public class XORModel<I,O> implements AtomicModel<I,O>{
 		System.out.println("XOR" + id + " State: " + ((state) ? 1 : 0) + "\n==================");
 	}*/
 
-	public void deltaExternal(boolean[] X){
-		state = (X[0] ^ X[1]);
-		
-		scheduler.remove(scheduler.find("deltaInternal", this));
-		double t = currentTime.getReal() + timeAdvance();
-		Event<AtomicModel> event = Event.builder(new Time(t, 0), "deltaInternal", this).build();
-		scheduler.put(event);
+	public void deltaExternal(boolean b){
+		// state = (X[0] ^ X[1]);
+		// has map of inputs
+		// memory model creates events for itself
+		System.out.println("size: " + bits.size());
+		if (bits.size() >= 2){
+			// interrupt
+			bits.clear();
+			bits.add(b);
+			scheduler.remove(scheduler.find("deltaInternal", this));
+			double t = currentTime.getReal() + timeAdvance();
+			Event<AtomicModel> event = Event.builder(new Time(t, 0), "deltaInternal", this).build();
+			scheduler.put(event);
+		} else {
+			bits.add(b);
+			Event removedEvent = scheduler.remove(scheduler.find("deltaInternal", this));
+
+			if (removedEvent != null){
+				Event<AtomicModel> event = Event.builder(removedEvent.time, "deltaInternal", this).build();
+				scheduler.put(event);
+			} else {
+				double t = currentTime.getReal() + timeAdvance();
+				Event<AtomicModel> event = Event.builder(new Time(t, 0), "deltaInternal", this).build();
+				scheduler.put(event);
+			}
+		}
 	}
 
 	public void deltaInternal(){
-
-		boolean[] X = new boolean[2];
+		state = (bits.get(0) ^ bits.get(1));
+		bits.clear();
+		// if both bits are not there by the time this executes have an error message for the user
+		/*boolean[] X = new boolean[2];
 		for (O out : outputs){
 			if (network.getOutputs().contains(this)){
 				System.out.println("Network output: " + lambda());
@@ -58,11 +81,11 @@ public class XORModel<I,O> implements AtomicModel<I,O>{
 			X[1] = two.lambda();
 			Event<AtomicModel> event = Event.builder(currentTime, "deltaExternal", out).addParameter(X).build();
 			scheduler.put(event);
-		}
+		}*/
 	}
 
-	public void deltaConfluent(boolean[] X){
-		deltaExternal(X);
+	public void deltaConfluent(boolean x){
+		deltaExternal(x);
 		deltaInternal();
 	}
 

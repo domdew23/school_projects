@@ -12,18 +12,14 @@ public class main{
 		GraphicsEngine graphicsEngine = new GraphicsEngine();
 		Jacobi jacobi = new Jacobi(control.A, control.B, 0, Settings.HEIGHT, 0, Settings.WIDTH, Settings.MAX_STEPS, Settings.THRESHOLD);
 
-		graphicsEngine.start();
 		jacobi.start();
+		graphicsEngine.start();
 		run();
 	}
 
 	private static void run(){
-		while (true){
-			for (int i = 0; i < Settings.WIDTH; i++){
-				for (int j = 0; j < Settings.HEIGHT; j++){
-					//System.out.println(Merger.getUpdatedAlloy()[i][j]);
-				}
-			}
-		}
+		//try{Thread.sleep(500);}catch(InterruptedException e){}
+		//System.out.println(Merger.getUpdatedAlloy()[0][0]);
+		//System.out.println(Merger.getUpdatedAlloy()[Settings.WIDTH-1][Settings.HEIGHT-1]);
 	}
 }

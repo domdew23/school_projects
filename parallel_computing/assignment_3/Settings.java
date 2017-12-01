@@ -29,7 +29,7 @@ public class Settings {
 		SCALE = sc.nextInt();
 		HEIGHT = WIDTH/2;
 		THRESHOLD = (WIDTH * HEIGHT)/4;
-		MAX_STEPS = 4;
+		MAX_STEPS = 1000;
 		RUNNING = true;
 	}
 }

@@ -148,6 +148,7 @@ class Scheduler {
 				if (e != NULL && e != peek()){
 					if (peek()->time->get_real() == e->time->get_real() && peek()->obj == e->obj){
 						merge(peek(), e);
+						return;
 					}
 				}
 			}

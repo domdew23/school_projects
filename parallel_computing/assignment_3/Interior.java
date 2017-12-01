@@ -31,12 +31,13 @@ public class Interior extends Tree {
 
 	public void compute(){
 		for (int i = 0; i < quads.length; i++){
-			workers[i].setSection(quads[i]);
-			workers[i].wakeUp();
+			workers[i].wakeUp(quads[i]);
+			//workers[i].setSection(quads[i]);
+
 		}
 		waitUntilComplete();
 		synchPoint.reset();
-		System.out.println(Thread.currentThread().getName() + " all done.");
+		//System.out.println(Thread.currentThread().getName() + " all done.");
 	}
 
 	private void waitUntilComplete(){

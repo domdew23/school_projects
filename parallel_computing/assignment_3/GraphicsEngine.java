@@ -21,7 +21,6 @@ public class GraphicsEngine extends Canvas implements Runnable{
 	public GraphicsEngine(){
 		screen = new Screen(Settings.WIDTH, Settings.HEIGHT);
 		init();
-		// maybe make jacobi a runnable and start that thread and get control back here
 	}
 
 	private void init(){
@@ -37,7 +36,7 @@ public class GraphicsEngine extends Canvas implements Runnable{
 	}
 
 	public void run(){
-		try {Thread.sleep(200);}catch(InterruptedException e){}
+		//try {Thread.sleep(1000);}catch(InterruptedException e){}
 		while (Settings.RUNNING){
 			update();
 			render();
@@ -73,9 +72,13 @@ public class GraphicsEngine extends Canvas implements Runnable{
 	}
 
 	private void draw(Graphics g, int i, int j){
-		Region r = Merger.getUpdatedAlloy()[i][j];
+		Region r = null;
+		while (r == null){
+			r = Merger.getUpdatedAlloy()[i][j];
+		}
+		//System.out.println("hi");
 		//Region r = Control.A[i][j];
-		r.calcRGB();
+		//r.calcRGB();
 		int red = (int) Math.round(r.red);
 		int green = (int) Math.round(r.green);
 		int blue = (int) Math.round(r.blue);

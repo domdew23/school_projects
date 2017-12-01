@@ -5,11 +5,11 @@ public interface AtomicModel<I,O>{
 
 	public boolean lambda();
 
-	public void deltaExternal(boolean[]  X);
+	public void deltaExternal(boolean x);
 	
 	public void deltaInternal();	
 
-	public void deltaConfluent(boolean[] X);
+	public void deltaConfluent(boolean x);
 
 	public int timeAdvance();
 

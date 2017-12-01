@@ -14,7 +14,7 @@ public class Control {
 			for (int j = 0; j < Settings.HEIGHT; j++){
 				Region r = new Region(Settings.C1, Settings.C2, Settings.C3, i, j);
 				alloy[i][j] = r;
-				r.setTemp(1.0);
+				r.setTemp(0.0);
 			}
 		}
 

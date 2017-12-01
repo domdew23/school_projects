@@ -103,11 +103,11 @@ class Machine : public AtomicModel {
 			}
 		}
 
-		string to_string(int i){
+		/*string to_string(int i){
 		    stringstream ss;
 		    ss << i;
 		    return ss.str();
-		}
+		}*/
 
 		string get_name(){
 			string str = to_string(p);

@@ -1,25 +1,41 @@
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.Condition;
 
 public class Worker implements Runnable {
 	Tree section;
 	CyclicBarrier synchPoint;
 	Region[][] myPart;
 	boolean running;
+	Lock lock = new ReentrantLock();
+	Condition notReady = lock.newCondition();
+	boolean wasSignalled = false;
 	public Worker(CyclicBarrier barrier){
 		this.section = null;
 		this.synchPoint = barrier;
 		this.myPart = null;
 		this.running = true;
+		//this.lock = new Object();
 	}
 
 	public void run(){
-		//while (running){
+		while (running){
 			try{
-				wait();
+				lock.lock();
+				try {
+					while (!wasSignalled){
+						//System.out.println(Thread.currentThread().getName() + " waiting...");
+						notReady.await();
+					}
+					wasSignalled = false;
+				} finally {
+					lock.unlock();
+				}
 				section.compute(); // returns its parts of the alloy
 				Merger.addPart(myPart);
-				System.out.println(Thread.currentThread().getName() + " added my part");
+				//System.out.println(Thread.currentThread().getName() + " added my part");
 				try {
 					synchPoint.await();
 				} catch (BrokenBarrierException e){
@@ -28,16 +44,24 @@ public class Worker implements Runnable {
 			} catch (InterruptedException e){
 				e.printStackTrace();
 			}
-		//}
+		}
 	}
 
-	public void wakeUp(){
-		notify();
+	public void wakeUp(Tree section){
+		
+		lock.lock();
+		try {
+			wasSignalled = true;
+			notReady.signal();
+		} finally {
+			lock.unlock();
+			this.section = section;
+			this.section.setWorker(this);
+		}
 	}
 
 	public void setSection(Tree section){
-		this.section = section;
-		this.section.setWorker(this);
+	
 	}
 
 	public void setPart(Region[][] part){
