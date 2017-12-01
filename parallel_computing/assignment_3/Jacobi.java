@@ -2,7 +2,6 @@ public class Jacobi implements Runnable {
 	Tree root;
 	int maxSteps;
 	Thread thread;
-	
 	Jacobi(Region[][] A, Region[][] B, int firstRow, int lastRow, int firstCol, int lastCol, int maxSteps, int cellsPerLeaf){
 		this.maxSteps = maxSteps;
 		root = build(A, B, firstRow, lastRow, firstCol, lastCol, cellsPerLeaf);
@@ -10,7 +9,7 @@ public class Jacobi implements Runnable {
 
 	public void run(){
 		for (int i = 0; i < maxSteps; i++){
-			System.out.println("i: " + i);
+			//System.out.println("i: " + i);
 			root.compute();
 		}
 	}

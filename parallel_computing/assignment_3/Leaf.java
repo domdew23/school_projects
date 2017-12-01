@@ -19,7 +19,7 @@ public class Leaf extends Tree {
 	}
 
 	public void compute(){
-		System.out.println(Thread.currentThread().getName() + " step: " + steps);
+		//System.out.println(Thread.currentThread().getName() + " step: " + steps);
 		boolean AtoB = (steps++ % 2) == 0;
 		Region[][] a = (AtoB) ? A : B;
 		Region[][] b = (AtoB) ? B : A;
@@ -29,10 +29,15 @@ public class Leaf extends Tree {
 			for (int j = loRow; j < hiRow; j++){
 				//System.out.println("Before: " + a[j][i]);
 				b[i][j] = a[i][j].compute();
-				myWorker.setPart(b);
 				//System.out.println("After: " + b[j][i]);
 			}
 		}
+		Control.updateNeighbors(b);
+		myWorker.setPart(b);
+		//System.out.println("step: " + steps + "\n==================================");
+		//System.out.println(b[18][9]);
+		//System.out.println(b[17][9]);
+		//System.out.println("============================================");
 		maxDiff = md;
 		//System.out.println();
 	}

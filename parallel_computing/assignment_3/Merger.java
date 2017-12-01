@@ -11,6 +11,8 @@ public class Merger implements Runnable {
 	}
 
 	public void run(){
+		//System.out.println(updatedAlloy[18][9]);
+		//System.out.println(updatedAlloy[17][9]);
 		for (int k = 0; k < quads.size(); k++){
 			Region[][] r = quads.get(k);
 			for (int i = 0; i < Settings.WIDTH; i++){
@@ -20,6 +22,9 @@ public class Merger implements Runnable {
 				}
 			}
 		}
+		//System.out.println("after:\n");
+		//System.out.println(updatedAlloy[18][9]);
+		//System.out.println(updatedAlloy[17][9]);
 		// maybe here have threads start computations again (reset the barrier)
 	}
 

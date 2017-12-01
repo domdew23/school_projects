@@ -57,16 +57,17 @@ public class Region{
 			total /= neighborCount;
 			total += tmpTotal;
 		}
+
 		Region retVal = new Region(this.C1, this.C2, this.C3, this.x, this.y);
-		retVal.setNeighbors(this.leftNeighbor, this.topNeighbor, this.rightNeighbor, this.bottomNeighbor);
 		retVal.setTemp(total);
+		//retVal.setNeighbors(this.leftNeighbor, this.topNeighbor, this.rightNeighbor, this.bottomNeighbor);
 		//this.setTemp(total);
 		//this.calcRGB();
 		retVal.calcRGB();
-		if (temp != 0){
-			System.out.println(x + "," + y + " Old temp: " + temp);
-			System.out.println(retVal.getX() + "," + retVal.getY() + " New temp: " + retVal.getTemp());
-		}
+		//System.out.println(this);
+		//try{Thread.sleep(500);}catch(InterruptedException e){}
+		//System.out.println(x + "," + y + " Old temp: " + temp);
+		//System.out.println(retVal.getX() + "," + retVal.getY() + " New temp: " + retVal.getTemp());
 		return retVal;
 	}
 
@@ -169,7 +170,7 @@ public class Region{
 		}
 		metals[0] = C1;
 		metals[1] = C2;
-		metals[2] = C2;	
+		metals[2] = C3;
 	}
 
 	public double[] getMetals(){
@@ -194,25 +195,31 @@ public class Region{
 
 	public String toString(){
 		int leftX=-1,leftY=-1,topX=-1,topY=-1,rightX=-1,rightY=-1,bottomX=-1,bottomY=-1;
+		double leftTemp=-1,topTemp=-1,rightTemp=-1,bottomTemp=-1;
 		if (leftNeighbor != null){
 			leftX = leftNeighbor.getX();
 			leftY = leftNeighbor.getY();
+			leftTemp = leftNeighbor.getTemp();
 		}
 		if (topNeighbor != null){
 			topX = topNeighbor.getX();
 			topY = topNeighbor.getY();
+			topTemp = topNeighbor.getTemp();
 		}
 		if (rightNeighbor != null){
 			rightX = rightNeighbor.getX();
 			rightY = rightNeighbor.getY();
+			rightTemp = rightNeighbor.getTemp();
 		}
 		if (bottomNeighbor != null){
 			bottomX = bottomNeighbor.getX();
 			bottomY = bottomNeighbor.getY();
+			bottomTemp = bottomNeighbor.getTemp();
 		}
 
-		return "x: " + x + " | y: " + y + " | temp: " + temp + // " | C1: " + C1 + " | C2: " + C2 + " | C3: " + C3 + 
-		"\nNeighbors:\nleft: " + leftX + "," + leftY + " | top: " + topX + "," + topY +" | right: " 
-		+ rightX + "," + rightY + " | bottom: " + bottomX + "," + bottomY + "\nRGB:\nr: " + red + " | g: " + green + " | b: " + blue + "\n"; 
+		return "x: " + x + " | y: " + y + " | temp: " + temp + "\nNeighbors:\nleft: " + leftX + "," + leftY
+		+ "| " + leftTemp + " | top: " + topX + "," + topY + "| " + topTemp +" | right: " + rightX + "," + 
+		rightY + " | " + rightTemp + " | bottom: " + bottomX + "," + bottomY +" | " + bottomTemp + 
+		"\nRGB:\nr: " + red + " | g: " + green + " | b: " + blue + "\n"; 
 	}
 }
