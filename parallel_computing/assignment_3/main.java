@@ -14,12 +14,16 @@ public class main{
 
 		jacobi.start();
 		graphicsEngine.start();
-		run();
+		run(jacobi);
 	}
 
-	private static void run(){
-		//try{Thread.sleep(500);}catch(InterruptedException e){}
-		//System.out.println(Merger.getUpdatedAlloy()[0][0]);
-		//System.out.println(Merger.getUpdatedAlloy()[Settings.WIDTH-1][Settings.HEIGHT-1]);
+	private static void run(Jacobi jacobi){
+		double time = System.currentTimeMillis();
+		while (true){
+			if (time % 1000 == 0){
+				System.out.println("Maxdiff: " + jacobi.root.maxDiff);
+			}
+			time = System.currentTimeMillis();	
+		}
 	}
 }

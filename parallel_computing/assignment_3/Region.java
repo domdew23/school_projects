@@ -3,10 +3,10 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Region{
 	
 	private double temp;
-	private double C1;
-	private double C2;
-	private double C3;
-	private double[] metals;
+	private double p1;
+	private double p2;
+	private double p3;
+	private double[] percentages;
 	private int x;
 	private int y;
 	private Region leftNeighbor;
@@ -17,10 +17,10 @@ public class Region{
 	private int neighborCount;
 	public double red,green,blue;
 
-	public Region(double C1, double C2, double C3, int x, int y){
-		this.metals = new double[3];
+	public Region(int x, int y){
+		this.percentages = new double[3];
 		this.neighbors = new Region[4];
-		init(C1, C2, C3);
+		init();
 		this.x = x;
 		this.y = y;
 		this.temp = 0.0;
@@ -34,11 +34,13 @@ public class Region{
 		boolean isTopLeft = (x == 0 && y == 0);
 		boolean isBottomRight = (x == Settings.WIDTH - 1 && y == Settings.HEIGHT - 1);
 		
-		if (isTopLeft || isBottomRight){
-			//System.out.println("I am a corner:\n" + this);
-			Region retVal = new Region(this.C1, this.C2, this.C3, this.x, this.y);
-			retVal.setTemp(this.temp);
-			retVal.setNeighbors(this.leftNeighbor, this.topNeighbor, this.rightNeighbor, this.bottomNeighbor);
+		if (isTopLeft || isBottomRight || !(hasNonZeroNeighbor()) || Double.isInfinite(temp)){
+			Region retVal = new Region(this.x, this.y);
+			if (Double.isInfinite(temp)){
+				retVal.setTemp(100000.0);
+			} else {
+				retVal.setTemp(this.temp);
+			}
 			retVal.calcRGB();
 			return retVal;
 		}
@@ -46,28 +48,21 @@ public class Region{
 		double total = 0.0;
 		double tmpTotal = 0.0;
 
-		for (int i = 0; i < metals.length; i++){
+		for (int i = 0; i < Settings.METALS.length; i++){
 			tmpTotal = 0.0;
 			for (int j = 0; j < neighbors.length; j++){
 				if (neighbors[j] != null){
 					tmpTotal += (neighbors[j].getTemp() * neighbors[j].getMetals()[i]);
 				}
 			}
-			tmpTotal *= metals[i];
+			tmpTotal *= Settings.METALS[i];
 			total /= neighborCount;
 			total += tmpTotal;
 		}
 
-		Region retVal = new Region(this.C1, this.C2, this.C3, this.x, this.y);
+		Region retVal = new Region(this.x, this.y);
 		retVal.setTemp(total);
-		//retVal.setNeighbors(this.leftNeighbor, this.topNeighbor, this.rightNeighbor, this.bottomNeighbor);
-		//this.setTemp(total);
-		//this.calcRGB();
 		retVal.calcRGB();
-		//System.out.println(this);
-		//try{Thread.sleep(500);}catch(InterruptedException e){}
-		//System.out.println(x + "," + y + " Old temp: " + temp);
-		//System.out.println(retVal.getX() + "," + retVal.getY() + " New temp: " + retVal.getTemp());
 		return retVal;
 	}
 
@@ -150,31 +145,31 @@ public class Region{
     	}
 	}
 
-	private void init(double C1, double C2, double C3){
+	private void init(){
 		if (ThreadLocalRandom.current().nextDouble(1.0) < .5){
-			this.C1 = (C1 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
+			this.p1 = (Settings.C1 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
 		} else {
-			this.C1 = (C1 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
+			this.p1 = (Settings.C1 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
 		}
 
 		if (ThreadLocalRandom.current().nextDouble(1.0) < .5){
-			this.C2 = (C2 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
+			this.p2 = (Settings.C2 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
 		} else {
-			this.C2 = (C2 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
+			this.p2 = (Settings.C2 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
 		}
 
 		if (ThreadLocalRandom.current().nextDouble(1.0) < .5){
-			this.C3 = (C3 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
+			this.p3 = (Settings.C3 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
 		} else {
-			this.C3 = (C3 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
+			this.p3 = (Settings.C3 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
 		}
-		metals[0] = C1;
-		metals[1] = C2;
-		metals[2] = C3;
+		percentages[0] = p1;
+		percentages[1] = p2;
+		percentages[2] = p3;
 	}
 
 	public double[] getMetals(){
-		return metals;
+		return percentages;
 	}
 
 	public double getTemp(){

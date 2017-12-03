@@ -27,23 +27,17 @@ public class Leaf extends Tree {
 
 		for (int i = loCol; i < hiCol; i++){
 			for (int j = loRow; j < hiRow; j++){
-				//System.out.println("Before: " + a[j][i]);
 				b[i][j] = a[i][j].compute();
-				//System.out.println("After: " + b[j][i]);
+				md = Math.max(md, Math.abs(b[i][j].getTemp() - a[i][j].getTemp()));
 			}
 		}
-		Control.updateNeighbors(b);
 		myWorker.setPart(b);
-		//System.out.println("step: " + steps + "\n==================================");
-		//System.out.println(b[18][9]);
-		//System.out.println(b[17][9]);
-		//System.out.println("============================================");
 		maxDiff = md;
-		//System.out.println();
+		Control.updateNeighbors(b);
 	}
 
 	public void reset(){
-		maxDiff = 0.0;
+		//maxDiff = 0.0;
 	}
 
 	public void setWorker(Worker w){

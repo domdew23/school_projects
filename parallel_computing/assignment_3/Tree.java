@@ -4,4 +4,6 @@ abstract class Tree {
 	}
 
 	public void setWorker(Worker w){}
+
+	public void reset(){}
 }

@@ -29,15 +29,22 @@ public class Interior extends Tree {
 		}
 	}
 
-	public void compute(){
+	public void wakeUp(){
 		for (int i = 0; i < quads.length; i++){
 			workers[i].wakeUp(quads[i]);
-			//workers[i].setSection(quads[i]);
-
 		}
+	}
+
+	public void compute(){
+		wakeUp();
 		waitUntilComplete();
 		synchPoint.reset();
-		//System.out.println(Thread.currentThread().getName() + " all done.");
+		double md = 0.0;
+		for (int i = 0; i < quads.length; i++){
+			md = Math.max(md, quads[i].maxDiff);
+			quads[i].reset();
+		}
+		maxDiff = md;
 	}
 
 	private void waitUntilComplete(){

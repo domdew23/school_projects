@@ -5,6 +5,7 @@ public class MemoryModel<I,O> implements AtomicModel<I,O>{
 	private boolean[] state = new boolean[2];
 	private ArrayList<I> inputs;
 	private ArrayList<O> outputs;
+	private ArrayList<Boolean> bits;
 	public static Time currentTime;
 	public static Scheduler<AtomicModel> scheduler;
 
@@ -13,11 +14,12 @@ public class MemoryModel<I,O> implements AtomicModel<I,O>{
 		this.state[1] = false;
 		inputs = new ArrayList<I>();
 		outputs = new ArrayList<O>();
+		bits = new ArrayList<Boolean>();
 	}
 
 	public boolean lambda(){
-		System.out.println("M Output: " + ((state[0] ^ state[1]) ? 1 : 0));
-		System.out.println("==================");
+		//System.out.println("M Output: " + ((state[0] ^ state[1]) ? 1 : 0));
+		//System.out.println("==================");
 		return state[0];
 	}
 
@@ -29,18 +31,19 @@ public class MemoryModel<I,O> implements AtomicModel<I,O>{
 	}
 
 	public void deltaExternal(boolean x){
-		state[0] = state[1];
-		state[1] = x;
-		/*double t = currentTime.getReal() + timeAdvance();
+		bits.add(x);
+		double t = currentTime.getReal() + timeAdvance();
 		Event<AtomicModel> event = Event.builder(new Time(t, 0), "deltaInternal", this).build();
-		scheduler.put(event);*/
+		scheduler.put(event);
 	}
 
 	public void deltaInternal(){
-		/*for (O out : outputs){
-			Event<AtomicModel> event = Event.builder(currentTime, "deltaExternal", this).addParameter(lambda()).build();
+		state[0] = state[1];
+		state[1] = bits.get(0);
+		for (O out : outputs){
+			Event<AtomicModel> event = Event.builder(currentTime, "deltaExternal", out).addParameter(lambda()).build();
 			scheduler.put(event);
-		}*/
+		}
 	}
 
 	public void deltaConfluent(boolean x){

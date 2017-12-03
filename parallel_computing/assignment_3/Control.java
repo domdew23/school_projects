@@ -15,7 +15,7 @@ public class Control {
 
 		for (int i = 0; i < Settings.WIDTH; i++){
 			for (int j = 0; j < Settings.HEIGHT; j++){
-				Region r = new Region(Settings.C1, Settings.C2, Settings.C3, i, j);
+				Region r = new Region(i, j);
 				alloy[i][j] = r;
 				r.setTemp(0.0);
 			}
@@ -28,7 +28,7 @@ public class Control {
 		return alloy;
 	}
 
-	public synchronized static void updateNeighbors(Region[][] alloy){
+	public static void updateNeighbors(Region[][] alloy){
 		for (int i = 0; i < Settings.WIDTH; i++){
 			for (int j = 0; j < Settings.HEIGHT; j++){
 				Region left=null,top=null,right=null,bottom=null;

@@ -58,7 +58,6 @@ public class main {
 		createCouples(xor1, xor2, memoryModel, network);
 		init(sc, scheduler, network, currentTime);
 		System.out.println(scheduler);
-		int c = 1;
 		while (!(scheduler.isEmpty())){
 			System.out.println("Global time: " + currentTime.getReal());
 			Event<AtomicModel> event = scheduler.pull();
@@ -72,8 +71,6 @@ public class main {
 				execute(event, model, network);
 			}
 			System.out.println("------------------------\n" + scheduler);
-			if (c==4){return;}
-			c++;
 		}
 	}
 
@@ -103,10 +100,10 @@ public class main {
 		xor1.addInput(network);
 		xor1.addOutput(xor2);
 
-		xor2.addInput(xor1);
 		xor2.addInput(memModel);
-		xor2.addOutput(memModel);
+		xor2.addInput(xor1);
 		xor2.addOutput(network);
+		xor2.addOutput(memModel);
 
 		memModel.addInput(xor2);
 		memModel.addOutput(xor2);
