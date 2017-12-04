@@ -60,11 +60,8 @@ public class Interior extends Tree {
 	}
 
 	public void reinitialize(){
-		// get ready for next iteration of the computations
-		// get same threads ready
 		Region[][] alloy;
 		for (int i = 0; i < quads.length; i++){
-
 		}
 	}
 

@@ -17,7 +17,6 @@ public class Worker implements Runnable {
 		this.synchPoint = barrier;
 		this.myPart = null;
 		this.running = true;
-		//this.lock = new Object();
 	}
 
 	public void run(){
@@ -26,7 +25,6 @@ public class Worker implements Runnable {
 				lock.lock();
 				try {
 					while (!wasSignalled){
-						//System.out.println(Thread.currentThread().getName() + " waiting...");
 						notReady.await();
 					}
 					wasSignalled = false;
@@ -35,7 +33,6 @@ public class Worker implements Runnable {
 				}
 				section.compute(); // returns its parts of the alloy
 				Merger.addPart(myPart);
-				//System.out.println(Thread.currentThread().getName() + " added my part");
 				try {
 					synchPoint.await();
 				} catch (BrokenBarrierException e){

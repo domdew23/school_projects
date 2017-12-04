@@ -36,15 +36,9 @@ public class GraphicsEngine extends Canvas implements Runnable{
 	}
 
 	public void run(){
-		//try {Thread.sleep(1000);}catch(InterruptedException e){}
 		while (Settings.RUNNING){
-			update();
 			render();
 		}
-	}
-
-	public void update(){
-		// buffer - temporary place for storage
 	}
 
 	public void render(){
@@ -54,21 +48,14 @@ public class GraphicsEngine extends Canvas implements Runnable{
 			return;
 		}
 
-		screen.render();
-		for (int i = 0; i < pixels.length; i++){
-			pixels[i] = screen.pixels[i];
-		}
-
 		Graphics g = bs.getDrawGraphics();
 		for (int i = 0; i < Settings.WIDTH; i++){
 			for (int j = 0; j < Settings.HEIGHT; j++){
 				draw(g, i, j);
 			}
 		}
-		//g.drawImage(image, 0, 0, Settings.WIDTH, Settings.HEIGHT, null);
 		g.dispose();
 		bs.show();
-
 	}
 
 	private void draw(Graphics g, int i, int j){
@@ -76,9 +63,6 @@ public class GraphicsEngine extends Canvas implements Runnable{
 		while (r == null){
 			r = Merger.getUpdatedAlloy()[i][j];
 		}
-		//System.out.println("hi");
-		//Region r = Control.A[i][j];
-		//r.calcRGB();
 		int red = (int) Math.round(r.red);
 		int green = (int) Math.round(r.green);
 		int blue = (int) Math.round(r.blue);

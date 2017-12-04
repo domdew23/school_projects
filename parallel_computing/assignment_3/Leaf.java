@@ -19,7 +19,6 @@ public class Leaf extends Tree {
 	}
 
 	public void compute(){
-		//System.out.println(Thread.currentThread().getName() + " step: " + steps);
 		boolean AtoB = (steps++ % 2) == 0;
 		Region[][] a = (AtoB) ? A : B;
 		Region[][] b = (AtoB) ? B : A;
@@ -33,7 +32,7 @@ public class Leaf extends Tree {
 		}
 		myWorker.setPart(b);
 		maxDiff = md;
-		Control.updateNeighbors(b);
+		//Control.updateNeighbors(b);
 	}
 
 	public void reset(){
