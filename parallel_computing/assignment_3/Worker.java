@@ -12,6 +12,7 @@ public class Worker implements Runnable {
 	Lock lock = new ReentrantLock();
 	Condition notReady = lock.newCondition();
 	boolean wasSignalled = false;
+
 	public Worker(CyclicBarrier barrier){
 		this.section = null;
 		this.synchPoint = barrier;
@@ -32,7 +33,6 @@ public class Worker implements Runnable {
 					lock.unlock();
 				}
 				section.compute(); // returns its parts of the alloy
-				Merger.addPart(myPart);
 				try {
 					synchPoint.await();
 				} catch (BrokenBarrierException e){
@@ -45,7 +45,6 @@ public class Worker implements Runnable {
 	}
 
 	public void wakeUp(Tree section){
-		
 		lock.lock();
 		try {
 			wasSignalled = true;
@@ -63,6 +62,7 @@ public class Worker implements Runnable {
 
 	public void setPart(Region[][] part){
 		myPart = part;
+		//Merger.addPart(myPart);
 	}
 
 	public void printPart(){

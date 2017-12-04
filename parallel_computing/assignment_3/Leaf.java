@@ -27,16 +27,18 @@ public class Leaf extends Tree {
 		for (int i = loCol; i < hiCol; i++){
 			for (int j = loRow; j < hiRow; j++){
 				b[i][j] = a[i][j].compute();
-				md = Math.max(md, Math.abs(b[i][j].getTemp() - a[i][j].getTemp()));
+				double diff = b[i][j].getRGB() - a[i][j].getRGB();
+				md = Math.max(md, Math.abs(diff));
 			}
 		}
-		myWorker.setPart(b);
+		//myWorker.setPart(b);
+		Merger.addPart(b);
 		maxDiff = md;
 		//Control.updateNeighbors(b);
 	}
 
 	public void reset(){
-		//maxDiff = 0.0;
+		maxDiff = 0.0;
 	}
 
 	public void setWorker(Worker w){

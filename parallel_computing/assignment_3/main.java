@@ -14,7 +14,7 @@ public class main{
 
 		jacobi.start();
 		graphicsEngine.start();
-		run(jacobi);
+		//run(jacobi);
 	}
 
 	private static void run(Jacobi jacobi){
@@ -22,6 +22,7 @@ public class main{
 		while (true){
 			if (time % 1000 == 0){
 				System.out.println("Maxdiff: " + jacobi.root.maxDiff);
+				//System.out.println(Merger.getUpdatedAlloy()[2][2]);
 			}
 			time = System.currentTimeMillis();	
 		}

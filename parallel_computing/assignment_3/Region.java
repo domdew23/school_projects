@@ -3,9 +3,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public class Region{
 	
 	private double temp;
-	private double p1;
-	private double p2;
-	private double p3;
 	private double[] percentages;
 	private int x;
 	private int y;
@@ -28,19 +25,17 @@ public class Region{
 		this.red = 0;
 		this.green = 0;
 		this.blue = 0;
+		this.calcRGB();
 	}
 
 	public Region compute(){
 		boolean isTopLeft = (x == 0 && y == 0);
 		boolean isBottomRight = (x == Settings.WIDTH - 1 && y == Settings.HEIGHT - 1);
+		boolean tooBig = (temp >= 1000000000000000000.0);
 		
-		if (isTopLeft || isBottomRight || !(hasNonZeroNeighbor()) || Double.isInfinite(temp)){
+		if (isTopLeft || isBottomRight || !(hasNonZeroNeighbor()) || tooBig){
 			Region retVal = new Region(this.x, this.y);
-			if (Double.isInfinite(temp)){
-				retVal.setTemp(100000.0);
-			} else {
-				retVal.setTemp(this.temp);
-			}
+			retVal.setTemp(this.temp);
 			retVal.calcRGB();
 			return retVal;
 		}
@@ -56,7 +51,7 @@ public class Region{
 				}
 			}
 			tmpTotal *= Settings.METALS[i];
-			total /= neighborCount;
+			tmpTotal /= neighborCount;
 			total += tmpTotal;
 		}
 
@@ -105,12 +100,12 @@ public class Region{
 		//temp = temp + 273.15;
 		//temp = temp/10;
 
-    	if (temp > 10){ 
+    	if (temp > 100){ 
 	       	red = 255; 
 	        green = temp;
 	        green = 9.4708025861 * Math.log(green) - 16.1195681661;
         	
-        	if (temp >= 19){
+        	if (temp >= 10){
             	blue = 0;
         	} else {
            		blue = temp-1;
@@ -118,10 +113,10 @@ public class Region{
         	}
     	} else {
 	        red = temp - 6;
-	        red = 60.698727446 * Math.pow(red, -0.1332047592);
+	        red = 30.698727446 * Math.pow(red, -0.1332047592);
 	        
 	        green = temp - 6;
-	        green = 60.1221695283 * Math.pow(green, -0.0755148492 );
+	        green = 30.1221695283 * Math.pow(green, -0.0755148492 );
 
 	        blue = 255;
     	}
@@ -145,23 +140,28 @@ public class Region{
     	}
 	}
 
+	public int getRGB(){
+		return (int) Math.round(red + green + blue);
+	}
+
 	private void init(){
+		double p1, p2, p3;
 		if (ThreadLocalRandom.current().nextDouble(1.0) < .5){
-			this.p1 = (Settings.C1 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
+			p1 = (Settings.C1 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
 		} else {
-			this.p1 = (Settings.C1 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
+			p1 = (Settings.C1 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
 		}
 
 		if (ThreadLocalRandom.current().nextDouble(1.0) < .5){
-			this.p2 = (Settings.C2 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
+			p2 = (Settings.C2 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
 		} else {
-			this.p2 = (Settings.C2 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
+			p2 = (Settings.C2 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
 		}
 
 		if (ThreadLocalRandom.current().nextDouble(1.0) < .5){
-			this.p3 = (Settings.C3 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
+			p3 = (Settings.C3 * ThreadLocalRandom.current().nextDouble(.75, 1.0));
 		} else {
-			this.p3 = (Settings.C3 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
+			p3 = (Settings.C3 * ThreadLocalRandom.current().nextDouble(1.0, 1.25));
 		}
 		percentages[0] = p1;
 		percentages[1] = p2;

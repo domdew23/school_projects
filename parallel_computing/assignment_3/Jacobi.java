@@ -13,9 +13,11 @@ public class Jacobi implements Runnable {
 			root.compute();
 			if (root.maxDiff < EPSILON){
 				System.out.println("Converged.");
-				return;
+				Settings.RUNNING = false;
+				break;
 			}
 		}
+		stop();
 	}
 
 	public synchronized void start(){

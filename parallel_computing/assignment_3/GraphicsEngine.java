@@ -13,13 +13,8 @@ public class GraphicsEngine extends Canvas implements Runnable{
 	private Thread thread;
 	private JFrame frame;
 	Dimension size = new Dimension(Settings.WIDTH*Settings.SCALE, Settings.HEIGHT*Settings.SCALE);
-	BufferedImage image = new BufferedImage(Settings.WIDTH, Settings.HEIGHT, BufferedImage.TYPE_INT_RGB);
-	private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-
-	private Screen screen;
 
 	public GraphicsEngine(){
-		screen = new Screen(Settings.WIDTH, Settings.HEIGHT);
 		init();
 	}
 
@@ -31,14 +26,23 @@ public class GraphicsEngine extends Canvas implements Runnable{
 		frame.add(this);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setBackground(Color.BLUE);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
 
 	public void run(){
+		long lastTime = System.currentTimeMillis();
+		double delta = 0;
+		long now = 0;
 		while (Settings.RUNNING){
 			render();
+			now = System.currentTimeMillis();
+			delta = (now - lastTime);
+			System.out.println("Loop took: {" + delta + "} milliseconds.");
+			lastTime = now;
 		}
+		stop();
 	}
 
 	public void render(){
@@ -59,9 +63,10 @@ public class GraphicsEngine extends Canvas implements Runnable{
 	}
 
 	private void draw(Graphics g, int i, int j){
-		Region r = null;
-		while (r == null){
-			r = Merger.getUpdatedAlloy()[i][j];
+		Region r = Merger.getUpdatedAlloy()[i][j];
+		if (r == null){
+			//r = Merger.getUpdatedAlloy()[i][j];
+			r = Control.getPreviousVersion()[i][j];
 		}
 		int red = (int) Math.round(r.red);
 		int green = (int) Math.round(r.green);

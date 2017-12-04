@@ -1,6 +1,7 @@
 public class Control {
 	public static Region[][] A;
 	public static Region[][] B;
+	public static Region[][] prevVersion;
 	public static double C1;
 	public static double C2;
 	public static double C3;
@@ -8,6 +9,7 @@ public class Control {
 	public Control(){
 		this.A = initAlloy();
 		this.B = new Region[Settings.WIDTH][Settings.HEIGHT];
+		this.prevVersion = A;
 	}
 
 	private Region[][] initAlloy(){
@@ -17,12 +19,16 @@ public class Control {
 			for (int j = 0; j < Settings.HEIGHT; j++){
 				Region r = new Region(i, j);
 				alloy[i][j] = r;
-				r.setTemp(0.0);
+				if (i == 0 && j == 0){
+					r.setTemp(Settings.S);
+				} else if (i == Settings.WIDTH-1 && j == Settings.HEIGHT-1){
+					r.setTemp(Settings.T);
+				} else {
+					r.setTemp(0.0);
+				}
+				r.calcRGB();
 			}
 		}
-
-		alloy[0][0].setTemp(Settings.S);
-		alloy[Settings.WIDTH-1][Settings.HEIGHT-1].setTemp(Settings.T);
 		
 		updateNeighbors(alloy);
 		return alloy;
@@ -50,5 +56,9 @@ public class Control {
 				alloy[i][j].setNeighbors(left, top, right, bottom);
 			}
 		}
+	}
+
+	public static Region[][] getPreviousVersion(){
+		return prevVersion;
 	}
 }
