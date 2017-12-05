@@ -8,7 +8,7 @@ public class Leaf extends Tree {
 	public Region[][] A;
 	public Region[][] B;
 
-	Leaf(Region[][] A, Region[][] B, int loRow, int hiRow, int loCol, int hiCol){
+	public Leaf(Region[][] A, Region[][] B, int loRow, int hiRow, int loCol, int hiCol){
 		this.A = A;
 		this.B = B;
 		this.loRow = loRow;
@@ -32,13 +32,10 @@ public class Leaf extends Tree {
 			}
 		}
 		//myWorker.setPart(b);
-		Merger.addPart(b);
+		//Merger.addPart(b);
 		maxDiff = md;
-		//Control.updateNeighbors(b);
-	}
-
-	public void reset(){
-		maxDiff = 0.0;
+		Control.addPart(b);
+		Control.updateNeighbors(b);
 	}
 
 	public void setWorker(Worker w){

@@ -1,7 +1,7 @@
 public class Control {
 	public static Region[][] A;
 	public static Region[][] B;
-	public static Region[][] prevVersion;
+	public static Region[][] updatedAlloy;
 	public static double C1;
 	public static double C2;
 	public static double C3;
@@ -9,7 +9,7 @@ public class Control {
 	public Control(){
 		this.A = initAlloy();
 		this.B = new Region[Settings.WIDTH][Settings.HEIGHT];
-		this.prevVersion = A;
+		this.updatedAlloy = A;
 	}
 
 	private Region[][] initAlloy(){
@@ -29,7 +29,6 @@ public class Control {
 				r.calcRGB();
 			}
 		}
-		
 		updateNeighbors(alloy);
 		return alloy;
 	}
@@ -37,6 +36,9 @@ public class Control {
 	public static void updateNeighbors(Region[][] alloy){
 		for (int i = 0; i < Settings.WIDTH; i++){
 			for (int j = 0; j < Settings.HEIGHT; j++){
+				if (alloy[i][j] == null){
+					continue;
+				}
 				Region left=null,top=null,right=null,bottom=null;
 				if (i-1 >= 0){
 					left = alloy[i-1][j];
@@ -50,15 +52,22 @@ public class Control {
 				if (j+1 < Settings.HEIGHT){
 					bottom = alloy[i][j+1];
 				}
-				if (alloy[i][j] == null){
-					System.out.println("i was null: " + " i: " + i + " | j: " + j);	
-				}
 				alloy[i][j].setNeighbors(left, top, right, bottom);
 			}
 		}
 	}
 
-	public static Region[][] getPreviousVersion(){
-		return prevVersion;
+	public static void addPart(Region[][] part){
+		for (int i = 0; i < Settings.WIDTH; i++){
+			for (int j = 0; j < Settings.HEIGHT; j++){
+				if (part[i][j] != null){
+					updatedAlloy[i][j] = part[i][j];
+				}
+			}
+		}
+	}
+
+	public synchronized static Region[][] getUpdatedAlloy(){
+		return updatedAlloy;
 	}
 }

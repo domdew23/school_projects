@@ -10,20 +10,5 @@ public class Merger implements Runnable {
 
 	public void run(){
 		Control.updateNeighbors(updatedAlloy);
-		Control.prevVersion = updatedAlloy;
-	}
-
-	public static void addPart(Region[][] part){
-		for (int i = 0; i < Settings.WIDTH; i++){
-			for (int j = 0; j < Settings.HEIGHT; j++){
-				if (part[i][j] != null){
-					updatedAlloy[i][j] = part[i][j];
-				}
-			}
-		}
-	}
-
-	public synchronized static Region[][] getUpdatedAlloy(){
-		return updatedAlloy;
 	}
 }

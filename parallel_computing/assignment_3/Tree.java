@@ -1,9 +1,5 @@
-abstract class Tree {
+import java.util.concurrent.RecursiveAction;
+
+abstract class Tree extends RecursiveAction {
 	volatile double maxDiff;
-	public void compute(){
-	}
-
-	public void setWorker(Worker w){}
-
-	public void reset(){}
 }

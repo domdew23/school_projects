@@ -14,7 +14,7 @@ public class GraphicsEngine extends Canvas implements Runnable{
 	private JFrame frame;
 	Dimension size = new Dimension(Settings.WIDTH*Settings.SCALE, Settings.HEIGHT*Settings.SCALE);
 
-	public GraphicsEngine(){
+	public GraphicsEngine(Control control){
 		init();
 	}
 
@@ -32,15 +32,8 @@ public class GraphicsEngine extends Canvas implements Runnable{
 	}
 
 	public void run(){
-		long lastTime = System.currentTimeMillis();
-		double delta = 0;
-		long now = 0;
 		while (Settings.RUNNING){
 			render();
-			now = System.currentTimeMillis();
-			delta = (now - lastTime);
-			System.out.println("Loop took: {" + delta + "} milliseconds.");
-			lastTime = now;
 		}
 		stop();
 	}
@@ -63,10 +56,9 @@ public class GraphicsEngine extends Canvas implements Runnable{
 	}
 
 	private void draw(Graphics g, int i, int j){
-		Region r = Merger.getUpdatedAlloy()[i][j];
-		if (r == null){
-			//r = Merger.getUpdatedAlloy()[i][j];
-			r = Control.getPreviousVersion()[i][j];
+		Region r = Control.getUpdatedAlloy()[i][j];
+		while (r == null){
+			r = Control.getUpdatedAlloy()[i][j];
 		}
 		int red = (int) Math.round(r.red);
 		int green = (int) Math.round(r.green);

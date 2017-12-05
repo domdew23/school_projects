@@ -32,7 +32,7 @@ public class Worker implements Runnable {
 				} finally {
 					lock.unlock();
 				}
-				section.compute(); // returns its parts of the alloy
+				//section.compute(); // returns its parts of the alloy
 				try {
 					synchPoint.await();
 				} catch (BrokenBarrierException e){
@@ -52,7 +52,7 @@ public class Worker implements Runnable {
 		} finally {
 			lock.unlock();
 			this.section = section;
-			this.section.setWorker(this);
+			//this.section.setWorker(this);
 		}
 	}
 
