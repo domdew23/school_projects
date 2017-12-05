@@ -1,17 +1,18 @@
 public class main{
 	public static void main(String[] args){
-		/* two times wide as high
-		parameters: S, T, C1, C2, C3, dimensions, threshold 
-		calculaate final temperature for each region of the alloy */
+		Settings settings;
 		if (args.length < 1){
-			System.out.println("Please supply an input file.");
+			settings = new Settings();
+		} else if (args.length == 1){
+			settings = new Settings(args[0]);
+		} else {
+			System.out.println("Unexpected amount of arguments.");
 			return;
 		}
-		Settings settings = new Settings(args[0]);
 		Control control = new Control();
 		GraphicsEngine graphicsEngine = new GraphicsEngine(control);
 		Jacobi jacobi = new Jacobi(control.A, control.B, 0, Settings.HEIGHT, 0, Settings.WIDTH, Settings.MAX_STEPS, Settings.THRESHOLD);
-		//jacobi.start();
+
 		graphicsEngine.start();
 		jacobi.invoke();
 		//run(jacobi);

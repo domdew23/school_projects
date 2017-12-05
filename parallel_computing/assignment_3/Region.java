@@ -31,9 +31,8 @@ public class Region{
 	public Region compute(){
 		boolean isTopLeft = (x == 0 && y == 0);
 		boolean isBottomRight = (x == Settings.WIDTH - 1 && y == Settings.HEIGHT - 1);
-		boolean tooBig = (temp >= 1000000000000000000.0);
 		
-		if (isTopLeft || isBottomRight || !(hasNonZeroNeighbor()) || tooBig){
+		if (isTopLeft || isBottomRight || !(hasNonZeroNeighbor())){
 			Region retVal = new Region(this.x, this.y);
 			retVal.setTemp(this.temp);
 			retVal.calcRGB();
@@ -177,6 +176,11 @@ public class Region{
 	}
 
 	public void setTemp(double temp){
+		boolean tooBig = Double.isNaN(temp);
+		if (tooBig){
+			this.temp = Double.MAX_VALUE;
+			return;
+		}
 		this.temp = (temp * ThreadLocalRandom.current().nextDouble(.5, 2.0));
 	}
 

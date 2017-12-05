@@ -4,7 +4,6 @@ public class Leaf extends Tree {
 	private int hiRow;
 	private int hiCol;
 	private int steps;
-	private Worker myWorker;
 	public Region[][] A;
 	public Region[][] B;
 
@@ -27,19 +26,13 @@ public class Leaf extends Tree {
 		for (int i = loCol; i < hiCol; i++){
 			for (int j = loRow; j < hiRow; j++){
 				b[i][j] = a[i][j].compute();
-				double diff = b[i][j].getRGB() - a[i][j].getRGB();
+				double diff = b[i][j].getTemp() - a[i][j].getTemp();
 				md = Math.max(md, Math.abs(diff));
 			}
 		}
-		//myWorker.setPart(b);
-		//Merger.addPart(b);
 		maxDiff = md;
 		Control.addPart(b);
 		Control.updateNeighbors(b);
-	}
-
-	public void setWorker(Worker w){
-		this.myWorker = w;
 	}
 
 	public String toString(){

@@ -4,8 +4,8 @@ import java.io.FileNotFoundException;
 
 public class Settings {
 	public static double C1, C2, C3, S, T;
-	public static int WIDTH, HEIGHT, SCALE, THRESHOLD, MAX_STEPS;
-	public static double[] METALS;
+	public static int WIDTH, HEIGHT, SCALE, THRESHOLD, MAX_STEPS, THRESVAL;
+	public static double[] METALS = new double[3];
 	public static boolean RUNNING;
 	private File file = null;
 	private Scanner sc = null;
@@ -21,20 +21,46 @@ public class Settings {
 			System.exit(0);
 		}
 		
-		METALS = new double[3];
 		C1 = sc.nextDouble();
 		C2 = sc.nextDouble();
 		C3 = sc.nextDouble();
-		METALS[0] = C1;
-		METALS[1] = C2;
-		METALS[2] = C3;
 		S = sc.nextDouble();
 		T = sc.nextDouble();
 		WIDTH = sc.nextInt();
 		SCALE = sc.nextInt();
+		THRESVAL = sc.nextInt();
+		finish();
+	}
+
+	public Settings(){
+		sc = new Scanner(System.in);
+		
+		System.out.println("C1:");
+		C1 = sc.nextDouble();
+		System.out.println("C2:");
+		C2 = sc.nextDouble();
+		System.out.println("C3:");
+		C3 = sc.nextDouble();
+		System.out.println("S:");
+		S = sc.nextDouble();
+		System.out.println("T:");
+		T = sc.nextDouble();
+		System.out.println("Width:");
+		WIDTH = sc.nextInt();
+		System.out.println("Scale:");
+		SCALE = sc.nextInt();
+		System.out.println("Threshold:");
+		THRESVAL = sc.nextInt();
+		finish();
+	}
+
+	private void finish(){
+		METALS[0] = C1;
+		METALS[1] = C2;
+		METALS[2] = C3;
 		HEIGHT = WIDTH/2;
-		THRESHOLD = (WIDTH * HEIGHT)/4;
+		THRESHOLD = (WIDTH * HEIGHT)/THRESVAL;
 		MAX_STEPS = Integer.MAX_VALUE;
-		RUNNING = true;
+		RUNNING = true;	
 	}
 }

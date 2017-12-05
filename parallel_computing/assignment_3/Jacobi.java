@@ -1,9 +1,8 @@
 import java.util.concurrent.RecursiveAction;
 
-public class Jacobi extends RecursiveAction implements Runnable{
+public class Jacobi extends RecursiveAction {
 	Tree root;
 	int maxSteps;
-	Thread thread;
 	double EPSILON = 0.001;
 	
 	Jacobi(Region[][] A, Region[][] B, int firstRow, int lastRow, int firstCol, int lastCol, int maxSteps, int cellsPerLeaf){
@@ -13,48 +12,15 @@ public class Jacobi extends RecursiveAction implements Runnable{
 	}
 
 	public void compute(){
-		long lastTime = System.currentTimeMillis();
-		double delta = 0;
-		long now = 0;
 		for (int i = 0; i < maxSteps; i++){
-			now = System.currentTimeMillis();
 			root.invoke();
-			lastTime = System.currentTimeMillis();
-			delta = (lastTime - now);
-			//System.out.println("Step took: {" + delta + "} milliseconds.");
-			System.out.println(root.maxDiff);
-			if (root.maxDiff < EPSILON){
+			if (root.maxDiff < EPSILON || Double.isNaN(root.maxDiff)){
 				Settings.RUNNING = false;
 				System.out.println("Converged.");
 				return;			
 			} else {
 				root.reinitialize();
 			}
-		}
-	}
-
-	public void run(){
-		for (int i = 0; i < maxSteps; i++){
-			//root.compute();
-			if (root.maxDiff < EPSILON){
-				Settings.RUNNING = false;
-				System.out.println("Converged.");
-				break;
-			}
-		}
-		stop();
-	}
-
-	public synchronized void start(){
-		thread = new Thread(this, "Jacobi");
-		thread.start();
-	}
-
-	public synchronized void stop(){
-		try {
-			thread.join();
-		} catch (InterruptedException e){
-			e.printStackTrace();
 		}
 	}
 
