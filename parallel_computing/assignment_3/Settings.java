@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Settings {
-	public static double C1, C2, C3, S, T;
+	public static double C1, C2, C3, S, T, MAX;
 	public static int WIDTH, HEIGHT, SCALE, THRESHOLD, MAX_STEPS, THRESVAL;
 	public static double[] METALS = new double[3];
 	public static boolean RUNNING;
@@ -61,6 +61,7 @@ public class Settings {
 		HEIGHT = WIDTH/2;
 		THRESHOLD = (WIDTH * HEIGHT)/THRESVAL;
 		MAX_STEPS = Integer.MAX_VALUE;
+		MAX = Math.max(S,T);
 		RUNNING = true;	
 	}
 }

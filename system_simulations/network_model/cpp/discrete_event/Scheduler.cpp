@@ -3,6 +3,7 @@
 #include "Event.cpp"
 #include "Network.cpp"
 #include "AtomicModel.cpp"
+#include <cmath>
 #include <iostream>
 #include <vector>
 #include <string>
@@ -17,9 +18,6 @@ class Scheduler {
 		}
 
 		bool put(Event<T>* e){
-			//cout << "adding event: ";
-			//e->print();
-			//cout << " | size: " << size << endl;
 			events.push_back(e);
 			size++;
 			check(size);
@@ -98,16 +96,12 @@ class Scheduler {
 					cout << endl;
 				}
 			}
-			/*for (int i = 1; i <= size; i++){
-				cout << "Event " << i << ": ";
-				events[i]->print();
-				cout << endl;
-			}*/
 		}
 
 	private:
 		int size = 0;
 		int DEFAULT_INIT_SIZE = 50;
+		double EPSLION = 0.001;
 		vector<Event<T>*> events;
 
 		void check(int k){
@@ -146,7 +140,8 @@ class Scheduler {
 		void check_merge(){
 			for (Event<T>* e : events){
 				if (e != NULL && e != peek()){
-					if (peek()->time->get_real() == e->time->get_real() && peek()->obj == e->obj){
+					double diff = peek()->time->get_real() - e->time->get_real();
+					if (abs(diff) < EPSLION && peek()->obj == e->obj){
 						merge(peek(), e);
 						return;
 					}

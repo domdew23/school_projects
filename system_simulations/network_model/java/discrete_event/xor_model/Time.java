@@ -1,21 +1,23 @@
+import java.math.BigDecimal;
+
 public class Time {
-	private double real;
+	private BigDecimal real;
 	private int discrete;
 
-	public Time(double real, int discrete){
+	public Time(BigDecimal real, int discrete){
 		this.real = real;
 		this.discrete = discrete;
 	}
 
 	public Time advance(Time interval){
-		if (!(interval.real == 0.0)){
-			return new Time(real + interval.real, 0); // go to the right
+		if (!(interval.real.equals(0.0))){
+			return new Time(real.add(interval.real), 0); // go to the right
 		} else {
 			return new Time(real, discrete + interval.discrete); // go up
 		}
 	}
 
-	public double getReal(){
+	public BigDecimal getReal(){
 		return real;
 	}
 

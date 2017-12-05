@@ -1,5 +1,6 @@
 /* Component */
 import java.util.ArrayList;
+import java.math.BigDecimal;
 
 public interface AtomicModel<I,O>{
 
@@ -11,7 +12,7 @@ public interface AtomicModel<I,O>{
 
 	public void deltaConfluent(boolean x);
 
-	public int timeAdvance();
+	public BigDecimal timeAdvance();
 
 	public void addInput(I input);
 

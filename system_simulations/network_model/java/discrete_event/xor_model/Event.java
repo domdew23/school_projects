@@ -15,8 +15,7 @@ public class Event<T> implements Comparable<Event<T>>{
 	}
 
 	public int compareTo(Event<T> other){
-		int retVal = (time.getReal() > other.time.getReal()) ? 1 : 0;
-		return retVal;
+		return time.getReal().compareTo(other.time.getReal());
 	}
 
 	public String toString(){
@@ -34,24 +33,12 @@ public class Event<T> implements Comparable<Event<T>>{
 			kind = k;
 			obj = o;
 			x = false;
-			//X = new boolean[2];
 		}
-
-		/*public EventBuilder addParameter(boolean[] X){
-			this.X = X;
-			return this;
-		}*/
 
 		public EventBuilder addParameter(boolean x){
 			this.x = x;
 			return this;
 		}
-
-		/*public EventBuilder addParameter(boolean b1, boolean b2){
-			X[0] = b1;
-			X[1] = b2;
-			return this;
-		}*/
 
 		public Event build(){
 			Event<T> event = new Event<T>();

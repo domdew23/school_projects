@@ -31,8 +31,9 @@ public class Region{
 	public Region compute(){
 		boolean isTopLeft = (x == 0 && y == 0);
 		boolean isBottomRight = (x == Settings.WIDTH - 1 && y == Settings.HEIGHT - 1);
-		
-		if (isTopLeft || isBottomRight || !(hasNonZeroNeighbor())){
+		boolean tooBig = (Double.isInfinite(temp));
+
+		if (isTopLeft || isBottomRight || !(hasNonZeroNeighbor()) || tooBig){
 			Region retVal = new Region(this.x, this.y);
 			retVal.setTemp(this.temp);
 			retVal.calcRGB();
@@ -96,15 +97,12 @@ public class Region{
 	}
 
 	public void calcRGB(){
-		//temp = temp + 273.15;
-		//temp = temp/10;
-
-    	if (temp > 100){ 
+    	if (temp > 1000){ 
 	       	red = 255; 
 	        green = temp;
 	        green = 9.4708025861 * Math.log(green) - 16.1195681661;
         	
-        	if (temp >= 10){
+        	if (temp >= 100){
             	blue = 0;
         	} else {
            		blue = temp-1;
@@ -176,7 +174,7 @@ public class Region{
 	}
 
 	public void setTemp(double temp){
-		boolean tooBig = Double.isNaN(temp);
+		boolean tooBig = Double.isInfinite(temp);
 		if (tooBig){
 			this.temp = Double.MAX_VALUE;
 			return;

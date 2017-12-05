@@ -26,7 +26,6 @@ public class GraphicsEngine extends Canvas implements Runnable{
 		frame.add(this);
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setBackground(Color.BLUE);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
@@ -63,6 +62,7 @@ public class GraphicsEngine extends Canvas implements Runnable{
 		int red = (int) Math.round(r.red);
 		int green = (int) Math.round(r.green);
 		int blue = (int) Math.round(r.blue);
+		//if (i % 100 == 0) System.out.println("r: " + red + " g: " + green + " b: " + blue);
 		g.setColor(new Color(red, green, blue));
 		g.fillRect((i*Settings.SCALE), (j*Settings.SCALE), Settings.SCALE, Settings.SCALE);	
 	}

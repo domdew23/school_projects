@@ -14,8 +14,6 @@ using namespace std;
 template<class I, class O>
 class Machine : public AtomicModel {
 	public:
-		//Time* last_time;
-
 		Machine(double t, string name, Scheduler<AtomicModel>* scheduler){
 			this->t = t;
 			this->name = name;
@@ -23,8 +21,6 @@ class Machine : public AtomicModel {
 			this->p = 0;
 			this->last_time = new Time(0.0, 0);
 			this->scheduler = scheduler;
-			//inputs.push_back(input);
-			//outputs.push_back(output);
 		}
 
 		int lambda(){
@@ -80,7 +76,6 @@ class Machine : public AtomicModel {
 
 			double x = current_time->get_real() + time_advance();
 			Event<AtomicModel>* output_event = new Event<AtomicModel>(new Time(x,0), INTERNAL, this);
-			//cout << "EVENT: "; output_event->print();
 			scheduler->put(output_event);
 
 			for (O* output : outputs){
@@ -89,7 +84,6 @@ class Machine : public AtomicModel {
 				} else {
 					double x = current_time->get_real();
 					Event<O>* event = new Event<O>(new Time(x, 0), EXTERNAL, output, lambda());
-					//cout << "EVENT2: "; event->print();
 					scheduler->put((Event<AtomicModel>*) event);
 				}
 			}

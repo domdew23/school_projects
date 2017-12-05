@@ -1,6 +1,7 @@
 import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 
 public class main {
 	public static void main(String[] args){
@@ -53,7 +54,7 @@ public class main {
 		
 		Network<AtomicModel> network = Network.builder().addComponent(xor1).addComponent(xor2).addComponent(memoryModel).addInput(xor1).addOutput(xor2).build();
 
-		Time currentTime = new Time(0.0, 0);
+		Time currentTime = new Time(new BigDecimal(0.0), 0);
 		
 		createCouples(xor1, xor2, memoryModel, network);
 		init(sc, scheduler, network, currentTime);
@@ -61,7 +62,7 @@ public class main {
 		while (!(scheduler.isEmpty())){
 			System.out.println("Global time: " + currentTime.getReal());
 			Event<AtomicModel> event = scheduler.pull();
-			double e = event.time.getReal() - currentTime.getReal();
+			BigDecimal e = event.time.getReal().subtract(currentTime.getReal());
 			Time interval = new Time(e,1);
 			currentTime = currentTime.advance(interval);
 			XORModel.currentTime = currentTime;
@@ -117,7 +118,7 @@ public class main {
 		MemoryModel.currentTime = currentTime;
 
 		while (sc.hasNext()){
-			double time = sc.nextDouble();
+			BigDecimal time = new BigDecimal(sc.next());
 			int[] tmp = new int[2];
 			tmp[0] = sc.nextInt();
 			tmp[1] = sc.nextInt();

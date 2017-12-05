@@ -145,7 +145,7 @@ public class Scheduler<T>{
 	private void checkMerge(){
 		for (Event<T> e : events){
 			if (e != null && e != peek()){
-				if (peek().time.getReal() == e.time.getReal() && peek().obj == e.obj && (peek().kind == "deltaInternal" || e.kind == "deltaInternal")){
+				if (peek().time.getReal().equals(e.time.getReal()) && peek().obj == e.obj && (peek().kind == "deltaInternal" || e.kind == "deltaInternal")){
 					merge(peek(), e);
 				}	
 			}

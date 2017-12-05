@@ -1,5 +1,6 @@
 /* Leaf */
 import java.util.ArrayList;
+import java.math.BigDecimal;
 
 public class XORModel<I,O> implements AtomicModel<I,O>{
 	private boolean state;
@@ -21,27 +22,15 @@ public class XORModel<I,O> implements AtomicModel<I,O>{
 	}
 
 	public boolean lambda(){
-		//System.out.println("XOR" + id + " Output: " + ((state) ? 1 : 0));
 		return state;
 	}
 
-	/*public void delta(boolean[] X){
-		System.out.println("XOR" + id + " Input: " + ((X[0]) ? 1 : 0) + ((X[1]) ? 1 : 0));
-		state = (X[0] ^ X[1]);
-		System.out.println("XOR" + id + " State: " + ((state) ? 1 : 0) + "\n==================");
-	}*/
-
 	public void deltaExternal(boolean b){
-		// state = (X[0] ^ X[1]);
-		// has map of inputs
-		// memory model creates events for itself
-		System.out.println("size: " + bits.size());
 		if (bits.size() >= 2){
-			// interrupt
 			bits.clear();
 			bits.add(b);
 			scheduler.remove(scheduler.find("deltaInternal", this));
-			double t = currentTime.getReal() + timeAdvance();
+			BigDecimal t = currentTime.getReal().add(timeAdvance());
 			Event<AtomicModel> event = Event.builder(new Time(t, 0), "deltaInternal", this).build();
 			scheduler.put(event);
 		} else {
@@ -51,7 +40,7 @@ public class XORModel<I,O> implements AtomicModel<I,O>{
 				Event<AtomicModel> event = Event.builder(removedEvent.time, "deltaInternal", this).build();
 				scheduler.put(event);
 			} else {
-				double t = currentTime.getReal() + timeAdvance();
+				BigDecimal t = currentTime.getReal().add(timeAdvance());
 				Event<AtomicModel> event = Event.builder(new Time(t, 0), "deltaInternal", this).build();
 				scheduler.put(event);
 			}
@@ -78,30 +67,9 @@ public class XORModel<I,O> implements AtomicModel<I,O>{
 				scheduler.put(event);
 			}
 		}
-		// if both bits are not there by the time this executes have an error message for the user
-		/*boolean[] X = new boolean[2];
-		for (O out : outputs){
-			if (network.getOutputs().contains(this)){
-				System.out.println("Network output: " + lambda());
-				AtomicModel o = (AtomicModel) out;
-				AtomicModel one = (AtomicModel) o.getInputs().get(0);
-				X[0] = one.lambda();
-				Event<AtomicModel> event = Event.builder(currentTime, "deltaExternal", out).addParameter(X[0]).build();
-				scheduler.put(event);
-				return;
-			}
-			AtomicModel o = (AtomicModel) out;
-			AtomicModel one = (AtomicModel) o.getInputs().get(0);
-			AtomicModel two = (AtomicModel) o.getInputs().get(1);
-			X[0] = one.lambda();
-			X[1] = two.lambda();
-			Event<AtomicModel> event = Event.builder(currentTime, "deltaExternal", out).addParameter(X).build();
-			scheduler.put(event);
-		}*/
 	}
 
 	public void deltaConfluent(boolean x){
-		//deltaExternal(x);
 		bits.add(x);
 		deltaInternal();
 	}
@@ -118,8 +86,8 @@ public class XORModel<I,O> implements AtomicModel<I,O>{
 		return inputs;
 	}
 
-	public int timeAdvance(){
-		return 1;
+	public BigDecimal timeAdvance(){
+		return new BigDecimal(1.0);
 	}
 
 	public String toString(){

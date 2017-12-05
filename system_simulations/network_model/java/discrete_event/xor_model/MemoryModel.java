@@ -1,5 +1,6 @@
 /* Leaf */
 import java.util.ArrayList;
+import java.math.BigDecimal;
 
 public class MemoryModel<I,O> implements AtomicModel<I,O>{
 	private boolean[] state = new boolean[2];
@@ -18,8 +19,6 @@ public class MemoryModel<I,O> implements AtomicModel<I,O>{
 	}
 
 	public boolean lambda(){
-		//System.out.println("M Output: " + ((state[0] ^ state[1]) ? 1 : 0));
-		//System.out.println("==================");
 		return state[0];
 	}
 
@@ -32,7 +31,7 @@ public class MemoryModel<I,O> implements AtomicModel<I,O>{
 
 	public void deltaExternal(boolean x){
 		bits.add(x);
-		double t = currentTime.getReal() + timeAdvance();
+		BigDecimal t = currentTime.getReal().add(timeAdvance());
 		Event<AtomicModel> event = Event.builder(new Time(t, 0), "deltaInternal", this).build();
 		scheduler.put(event);
 	}
@@ -63,8 +62,8 @@ public class MemoryModel<I,O> implements AtomicModel<I,O>{
 		return inputs;
 	}
 
-	public int timeAdvance(){
-		return 1;
+	public BigDecimal timeAdvance(){
+		return new BigDecimal(1.0);
 	}
 
 	public String toString(){
