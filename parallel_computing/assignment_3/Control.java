@@ -71,7 +71,7 @@ public class Control {
 		MAX = m;
 	}
 
-	public synchronized static Region[][] getUpdatedAlloy(){
+	public static Region[][] getUpdatedAlloy(){
 		return updatedAlloy;
 	}
 }

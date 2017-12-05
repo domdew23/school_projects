@@ -8,13 +8,6 @@ import java.util.ArrayList;
 public class main {
 
 	public static void main(String[] args){
-		/* 
-		HW 6:
-		implement this in C++
-		make HW 3 discrete event (XOR model)
-		make this homework perfect, more generic
-		*/
-
 		if (args.length < 1){
 			System.out.println("Please supply an input file.");
 			return;
