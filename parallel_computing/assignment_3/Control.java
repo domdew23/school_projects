@@ -5,7 +5,6 @@ public class Control {
 	public static double C1;
 	public static double C2;
 	public static double C3;
-	public static double MAX;
 	
 	public Control(){
 		this.A = initAlloy();
@@ -64,11 +63,9 @@ public class Control {
 			for (int j = 0; j < Settings.HEIGHT; j++){
 				if (part[i][j] != null){
 					updatedAlloy[i][j] = part[i][j];
-					m = Math.max(m, part[i][j].getTemp());
 				}
 			}
 		}
-		MAX = m;
 	}
 
 	public static Region[][] getUpdatedAlloy(){

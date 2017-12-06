@@ -1,5 +1,4 @@
 import java.util.concurrent.ThreadLocalRandom;
-
 public class Region{
 	
 	private double temp;
@@ -28,19 +27,28 @@ public class Region{
 		this.calcRGB();
 	}
 
+	private void handleCorner(Region retVal, double cornerTemp){
+		retVal.temp = cornerTemp;
+		retVal.red = this.red;
+		retVal.green = this.green;
+		retVal.blue = this.blue;
+	}
+
 	public Region compute(){
 		boolean isTopLeft = (x == 0 && y == 0);
 		boolean isBottomRight = (x == Settings.WIDTH - 1 && y == Settings.HEIGHT - 1);
-		boolean tooBig = (temp >= Settings.MAX);
 
-		if (isTopLeft || isBottomRight || !(hasNonZeroNeighbor()) || tooBig){
+		if (isTopLeft){
 			Region retVal = new Region(this.x, this.y);
-			if (tooBig && !isTopLeft || !isBottomRight){
-				retVal.temp = this.temp;
-			} else {
-				retVal.setTemp(this.temp);
-			}
-			retVal.calcRGB();
+			handleCorner(retVal, Settings.S);
+			return retVal;
+		} else if (isBottomRight){
+			Region retVal = new Region(this.x, this.y);
+			handleCorner(retVal, Settings.T);
+			return retVal;
+		} else if (temp >= Settings.MAX){
+			Region retVal = new Region(this.x, this.y);
+			handleCorner(retVal, Settings.MAX);
 			return retVal;
 		}
 
@@ -55,9 +63,9 @@ public class Region{
 				}
 			}
 			tmpTotal *= Settings.METALS[i];
-			tmpTotal /= neighborCount;
 			total += tmpTotal;
 		}
+		total /= neighborCount;
 
 		Region retVal = new Region(this.x, this.y);
 		retVal.setTemp(total);
@@ -68,7 +76,7 @@ public class Region{
 	private boolean hasNonZeroNeighbor(){
 		for (int i = 0; i < neighbors.length; i++){
 			if (neighbors[i] != null){
-				if (neighbors[i].getTemp() != 0.0){
+				if (neighbors[i].getTemp() != 0){
 					return true;
 				}
 			}
@@ -100,16 +108,17 @@ public class Region{
 		}
 	}
 
-	public void calcRGB(){
-    	if (temp > Settings.MAX/200){ 
-	       	red = 255; 
-	        green = temp;
-	        green = 9.4708025861 * Math.log(green) - 16.1195681661;
+	public void calcRGB(){    	
+    	if (temp > Math.log(Settings.MAX) * 10){ 
+	       	red = 255;
+	       	green = temp;
+
+	       	green = 9.4708025861 * Math.log(green) - 16.1195681661;
         	
-        	if (temp >= Settings.MAX/400){
+        	if (temp >= Math.log(Settings.MAX)){
             	blue = 0;
         	} else {
-           		blue = temp-1;
+           		blue = temp;
             	blue = 13.5177312231 * Math.log(blue) - 30.0447927307;
         	}
     	} else {
@@ -145,6 +154,10 @@ public class Region{
 		return (int) Math.round(red + green + blue);
 	}
 
+	public String rgb(){
+		return ("R: " + red + " G: " + green + " B: " + blue);
+	}
+
 	private void init(){
 		double p1, p2, p3;
 		if (ThreadLocalRandom.current().nextDouble(1.0) < .5){
@@ -178,13 +191,11 @@ public class Region{
 	}
 
 	public void setTemp(double temp){
-		boolean tooBig = (temp >= Settings.MAX);
-		if (tooBig){
-			System.out.println("here: " + temp);
-			this.temp = Settings.MAX;
-			return;
+		if (ThreadLocalRandom.current().nextDouble() < .75){
+			this.temp = (temp * ThreadLocalRandom.current().nextDouble(1.1, 2.0));
+		} else {
+			this.temp = (temp * ThreadLocalRandom.current().nextDouble(.4, .9));
 		}
-		this.temp = (temp * ThreadLocalRandom.current().nextDouble(.5, 2.0));
 	}
 
 	public int getX(){
@@ -198,6 +209,7 @@ public class Region{
 	public String toString(){
 		int leftX=-1,leftY=-1,topX=-1,topY=-1,rightX=-1,rightY=-1,bottomX=-1,bottomY=-1;
 		double leftTemp=-1,topTemp=-1,rightTemp=-1,bottomTemp=-1;
+		
 		if (leftNeighbor != null){
 			leftX = leftNeighbor.getX();
 			leftY = leftNeighbor.getY();

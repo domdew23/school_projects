@@ -32,7 +32,6 @@ public class Leaf extends Tree {
 		}
 		Control.addPart(b);
 		Control.updateNeighbors(b);
-		//System.out.println(b[10][10]);
 		maxDiff = md;
 	}
 

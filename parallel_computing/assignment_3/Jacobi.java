@@ -14,7 +14,6 @@ public class Jacobi extends RecursiveAction {
 	public void compute(){
 		for (int i = 0; i < maxSteps; i++){
 			root.invoke();
-			//System.out.println(root.maxDiff);
 			if (root.maxDiff < EPSILON){
 				Settings.RUNNING = false;
 				System.out.println("Converged.");
