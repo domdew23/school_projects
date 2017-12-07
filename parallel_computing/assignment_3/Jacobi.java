@@ -8,7 +8,6 @@ public class Jacobi extends RecursiveAction {
 	Jacobi(Region[][] A, Region[][] B, int firstRow, int lastRow, int firstCol, int lastCol, int maxSteps, int cellsPerLeaf){
 		this.maxSteps = maxSteps;
 		root = build(A, B, firstRow, lastRow, firstCol, lastCol, cellsPerLeaf);
-		System.out.println(root);
 	}
 
 	public void compute(){
