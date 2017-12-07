@@ -50,13 +50,11 @@ public class Region{
 
 		double total = 0.0;
 		double tmpTotal = 0.0;
-		//if (x == Settings.WIDTH/2 && y == Settings.HEIGHT/2) System.out.println("before: " + temp + " - " + x + ", " + y);
 		
 		for (int i = 0; i < Settings.METALS.length; i++){
 			tmpTotal = 0.0;
 			for (int j = 0; j < neighbors.length; j++){
 				if (neighbors[j] != null){
-					//if (x == Settings.WIDTH/2 && y == Settings.HEIGHT/2) System.out.println(j + ": " + neighbors[j].getTemp() + " - " + neighbors[j].getMetals()[i]);
 					tmpTotal += (neighbors[j].getTemp() * neighbors[j].getMetals()[i]);
 				}
 			}
@@ -64,7 +62,6 @@ public class Region{
 			tmpTotal /= neighborCount;
 			total += tmpTotal;
 		}
-		//if (total !=0) System.out.println(total + " | " + x + "," + y);
 
 		Region retVal = new Region(this.x, this.y);
 		retVal.setTemp(total);
@@ -109,13 +106,13 @@ public class Region{
 	}
 
 	public void calcRGB(){	
-    	if (temp > Math.log(Settings.MAX)/2){ 
+    	if (temp > Math.log(Settings.MAX) * 10){ 
 	       	red = 255;
 	       	green = temp;
 
 	       	green = 9.4708025861 * Math.log(green) - 16.1195681661;
         	
-        	if (temp >= Math.log(Settings.MAX)/20){
+        	if (temp >= Math.log(Settings.MAX)){
             	blue = 0;
         	} else {
            		blue = temp;
@@ -173,6 +170,7 @@ public class Region{
 			double diff = Math.abs(total - 1);
 			percentages[2] += diff;
 		}
+		total = (percentages[0] + percentages[1] + percentages[2]);
 	}
 
 	public double[] getMetals(){
@@ -184,7 +182,7 @@ public class Region{
 	}
 
 	public void setTemp(double temp){
-		this.temp = (temp * ThreadLocalRandom.current().nextDouble(1.5, 2.8));
+		this.temp = (temp * ThreadLocalRandom.current().nextDouble(.8, 2.0));
 		
 	}
 

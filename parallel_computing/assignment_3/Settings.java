@@ -55,6 +55,8 @@ public class Settings {
 	}
 
 	private void finish(){
+		//S = Double.MAX_VALUE/2;
+		//T = Double.MAX_VALUE/2;
 		METALS[0] = C1;
 		METALS[1] = C2;
 		METALS[2] = C3;
