@@ -1,42 +1,21 @@
 import java.util.concurrent.ThreadLocalRandom;
 import java.math.BigDecimal;
+import java.math.MathContext;
+
 public class main{
+	private static final BigDecimal GAME_LENGTH = new BigDecimal(48 * 60);
+
 	public static void main(String[] args){
-		XMLParser parser = new XMLParser("data.xml");
+		AtomicModel<AtomicModel, Network> knicksHoop = new Hoop<AtomicModel, Network>("Knicks Hoop");
+		AtomicModel<AtomicModel, Network> hawksHoop = new Hoop<AtomicModel, Network>("Hawks Hoop");
+
+		XMLParser parser = new XMLParser("data.xml", knicksHoop, hawksHoop);
+		Token ball = new Token();
 
 		Time currentTime = new Time(new BigDecimal(0.0), 0);
 		Scheduler<AtomicModel> scheduler = new Scheduler();
-		Ref.currentTime = currentTime;
-		Ref.scheduler = scheduler;
-		Player.currentTime = currentTime;
-		Player.scheduler = scheduler;
 
-		Token ball = new Token();
-		ball.firstPossesion = true;
-
-		AtomicModel<Network, Network> ref1 = new Ref();
-
-		Network<AtomicModel> knicks = Network.builder().addComponents(parser.knicks).addInput(parser.knicks.get(0)).build();
-		Network<AtomicModel> hawks = Network.builder().addComponents(parser.hawks).addInput(parser.hawks.get(0)).build();
-
-		Network<AtomicModel> refs = Network.builder().addComponent(ref1).addInput(ref1).build();
-		Network<Network> game = Network.builder().addComponent(refs).addComponent(knicks).addComponent(hawks).addInput(refs).build();
-		
-		ref1.addInput(game);
-		ref1.addInput(knicks);
-		ref1.addInput(hawks);
-		
-		ref1.addOutput(knicks);
-		ref1.addOutput(hawks);
-
-		for (Network<AtomicModel> network : game.getInputs()){
-			for (AtomicModel model : network.getInputs()){
-				Event<AtomicModel> event = Event.builder(currentTime, "deltaExternal", model, ball).build();
-				scheduler.put(event);
-			}
-		}
-
-		System.out.println(scheduler);
+		init(currentTime, scheduler, parser, knicksHoop, hawksHoop, ball);
 
 		while (!(scheduler.isEmpty())){
 			System.out.println("Global time: " + currentTime.getReal());
@@ -47,15 +26,49 @@ public class main{
 			currentTime = currentTime.advance(interval);
 			Ref.currentTime = currentTime;
 			Player.currentTime = currentTime;
+			Hoop.currentTime = currentTime;
 
 			execute(event);
-			System.out.println("------------------------\n" + scheduler);
+			System.out.println("Executing: " + event + "\n------------------------\n" + scheduler);
+			System.out.println("current possesion: " + ball.currentPossesion);
+			if (currentTime.getReal().compareTo(GAME_LENGTH) == 1) break;
 		}
+		System.out.println("\nKnicks " + ball.knicksTotal + " | Hawks " + ball.hawksTotal);
 	}
 
-	private static void couple(AtomicModel I, AtomicModel O){
-		I.addOutput(O);
-		O.addInput(I);
+	private static void init(Time currentTime, Scheduler<AtomicModel> scheduler, XMLParser parser, AtomicModel knicksHoop, 
+		AtomicModel hawksHoop, Token ball){
+
+		Ref.currentTime = currentTime;
+		Player.currentTime = currentTime;
+		Hoop.currentTime = currentTime;
+
+		Ref.scheduler = scheduler;
+		Player.scheduler = scheduler;
+		Hoop.scheduler = scheduler;
+
+		ball.firstPossesion = true;
+
+		AtomicModel<Network, Network> ref = new Ref<Network, Network>();
+
+		Network<AtomicModel> knicks = Network.builder().addComponents(parser.knicks).addInput(parser.knicks.get(0)).addOutput(ref).addName("Knicks").build();
+		Network<AtomicModel> hawks = Network.builder().addComponents(parser.hawks).addInput(parser.hawks.get(0)).addOutput(ref).addName("Hawks").build();
+		Network<AtomicModel> game = Network.builder().addComponent(knicks).addComponent(hawks).addComponent(ref).addInput(ref).addName("Game").build();
+		
+		knicksHoop.addOutput(knicks);
+		hawksHoop.addOutput(hawks);
+
+		ref.addInput(game);
+		ref.addInput(knicks);
+		ref.addInput(hawks);
+
+		ref.addOutput(knicks);
+		ref.addOutput(hawks);
+
+		for (AtomicModel model : game.getInputs()){
+			Event<AtomicModel> event = Event.builder(currentTime, "deltaExternal", model, ball).build();
+			scheduler.put(event);
+		}
 	}
 
 	private static void execute(Event<AtomicModel> event){
@@ -78,6 +91,5 @@ public class main{
 				System.out.println("Something went wrong");
 				break;
 		}
-		System.out.println("Executing " + event);
 	}
 }

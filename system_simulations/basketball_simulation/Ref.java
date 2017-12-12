@@ -35,29 +35,36 @@ public class Ref<I, O> implements AtomicModel<I, O> {
 	public void deltaInternal(){
 		if (firstPossesion){
 			int teamIndex = ThreadLocalRandom.current().nextInt(0,2);
-			System.out.println(teamIndex);
 			Network<AtomicModel> team = (Network) outputs.get(teamIndex);
 			for (AtomicModel player : team.getInputs()){
 				Event<AtomicModel> event = Event.builder(currentTime, "deltaExternal", player, lambda()).build();
 				scheduler.put(event);
 			}
+			myBall.firstPossesion = false;
+			firstPossesion = false;
 		} else {
 			int teamIndex = 0;
 			if (myBall.lastTeamWithBall == (Network) outputs.get(0)){
 				teamIndex = 1;
+				myBall.currentPossesion = (Network) outputs.get(1);
 			} else if (myBall.lastTeamWithBall == (Network) outputs.get(1)) {
 				teamIndex = 0;
-			} else {
-				//exception
+				myBall.currentPossesion = (Network) outputs.get(0);
 			}
-	
+
 			Network<AtomicModel> team = (Network) outputs.get(teamIndex);
 			for (AtomicModel player : team.getInputs()){
+				if (Math.random() < .05){
+					myBall.steal = true;
+					BigDecimal rand = new BigDecimal("3.5");
+					Time newTime = new Time(currentTime.getReal().add(rand), 0);
+					Event<AtomicModel> event = Event.builder(newTime, "deltaExternal", player, lambda()).build();
+					scheduler.put(event);
+				}
 				Event<AtomicModel> event = Event.builder(currentTime, "deltaExternal", player, lambda()).build();
 				scheduler.put(event);
 			}
 		}
-		myBall = null;
 	}
 
 	public void deltaConfluent(Token ball){
