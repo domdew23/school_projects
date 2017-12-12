@@ -11,7 +11,7 @@ function Cube(rubiksCube, coordinates, color){
         'green': [0.0, 1.0, 0.0, 1.0],
         'orange': [1.0, 0.5, 0.0, 1.0],
         'red': [1.0, 0.0, 0.0, 1.0],
-        'white': [1.0, 1.0, 1.0, 1.0],
+        'purple': [.6, 0.2, 1.0, 1.0],
         'yellow': [1.0, 1.0, 0.0, 1.0]
     }
 
@@ -51,7 +51,7 @@ function Cube(rubiksCube, coordinates, color){
     			mat4.rotateX(viewMatrix, viewMatrix, degreesToRadians(-180));
     		}));
     	} else if (y == 1){
-    		this.stickers.push(new Sticker(this, this.COLORS['white'], function(){
+    		this.stickers.push(new Sticker(this, this.COLORS['purple'], function(){
     			this.cube.transform();
     			mat4.translate(viewMatrix, viewMatrix, [0, state.stickerDepth, 0]);
     			setMatrixUniforms();
@@ -68,7 +68,7 @@ function Cube(rubiksCube, coordinates, color){
     		this.stickers.push(new Sticker(this, this.COLORS['green'], function() {
     			this.cube.transform();
     			mat4.translate(viewMatrix, viewMatrix, [0, 0, state.stickerDepth]);
-    			mat4.rotateX(viewMatrix, viewMatrix, degreesToRadians(-90));
+    			mat4.rotateX(viewMatrix, viewMatrix, degreesToRadians(90));
     		}));
     	}
     }

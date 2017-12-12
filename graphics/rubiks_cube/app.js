@@ -30,6 +30,9 @@ var state = {
 	objects: [],
 	FOV: -45,
 	stickerDepth: .96,
+	x_current_right: 0,
+	y_current_right: 0,
+	isRotating: false,
 };
 
 var gl;
@@ -38,7 +41,7 @@ var program;
 var viewMatrix;
 var projMatrix;
 var worldMatrix;
-var rotationMatrix;
+var rotationMatrix = mat4.create();;
 
 window.onload = function main(){
 	run();
@@ -54,7 +57,6 @@ function run(){
 	viewMatrix = mat4.create();
 	projMatrix = mat4.create();
 	worldMatrix = mat4.create();
-	rotationMatrix = mat4.create();
 
 	gl = init();
 	linkProgram(loadVertexShader(), loadFragShader());
@@ -259,18 +261,18 @@ function tick(){
 }
 
 function drawScene(){
-	state.rubiksCube.drawToFrameBuffer();
+	//state.rubiksCube.drawToFrameBuffer();
 	//state.rubiksCube.drawInnerCube();
 	state.rubiksCube.draw();
 
-	var yRoatation = new Float32Array(16);
-	var xRoatation = new Float32Array(16);
-	var identityMatrix = new Float32Array(16);
-	mat4.identity(identityMatrix);
+	//var yRoatation = new Float32Array(16);
+	//var xRoatation = new Float32Array(16);
+	//var identityMatrix = new Float32Array(16);
+	//mat4.identity(identityMatrix);
 
-	mat4.rotate(yRoatation, identityMatrix, state.theta.y/1000, [0, 1, 0]);
-	mat4.rotate(xRoatation, identityMatrix, state.theta.x/1000, [1, 0, 0]);
-	mat4.mul(worldMatrix, xRoatation, yRoatation);
+	//mat4.rotate(yRoatation, identityMatrix, state.theta.y/1000, [0, 1, 0]);
+	//mat4.rotate(xRoatation, identityMatrix, state.theta.x/1000, [1, 0, 0]);
+	//mat4.mul(worldMatrix, xRoatation, yRoatation);
 }
 
 function setMatrixUniforms() {
@@ -281,6 +283,20 @@ function setMatrixUniforms() {
 	gl.uniformMatrix4fv(matWorldUniformLocation, gl.FALSE, worldMatrix);
 	gl.uniformMatrix4fv(matViewUniformLocation, gl.FALSE, viewMatrix);
 	gl.uniformMatrix4fv(matProjUniformLocation, gl.FALSE, projMatrix);
+}
+
+function mousemove(event){
+	if (state.ui.dragging){
+		x_new_right = event.pageX;
+		y_new_right = event.pageY;
+		var delta_x = (x_new_right - state.x_current_right) / 50;
+		var delta_y = (y_new_right - state.y_current_right) / 50;
+		var axis = [delta_y, -delta_x, 0];
+		var degrees = Math.sqrt(delta_x * delta_x + delta_y * delta_y);
+		var newRotationMatrix = mat4.create();
+		mat4.rotate(newRotationMatrix, newRotationMatrix, degreesToRadians(degrees), axis);
+		mat4.multiply(rotationMatrix, newRotationMatrix, rotationMatrix); // update rotation matrix
+	}
 }
 
 function updateState(){
@@ -305,22 +321,16 @@ function keyup(event){
 }
 
 function mousedown(event){
-	var x = event.clientX;
-	var y = event.clientY;
-	var rect = event.target.getBoundingClientRect();
-
-	if (rect.left <= x && x < rect.right && rect.top <= y && y < rect.bottom){
-		state.ui.mouse.lastX = x;
-		state.ui.mouse.lastY = y;
-		state.ui.dragging = true;
-	}
+	state.ui.dragging = true;
+	state.x_current_right = event.pageX;
+	state.y_current_right = event.pageY;
 }
 
 function mouseup(event){
 	state.ui.dragging = false;
 }
 
-function mousemove(event){
+function mousemove1(event){
 	var x = event.clientX;
 	var y = event.clientY;
 	if (state.ui.dragging){
