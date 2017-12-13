@@ -3,7 +3,7 @@ var state = {
 	lighting: {
 		diffuse: [0.2, 0.2, 0.2, 1.0],
 		specular: [1.0, 1.0, 1.0, 1.0],
-		shininess: 1000.0,
+		shininess: 100.0,
 		ambient: [0.0, 0.0, 0.0, 1.0],
 	},
 	buffers : {
@@ -29,7 +29,7 @@ var state = {
 		x: 0,
 		y: 0,
 	},
-	eye: [0, 0, -15],
+	eye: [0, 0, -18],
 	center: [0, 0, 0],
 	up: [0, 1, 0],
 	FOV: -45,
@@ -218,7 +218,6 @@ function setLighting(color=state.lighting.ambient){
 	gl.uniform4fv(program.specular, state.lighting.specular);
 	gl.uniform1f(program.shininess, state.lighting.shininess);
 }
-
 
 function mousemove(event){
 	if (state.ui.dragging){

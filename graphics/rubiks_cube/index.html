@@ -35,7 +35,7 @@
 				gl_Position = mProj * mView * mWorld * vec4(vertPosition, 1.0);
 
 				vec3 pos = -(mView * position).xyz;
-				vec3 lightPos = vec3(0, 0, -1);
+				vec3 lightPos = vec3(-3, 10, -1);
 				vec3 light = vec3(1, 1, 1);
 
 				surfaceLight = normalize(light - pos);

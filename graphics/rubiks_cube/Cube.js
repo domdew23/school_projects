@@ -54,7 +54,6 @@ function Cube(rubiksCube, coordinates, color){
     		this.stickers.push(new Sticker(this, this.COLORS['white'], function(){
     			this.cube.rotate();
     			mat4.translate(viewMatrix, viewMatrix, [0, state.stickerDepth, 0]);
-    			setUniforms();
     		}));
     	}
 
@@ -71,6 +70,8 @@ function Cube(rubiksCube, coordinates, color){
     			mat4.rotateX(viewMatrix, viewMatrix, degreesToRadians(90));
     		}));
     	}
+    	setUniforms();
+    	setLighting();
     }
 
 	this.draw = function(color) {
