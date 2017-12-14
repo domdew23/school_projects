@@ -45,26 +45,26 @@ public class GraphicsEngine extends Canvas implements Runnable{
 		}
 
 		Graphics g = bs.getDrawGraphics();
-		for (int i = 0; i < Settings.WIDTH; i++){
-			for (int j = 0; j < Settings.HEIGHT; j++){
-				draw(g, i, j);
+			for (int y = 0; y < Settings.HEIGHT; y++){
+				for (int x = 0; x < Settings.WIDTH; x++){
+				draw(g, x, y);
 			}
 		}
 		g.dispose();
 		bs.show();
 	}
 
-	private void draw(Graphics g, int i, int j){
-		Region r = Control.getUpdatedAlloy()[i][j];
+	private void draw(Graphics g, int x, int y){
+		Region r = Control.getUpdatedAlloy()[y][x];
 		while (r == null){
-			r = Control.getUpdatedAlloy()[i][j];
+			r = Control.getUpdatedAlloy()[y][x];
 		}
 		int red = (int) Math.round(r.red);
 		int green = (int) Math.round(r.green);
 		int blue = (int) Math.round(r.blue);
 		//if (i % 100 == 0) System.out.println("r: " + red + " g: " + green + " b: " + blue);
 		g.setColor(new Color(red, green, blue));
-		g.fillRect((i*Settings.SCALE), (j*Settings.SCALE), Settings.SCALE, Settings.SCALE);	
+		g.fillRect((x*Settings.SCALE), (y*Settings.SCALE), Settings.SCALE, Settings.SCALE);	
 	}
 
 	public synchronized void start(){

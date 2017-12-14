@@ -10,13 +10,13 @@ public class Control {
 		this.A = initAlloy();
 		split(A);
 
-		this.B = new Region[Settings.WIDTH][Settings.HEIGHT];
+		this.B = new Region[Settings.HEIGHT][Settings.WIDTH];
 		this.updatedAlloy = A;
 	}
 
 	private void split(Region[][] array){		
 		for (Region[] chunk : array){
-
+			
 		}
 			
 	}
@@ -64,17 +64,16 @@ public class Control {
 					bottom = alloy[y+1][x];
 				}
 				alloy[y][x].setNeighbors(left, top, right, bottom);
-				System.out.println(alloy[y][x]);
 			}
 		}
 	}
 
 	public static void addPart(Region[][] part){
 		double m = 0.0;
-		for (int i = 0; i < Settings.WIDTH; i++){
-			for (int j = 0; j < Settings.HEIGHT; j++){
-				if (part[i][j] != null){
-					updatedAlloy[i][j] = part[i][j];
+		for (int y = 0; y < Settings.HEIGHT;y++){
+			for (int x = 0; x < Settings.WIDTH; x++){
+				if (part[y][x] != null){
+					updatedAlloy[y][x] = part[y][x];
 				}
 			}
 		}

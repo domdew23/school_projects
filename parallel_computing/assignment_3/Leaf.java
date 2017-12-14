@@ -23,10 +23,11 @@ public class Leaf extends Tree {
 		Region[][] b = (AtoB) ? B : A;
 		double md = 0.0;
 
-		for (int i = loCol; i < hiCol; i++){
-			for (int j = loRow; j < hiRow; j++){
-				b[i][j] = a[i][j].compute();
-				double diff = b[i][j].getTemp() - a[i][j].getTemp();
+		for (int x = loCol; x < hiCol; x++){
+			for (int y = loRow; y < hiRow; y++){
+				b[y][x] = a[y][x].compute();
+				
+				double diff = b[y][x].getTemp() - a[y][x].getTemp();
 				md = Math.max(md, Math.abs(diff));
 			}
 		}

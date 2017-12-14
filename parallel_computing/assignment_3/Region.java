@@ -108,7 +108,7 @@ public class Region implements Serializable {
 			neighborCount++;
 		}
 		if (bottomNeighbor != null){
-			hasBottomNeighbor = false;
+			hasBottomNeighbor = true ;
 			neighborCount++;
 		}
 	}

@@ -1,11 +1,11 @@
 function Cube(rubiksCube, coordinates, color){
-	this.rubiksCube = rubiksCube;
-	this.coordinates = coordinates;
-	this.color = color;
-	this.rotationMatrix = mat4.create();
-	this.translationVector = vec3.create();
-
-	this.stickers = [];
+    this.rubiksCube = rubiksCube;
+    this.coordinates = coordinates;
+    this.color = color;
+    this.rotationMatrix = mat4.create();
+    this.translationVector = vec3.create();
+    this.stickers = [];
+   
     this.COLORS = {
         'blue': [0.0, 0.0, 1.0, 1.0],
         'green': [0.0, 1.0, 0.0, 1.0],
@@ -76,7 +76,7 @@ function Cube(rubiksCube, coordinates, color){
     	setLighting();
     }
 
-	this.draw = function(color) {
+    this.draw = function(color) {
         var mvMatrix = mat4.create();
         mat4.copy(mvMatrix, viewMatrix);
         this.rotate();
