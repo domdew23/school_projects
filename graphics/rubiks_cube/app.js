@@ -173,20 +173,6 @@ function createStickerBuffer(){
 	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(getStickerFaces()), gl.STATIC_DRAW);
 }
 
-function createInnerCubeBuffer() {
-        state.buffers.innerCubeVertexBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, state.buffers.innerCubeVertexBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(getInnerCubeVertices()), gl.STATIC_DRAW);
-
-        state.buffers.innerCubeNormalsBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, state.buffers.innerCubeNormalsBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(getInnerCubeNormals()), gl.STATIC_DRAW);
-
-        state.buffers.innerCubeFacesBuffer = gl.createBuffer();
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, state.buffers.innerCubeFacesBuffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(getInnerCubeFaces()), gl.STATIC_DRAW);
-}
-
 function render(){
 	requestAnimationFrame(render);
 	drawScene();
@@ -196,9 +182,6 @@ function drawScene(){
 	if (state.isRotating){
 		state.rubiksCube.rotateChunk();
 	}
-
-	//state.rubiksCube.drawToFrameBuffer();
-	//state.rubiksCube.drawInnerCube();
 	state.rubiksCube.draw();
 }
 
@@ -260,8 +243,17 @@ function updateState(){
 }
 
 function scrambleCube(){
-	state.rubiksCube.cycles = Math.floor(Math.random() * 100);
-	state.rubiksCube.scramble();
+	if (!state.isRotating){
+		state.rubiksCube.cycles = Math.floor(Math.random() * 100);
+		state.rubiksCube.scramble();
+	}
+}
+
+function randomMove(){
+	if (!state.isRotating){
+		state.rubiksCube.cycles = 1;
+		state.rubiksCube.scramble();
+	}
 }
 
 function keydown(event){

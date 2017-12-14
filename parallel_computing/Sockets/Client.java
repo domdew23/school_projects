@@ -11,22 +11,30 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Client {
+	private static final int PORT = 4444;
+
 	public static void main(String[] args) throws UnknownHostException, ClassNotFoundException {
 		try {
 			/* socket: interface that allows client and server to communicate with each other */
 			/* first run server then run the client */
-			Socket connection = new Socket("localhost", 4444); // takes ip and port
+			Socket connection = new Socket("localhost", PORT); // takes ip and port
 			
-			ObjectInputStream in = new ObjectInputStream(connection.getInputStream()); // recieve response from server
-			//ObjectOutputStream out = new ObjectOutputStream(new PrintStream(connection.getOutputStream())); // send data to the server
+			//ObjectInputStream in = new ObjectInputStream(connection.getInputStream()); // recieve response from server
+			ObjectOutputStream out = new ObjectOutputStream(connection.getOutputStream()); // send data to the server
 
-			System.out.println("Waiting for object...");
-			Person personFromServer = (Person) in.readObject();
-			System.out.println("Recieved Object.");
+			Person person = new Person(args[0], 21, 41100.22);
+			out.writeObject(person);
+			out.flush();
 
-			System.out.println(personFromServer);
-			in.close();
-			//out.close();
+			Scanner sc = new Scanner(System.in);
+			int message = 0;
+			while (message != -1){
+				message = sc.nextInt();
+				out.writeInt(message);
+				out.flush();
+			}
+
+			out.close();
 			connection.close();
 		} catch (IOException e){
 			e.printStackTrace();

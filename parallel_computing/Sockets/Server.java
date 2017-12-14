@@ -10,24 +10,16 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 public class Server {
-	public static void main(String[] args) throws InterruptedException {
+	private static final int PORT = 4444;
+	private static boolean running = true;
+
+	public static void main(String[] args) {
 		try {
-			ServerSocket listener = new ServerSocket(4444); // port to connect to		
-			Socket connectionSocket = listener.accept(); // accept request to socket 
-			System.out.println("Connection Established.");
-
-			//ObjectInputStream in = new ObjectInputStream(connectionSocket.getInputStream());
-			ObjectOutputStream out = new ObjectOutputStream(connectionSocket.getOutputStream());
-			System.out.println("IO streams initialized.");
-
-			Person person = new Person("Dom Dewhurst", 21, 41100.22);
-			out.writeObject(person);
-			System.out.println("Object written.");
-			out.flush();
-		
-			//in.close();
-			out.close();
-			connectionSocket.close();
+			ServerSocket listener = new ServerSocket(PORT); // port to connect to		
+			while (running){
+				new Handler(listener.accept()).start();
+				System.out.println("Added new Client.");
+			}
 			listener.close();
 		} catch (IOException e){
 			e.printStackTrace();

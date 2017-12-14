@@ -1,16 +1,14 @@
 function RubiksCube() {
 	this.cubes = new Array(3);
-    this.pickingFramebuffer = null;
-    this.innerCube = new InnerCube();
     this.chunkToRotate = null;
     this.rotationAxis = null;
     this.rotationAngle = 0;
-    this.axis = 0;
     this.cycles = 0;
 
 	this.init = function(){
 		createCubeBuffer();
 		createStickerBuffer();
+
 		for (x = 0; x < 3; x++){
 			this.cubes[x] = new Array(3);
 			for (y = 0; y < 3; y++){
@@ -46,44 +44,6 @@ function RubiksCube() {
 		}
 	}
 
-	this.drawToFrameBuffer = function() {
-		gl.bindFramebuffer(gl.FRAMEBUFFER, this.pickingFramebuffer);
-        gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-        mat4.perspective(projMatrix, state.FOV, canvas.width / canvas.height, 0.1, 100.0);
-        mat4.identity(viewMatrix);
-        mat4.lookAt(viewMatrix, state.eye, state.center, state.up);
-        mat4.multiply(viewMatrix, viewMatrix, rotationMatrix);
-
-        for (x = 0; x < 3; x++) {
-            for (y = 0; y < 3; y++) {
-                for (z = 0; z < 3; z++) {
-                    var cube = this.cubes[x][y][z];
-                    cube.draw(cube.color);
-                }
-            }
-        }
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-	}
-
-	this.drawInnerCube = function() {
-        gl.bindFramebuffer(gl.FRAMEBUFFER, this.innerCube.normalsFramebuffer);
-        gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-        mat4.perspective(projMatrix, state.FOV, canvas.width / canvas.height, 0.1, 100.0);
-        mat4.identity(viewMatrix);
-        mat4.lookAt(viewMatrix, state.eye, state.center, state.up);
-        mat4.multiply(viewMatrix, viewMatrix, rotationMatrix);
-        
-        var mvMatrix = mat4.create();
-        mat4.copy(mvMatrix, viewMatrix);
-       	this.innerCube.draw();
-
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    }
-
     this.scramble = function() {
 		if (this.cycles == 0){
 			state.isRotating = false;
@@ -111,19 +71,19 @@ function RubiksCube() {
 		this.setChunk();
 		state.isRotating = true;
 		this.cycles -= 1;
-		}
+	}
 
 	this.setChunk = function(){
 		if (!this.rotationAxis){
 			return;
 		}
 
+		/* iterate through cubes matrix to find matches */
 		var selectedChunk = this.cubeToRotate.coordinates[this.axisToRotate];
-
         var chunk = [];
-        for (var x = 0; x < 3; x++) {
-            for (var y = 0; y < 3; y++) {
-                for (var z = 0; z < 3; z++) {
+        for (x = 0; x < 3; x++) {
+            for (y = 0; y < 3; y++) {
+                for (z = 0; z < 3; z++) {
                     var cube = this.cubes[x][y][z];
                     /* dont want to compare floats for equality */
                     if (Math.abs(cube.coordinates[this.axisToRotate] - selectedChunk) < state.EPSILON) {
@@ -138,6 +98,7 @@ function RubiksCube() {
 
 	this.rotateChunk = function() {
 		if (Math.abs(this.rotationAngle) == 90) {
+			/* chunk has finished rotating */
             this.rotationAngle = 0;
             isRotating = false;
             this.scramble();
@@ -150,20 +111,10 @@ function RubiksCube() {
 		mat4.rotate(newRotationMatrix, newRotationMatrix, degreesToRadians(5), this.rotationAxis);
 
 		for (i = 0; i < this.chunkToRotate.length; i++){
+			/* rotate each cube */
 			var cube = this.chunkToRotate[i];
 			vec3.transformMat4(cube.coordinates, cube.coordinates, newRotationMatrix);
 			mat4.multiply(cube.rotationMatrix, newRotationMatrix, cube.rotationMatrix);
-		}
-	}
-
-	this.colorToCube = function(rgba){
-		var r = rbga[0];
-		var g = rgba[1];
-		var b = rgba[2];
-		if (r == 255 && g == 255 && b == 255){
-			return null;
-		} else {
-			return this.cubes[r % 3][g % 3][b % 3];
 		}
 	}
 
