@@ -5,7 +5,7 @@ function Cube(rubiksCube, coordinates, color){
     this.rotationMatrix = mat4.create();
     this.translationVector = vec3.create();
     this.stickers = [];
-   
+
     this.COLORS = {
         'blue': [0.0, 0.0, 1.0, 1.0],
         'green': [0.0, 1.0, 0.0, 1.0],
