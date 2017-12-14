@@ -1,4 +1,6 @@
 function RubiksCube() {
+	/* wrapper class for all sub-cubes that make up rubiks cube */
+	
 	this.cubes = new Array(3);
     this.chunkToRotate = null;
     this.rotationAxis = null;
@@ -64,7 +66,7 @@ function RubiksCube() {
 		}
 
 		if (Math.random() < 0.5) {
-			// 50% chance you rotate opposite way
+			/* 50% chance you rotate opposite way */
 		    vec3.scale(this.rotationAxis, this.rotationAxis, -1);
 		}
 
@@ -74,11 +76,8 @@ function RubiksCube() {
 	}
 
 	this.setChunk = function(){
-		if (!this.rotationAxis){
-			return;
-		}
-
 		/* iterate through cubes matrix to find matches */
+
 		var selectedChunk = this.cubeToRotate.coordinates[this.axisToRotate];
         var chunk = [];
         for (x = 0; x < 3; x++) {
@@ -87,7 +86,7 @@ function RubiksCube() {
                     var cube = this.cubes[x][y][z];
                     /* dont want to compare floats for equality */
                     if (Math.abs(cube.coordinates[this.axisToRotate] - selectedChunk) < state.EPSILON) {
-                    	// find cube that matches coordinates and add to chunk
+                    	/* find cube that matches coordinates and add to chunk */
                         chunk.push(cube);
                     }
                 }

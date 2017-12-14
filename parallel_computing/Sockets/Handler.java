@@ -6,13 +6,39 @@ import java.io.ObjectInputStream;
 public class Handler extends Thread {
 	private Socket socket;
 	private boolean running;
+	private int id;
 
-	public Handler(Socket socket){
+	public Handler(int id, Socket socket){
+		this.id = id;
 		this.socket = socket;
 		this.running = true;
 	}
 
-	public void run() {
+	public void run(){
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+			
+			Person[][] array = new Person[2][4];
+			for (int y = 0; y < 2; y++){
+				for (int x = 0; x < 4; x++){
+					array[y][x] = new Person(x, y);
+					System.out.println(array[y][x]);
+				}
+			}
+
+			for (int i = 0; i < 1; i++){
+				Person[] row = array[i];
+				out.writeObject(row);
+				out.flush();
+			}
+			
+			out.close();
+		} catch(IOException e){
+			e.printStackTrace();
+		}
+	}
+
+	public void run1() {
 		try {
 			ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
 			Person person = null;

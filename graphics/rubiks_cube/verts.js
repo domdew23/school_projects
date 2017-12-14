@@ -154,7 +154,7 @@ function getCubeVerts(){
 	return vertices;
 }
 
-function getCubeFaces(){
+function getCubeIndices(){
 	var faces = [
 		21, 40, 59, 
 		133, 57, 39, 
@@ -703,7 +703,7 @@ function getStickerVerts(){
 	return vertices;
 }
 
-function getStickerFaces(){
+function getStickerIndices(){
 	var faces = [
 		20, 22, 23, 
 		31, 11, 28, 

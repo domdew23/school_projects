@@ -1,5 +1,7 @@
 import java.util.concurrent.ThreadLocalRandom;
-public class Region{
+import java.io.Serializable;
+
+public class Region implements Serializable {
 	
 	private double temp;
 	private double[] percentages;
@@ -9,6 +11,8 @@ public class Region{
 	private Region topNeighbor;
 	private Region rightNeighbor;
 	private Region bottomNeighbor;
+	public boolean hasTopNeighbor;
+	public boolean hasBottomNeighbor;
 	private Region[] neighbors;
 	private int neighborCount;
 	public double red,green,blue;
@@ -16,6 +20,8 @@ public class Region{
 	public Region(int x, int y){
 		this.percentages = new double[3];
 		this.neighbors = new Region[4];
+		this.hasTopNeighbor = false;
+		this.hasBottomNeighbor = false;
 		init();
 		this.x = x;
 		this.y = y;
@@ -96,11 +102,13 @@ public class Region{
 		}
 		if (topNeighbor != null){
 			neighborCount++;
+			hasTopNeighbor = true;
 		}
 		if (rightNeighbor != null){
 			neighborCount++;
 		}
 		if (bottomNeighbor != null){
+			hasBottomNeighbor = false;
 			neighborCount++;
 		}
 	}

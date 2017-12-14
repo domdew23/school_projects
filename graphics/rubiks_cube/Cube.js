@@ -26,6 +26,8 @@ function Cube(rubiksCube, coordinates, color){
     }
 
     this.initStickers = function(){
+    	/* find cube each sticker is associated with and color */
+    	
     	var x = this.coordinates[0];
     	var y = this.coordinates[1];
     	var z = this.coordinates[2];
@@ -87,8 +89,8 @@ function Cube(rubiksCube, coordinates, color){
         gl.bindBuffer(gl.ARRAY_BUFFER, state.buffers.cubeNormalsBuffer);
         gl.vertexAttribPointer(program.vertNormal, 3, gl.FLOAT, false, 0, 0);
 
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, state.buffers.cubeFacesBuffer);
-        gl.drawElements(gl.TRIANGLES, getCubeFaces().length, gl.UNSIGNED_SHORT, 0);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, state.buffers.cubeIndicesBuffer);
+        gl.drawElements(gl.TRIANGLES, getCubeIndices().length, gl.UNSIGNED_SHORT, 0);
 
         mat4.copy(viewMatrix, mvMatrix);
     }

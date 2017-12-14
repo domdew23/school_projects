@@ -1,17 +1,15 @@
 import java.io.Serializable;
 
 public class Person implements Serializable {
-	String name;
-	int age;
-	double income;
+	int x;
+	int y;
 
-	public Person(String name, int age, double income){
-		this.name = name;
-		this.age = age;
-		this.income = income;
+	public Person(int x, int y){
+		this.x = x;
+		this.y = y;
 	}
 
 	public String toString(){
-		return "Name: " + name + " | Age: " + age + " | Income: " + income;
+		return "x: " + x + " | y: " + y;
 	}
 }

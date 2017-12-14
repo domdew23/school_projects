@@ -8,20 +8,30 @@ public class Control {
 	
 	public Control(){
 		this.A = initAlloy();
+		split(A);
+
 		this.B = new Region[Settings.WIDTH][Settings.HEIGHT];
 		this.updatedAlloy = A;
 	}
 
-	private Region[][] initAlloy(){
-		Region[][] alloy = new Region[Settings.WIDTH][Settings.HEIGHT];
+	private void split(Region[][] array){		
+		for (Region[] chunk : array){
 
-		for (int i = 0; i < Settings.WIDTH; i++){
-			for (int j = 0; j < Settings.HEIGHT; j++){
-				Region r = new Region(i, j);
-				alloy[i][j] = r;
-				if (i == 0 && j == 0){
+		}
+			
+	}
+
+	private Region[][] initAlloy(){
+		Region[][] alloy = new Region[Settings.HEIGHT][Settings.WIDTH];
+
+		for (int y = 0; y < Settings.HEIGHT; y++){
+			for (int x = 0; x < Settings.WIDTH; x++){
+				Region r = new Region(x, y);
+				alloy[y][x] = r;
+				
+				if (x == 0 && y == 0){
 					r.setTemp(Settings.S);
-				} else if (i == Settings.WIDTH-1 && j == Settings.HEIGHT-1){
+				} else if (x == Settings.WIDTH-1 && y == Settings.HEIGHT-1){
 					r.setTemp(Settings.T);
 				} else {
 					r.setTemp(0.0);
@@ -34,25 +44,27 @@ public class Control {
 	}
 
 	public static void updateNeighbors(Region[][] alloy){
-		for (int i = 0; i < Settings.WIDTH; i++){
-			for (int j = 0; j < Settings.HEIGHT; j++){
-				if (alloy[i][j] == null){
+		
+		for (int y = 0; y < Settings.HEIGHT; y++){
+			for (int x = 0; x < Settings.WIDTH; x++){
+				if (alloy[y][x] == null){
 					continue;
 				}
 				Region left=null,top=null,right=null,bottom=null;
-				if (i-1 >= 0){
-					left = alloy[i-1][j];
+				if (x-1 >= 0){
+					left = alloy[y][x-1];
 				}
-				if (i+1 < Settings.WIDTH){
-					right = alloy[i+1][j];
+				if (x+1 < Settings.WIDTH){
+					right = alloy[y][x+1];
 				}
-				if (j-1 >= 0){
-					top = alloy[i][j-1];
+				if (y-1 >= 0){
+					top = alloy[y-1][x];
 				}
-				if (j+1 < Settings.HEIGHT){
-					bottom = alloy[i][j+1];
+				if (y+1 < Settings.HEIGHT){
+					bottom = alloy[y+1][x];
 				}
-				alloy[i][j].setNeighbors(left, top, right, bottom);
+				alloy[y][x].setNeighbors(left, top, right, bottom);
+				System.out.println(alloy[y][x]);
 			}
 		}
 	}

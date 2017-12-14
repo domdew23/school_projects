@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 
 public class Client {
 	private static final int PORT = 4444;
+	private static boolean running = true;
 
 	public static void main(String[] args) throws UnknownHostException, ClassNotFoundException {
 		try {
@@ -19,22 +20,16 @@ public class Client {
 			/* first run server then run the client */
 			Socket connection = new Socket("localhost", PORT); // takes ip and port
 			
-			//ObjectInputStream in = new ObjectInputStream(connection.getInputStream()); // recieve response from server
-			ObjectOutputStream out = new ObjectOutputStream(connection.getOutputStream()); // send data to the server
+			InputHandler inputHandler = new InputHandler(args[0], connection);
+			OutputHandler outputHandler = new OutputHandler(args[0], connection);
 
-			Person person = new Person(args[0], 21, 41100.22);
-			out.writeObject(person);
-			out.flush();
+			inputHandler.start();
+			outputHandler.start();
 
-			Scanner sc = new Scanner(System.in);
-			int message = 0;
-			while (message != -1){
-				message = sc.nextInt();
-				out.writeInt(message);
-				out.flush();
+			while(running){
+
 			}
-
-			out.close();
+			
 			connection.close();
 		} catch (IOException e){
 			e.printStackTrace();

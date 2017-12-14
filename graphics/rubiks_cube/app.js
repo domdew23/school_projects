@@ -9,13 +9,10 @@ var state = {
 	buffers : {
 		cubeVertexBuffer: null,
 		cubeNormalsBuffer: null,
-		cubeFacesBuffer: null,
+		cubeIndicesBuffer: null,
 		stickerVertexBuffer: null,
 		stickerNormalsBuffer: null,
-		stickerFacesBuffer: null,
-		innerCubeVertexBuffer: null,
-		innerCubeNormalsBuffer: null,
-		innerCubeFacesBuffer: null,
+		stickerIndicesBuffer: null,
 	},
 	ui : {
 		dragging: false,
@@ -55,8 +52,6 @@ function run(){
 	canvas.onmousedown = mousedown;
 	canvas.onmouseup = mouseup;
 	canvas.onmousemove = mousemove;
-	document.onkeydown = keydown;
-	document.onkeyup = keyup;
 	viewMatrix = mat4.create();
 	projMatrix = mat4.create();
 	worldMatrix = mat4.create();
@@ -146,6 +141,8 @@ function linkProgram(vertexShader, fragmentShader){
 }
 
 function createCubeBuffer() {
+	/* create space on GPU for each cube's vertices, normals, indices */
+
 	state.buffers.cubeVertexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, state.buffers.cubeVertexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(getCubeVerts()), gl.STATIC_DRAW);
@@ -154,12 +151,14 @@ function createCubeBuffer() {
 	gl.bindBuffer(gl.ARRAY_BUFFER, state.buffers.cubeNormalsBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(getCubeNormals()), gl.STATIC_DRAW);
 
-	state.buffers.cubeFacesBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, state.buffers.cubeFacesBuffer);
-	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(getCubeFaces()), gl.STATIC_DRAW);
+	state.buffers.cubeIndicesBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, state.buffers.cubeIndicesBuffer);
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(getCubeIndices()), gl.STATIC_DRAW);
 }
 
 function createStickerBuffer(){
+	/* create space on GPU for sticker vertices, normals, indices */
+	
 	state.buffers.stickerVertexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, state.buffers.stickerVertexBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(getStickerVerts()), gl.STATIC_DRAW);
@@ -168,17 +167,17 @@ function createStickerBuffer(){
 	gl.bindBuffer(gl.ARRAY_BUFFER, state.buffers.stickerNormalsBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(getStickerNormals()), gl.STATIC_DRAW);
 
-	state.buffers.stickerFacesBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, state.buffers.stickerFacesBuffer);
-	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(getStickerFaces()), gl.STATIC_DRAW);
+	state.buffers.stickerIndicesBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, state.buffers.stickerIndicesBuffer);
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(getStickerIndices()), gl.STATIC_DRAW);
 }
 
 function render(){
 	requestAnimationFrame(render);
-	drawScene();
+	update();
 }
 
-function drawScene(){
+function update(){
 	if (state.isRotating){
 		state.rubiksCube.rotateChunk();
 	}
@@ -186,6 +185,7 @@ function drawScene(){
 }
 
 function setUniforms() {
+	/* send uniforms to shaders */
 	var matWorldUniformLocation = gl.getUniformLocation(program, 'mWorld');
 	var matViewUniformLocation = gl.getUniformLocation(program, 'mView');
 	var matProjUniformLocation = gl.getUniformLocation(program, 'mProj');
@@ -196,6 +196,7 @@ function setUniforms() {
 }
 
 function setLighting(color=state.lighting.ambient){
+	/* send lighting information to shaders */
 	gl.uniform4fv(program.ambient, color);
 	gl.uniform4fv(program.diffuse, state.lighting.diffuse);
 	gl.uniform4fv(program.specular, state.lighting.specular);
@@ -229,19 +230,6 @@ function mouseup(event){
 	state.ui.dragging = false;
 }
 
-function updateState(){
-	var speed = 0.2;
-	if (state.ui.pressedKeys[37]){
-		state.app.eye.x += speed;
-	} else if (state.ui.pressedKeys[39]){
-		state.app.eye.x -= speed;
-	} else if (state.ui.pressedKeys[40]){
-		state.app.eye.y += speed;
-	} else if (state.ui.pressedKeys[38]){
-		state.app.eye.y -= speed;
-	}
-}
-
 function scrambleCube(){
 	if (!state.isRotating){
 		state.rubiksCube.cycles = Math.floor(Math.random() * 100);
@@ -254,14 +242,6 @@ function randomMove(){
 		state.rubiksCube.cycles = 1;
 		state.rubiksCube.scramble();
 	}
-}
-
-function keydown(event){
-	state.ui.pressedKeys[event.keyCode] = true;
-}
-
-function keyup(event){
-	state.ui.pressedKeys[event.keyCode] = false;
 }
 
 function degreesToRadians(degrees) {
