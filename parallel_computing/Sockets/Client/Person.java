@@ -3,6 +3,7 @@ import java.io.Serializable;
 public class Person implements Serializable {
 	int x;
 	int y;
+	String name = "Jake";
 
 	public Person(int x, int y){
 		this.x = x;
@@ -10,6 +11,6 @@ public class Person implements Serializable {
 	}
 
 	public String toString(){
-		return "x: " + x + " | y: " + y;
+		return name + " | x: " + x + " | y: " + y;
 	}
 }

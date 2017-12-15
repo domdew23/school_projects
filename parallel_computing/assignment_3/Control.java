@@ -16,7 +16,7 @@ public class Control {
 
 	private void split(Region[][] array){		
 		for (Region[] chunk : array){
-			
+
 		}
 			
 	}

@@ -3,12 +3,12 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 
-public class Handler extends Thread {
+public class ServerOutputHandler extends Thread {
 	private Socket socket;
 	private boolean running;
 	private int id;
 
-	public Handler(int id, Socket socket){
+	public ServerOutputHandler(int id, Socket socket){
 		this.id = id;
 		this.socket = socket;
 		this.running = true;

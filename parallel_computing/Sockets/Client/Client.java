@@ -18,13 +18,10 @@ public class Client {
 		try {
 			/* socket: interface that allows client and server to communicate with each other */
 			/* first run server then run the client */
-			Socket connection = new Socket("altair", PORT); // takes ip and port
+			Socket connection = new Socket("localhost", PORT); // takes ip and port
 			
-			InputHandler inputHandler = new InputHandler(args[0], connection);
-			OutputHandler outputHandler = new OutputHandler(args[0], connection);
-
-			inputHandler.start();
-			outputHandler.start();
+			Handler handler = new Handler(args[0], connection);
+			handler.start();
 
 			while(running){
 
