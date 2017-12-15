@@ -56,8 +56,8 @@ public class Ref<I, O> implements AtomicModel<I, O> {
 			for (AtomicModel player : team.getInputs()){
 				if (Math.random() < .05){
 					myBall.steal = true;
-					BigDecimal rand = new BigDecimal("3.5");
-					Time newTime = new Time(currentTime.getReal().add(rand), 0);
+					BigDecimal timeUntilSteal = new BigDecimal("3.5");
+					Time newTime = new Time(currentTime.getReal().add(timeUntilSteal), 0);
 					Event<AtomicModel> event = Event.builder(newTime, "deltaExternal", player, lambda()).build();
 					scheduler.put(event);
 				}

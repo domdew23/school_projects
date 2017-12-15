@@ -44,8 +44,11 @@ public class Handler extends Thread {
 	}
 
 	private void recieve() throws IOException, ClassNotFoundException {
-		if ((chunk = (Chunk) in.readObject()) != null) Control.allChunks[id] = chunk;
-		System.out.println("Recieved: " +  Control.allChunks[id]);
+		Chunk newChunk = null;
+		if ((newChunk = (Chunk) in.readObject()) != null) {
+			Control.allChunks[id] = newChunk;
+			System.out.println("Recieved: " +  Control.allChunks[id]);
+		}
 	}
 
 	public void updateChunk(Chunk chunk){

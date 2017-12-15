@@ -11,6 +11,7 @@ public class Handler extends Thread {
 	ObjectInputStream in; 
 	ObjectOutputStream out;
 	Chunk chunk;
+	Chunk newChunk;
 	Jacobi jacobi;
 	int step;
 
@@ -44,10 +45,11 @@ public class Handler extends Thread {
 		} else {
 			jacobi.update(chunk);
 		}
-		chunk.elements = jacobi.invoke();
+		newChunk = new Chunk();
+		newChunk.setElements(jacobi.invoke());
 		jacobi.reinitialize();
 
-		System.out.println("Client " + clientId + " after computations\n" + chunk);
+		System.out.println("Client " + clientId + " after computations\n" + newChunk);
 	}
 
 	private void print(Chunk c){
@@ -69,7 +71,7 @@ public class Handler extends Thread {
 	}
 
 	private void send() throws IOException {
-		if (chunk != null) out.writeObject(chunk);
+		if (chunk != null) out.writeObject(newChunk);
 		out.flush();
 	}
 }

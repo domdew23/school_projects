@@ -36,7 +36,6 @@ public class Server {
 
 			while (true){
 				while(synchPoint.getArrivedParties() != Settings.CLIENTS){
-					//try {Thread.sleep(5000);}catch(InterruptedException e){}
 				}
 				Control.update();
 				for (int i = 0; i < clients.length; i++){
@@ -44,7 +43,6 @@ public class Server {
 				}
 				System.out.println("Advancing to Phase: " + (synchPoint.getPhase() + 1));
 				synchPoint.arriveAndAwaitAdvance();
-				//try {Thread.sleep(50000);}catch(InterruptedException e){}
 			}
 			//listener.close();
 		} catch (IOException e){
