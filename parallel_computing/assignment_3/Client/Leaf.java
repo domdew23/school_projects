@@ -17,24 +17,29 @@ public class Leaf extends Tree {
 		this.steps = 0;
 	}
 
-	public void compute(){
-		boolean AtoB = (steps++ % 2) == 0;
-		Region[][] a = (AtoB) ? A : B;
-		Region[][] b = (AtoB) ? B : A;
+	public Region[][] compute(){
+		Region[][] a = A;
+		Region[][] b = B;
 		double md = 0.0;
 
 		for (int x = loCol; x < hiCol; x++){
 			for (int y = loRow; y < hiRow; y++){
-				[y][x] = a[y][x].compute();
-				
+				b[y][x] = a[y][x].compute();
+								
 				double diff = b[y][x].getTemp() - a[y][x].getTemp();
 				md = Math.max(md, Math.abs(diff));
 			}
 		}
 		//System.out.println("md: " + md);
-		Control.addPart(b);
-		Control.updateNeighbors(b);
+		//Control.addPart(b);
+		//Control.updateNeighbors(b);
 		maxDiff = md;
+		return b;
+	}
+
+	public void update(Chunk chunk){
+		this.A = chunk.elements;
+		this.B = new Region[Settings.CHUNK_SIZE][Settings.WIDTH];
 	}
 
 	public String toString(){

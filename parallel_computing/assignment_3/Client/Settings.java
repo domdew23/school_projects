@@ -3,8 +3,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Settings {
-	public static double C1, C2, C3, S, T, MAX;
-	public static int WIDTH, HEIGHT, SCALE, THRESHOLD, MAX_STEPS, THRESVAL, CLIENTS, CHUNK_SIZE;
+	public static double C1=0, C2=0, C3=0, S=0, T=0, MAX=0;
+	public static int WIDTH=4, HEIGHT, SCALE=2, THRESHOLD=4, MAX_STEPS, THRESVAL, CLIENTS=1, CHUNK_SIZE;
 	public static double[] METALS = new double[3];
 	public static boolean RUNNING;
 	private File file = null;
@@ -64,7 +64,7 @@ public class Settings {
 		THRESHOLD = (WIDTH * HEIGHT)/THRESVAL;
 		MAX_STEPS = Integer.MAX_VALUE;
 		MAX = Math.max(S,T);
-		CLIENTS = 2;
+		CLIENTS = 3;
 		CHUNK_SIZE = HEIGHT/CLIENTS;
 		RUNNING = true;	
 	}

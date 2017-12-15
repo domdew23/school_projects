@@ -11,17 +11,14 @@ public class Region implements Serializable {
 	private Region topNeighbor;
 	private Region rightNeighbor;
 	private Region bottomNeighbor;
-	public boolean hasTopNeighbor;
-	public boolean hasBottomNeighbor;
 	private Region[] neighbors;
 	private int neighborCount;
 	public double red,green,blue;
 
+
 	public Region(int x, int y){
 		this.percentages = new double[3];
 		this.neighbors = new Region[4];
-		this.hasTopNeighbor = false;
-		this.hasBottomNeighbor = false;
 		init();
 		this.x = x;
 		this.y = y;
@@ -70,6 +67,7 @@ public class Region implements Serializable {
 		}
 
 		Region retVal = new Region(this.x, this.y);
+		retVal.setNeighbors(this.leftNeighbor, this.topNeighbor, this.rightNeighbor, this.bottomNeighbor);
 		retVal.setTemp(total);
 		retVal.calcRGB();
 		//if (x == Settings.WIDTH/2 && y == Settings.HEIGHT/2) System.out.println(retVal.temp + " - " + retVal.x + ", " + retVal.y);
@@ -102,16 +100,15 @@ public class Region implements Serializable {
 		}
 		if (topNeighbor != null){
 			neighborCount++;
-			hasTopNeighbor = true;
 		}
 		if (rightNeighbor != null){
 			neighborCount++;
 		}
 		if (bottomNeighbor != null){
-			hasBottomNeighbor = true ;
 			neighborCount++;
 		}
 	}
+
 
 	public void calcRGB(){	
     	if (temp > Math.log(Settings.MAX) * 10){ 
@@ -203,8 +200,8 @@ public class Region implements Serializable {
 	}
 
 	public String toString(){
-		if (1/1 == 1){
-			return "x: " + x + " | y: " + y;
+		if (1/2 == 1){
+			return "x: " + x + " | y: " + y + " " + rgb();
 		}
 		
 		int leftX=-1,leftY=-1,topX=-1,topY=-1,rightX=-1,rightY=-1,bottomX=-1,bottomY=-1;

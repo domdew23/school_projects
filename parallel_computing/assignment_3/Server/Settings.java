@@ -64,8 +64,8 @@ public class Settings {
 		THRESHOLD = (WIDTH * HEIGHT)/THRESVAL;
 		MAX_STEPS = Integer.MAX_VALUE;
 		MAX = Math.max(S,T);
-		CLIENTS = 2;
+		CLIENTS = 3;
 		CHUNK_SIZE = HEIGHT/CLIENTS;
-		RUNNING = true;	
+		RUNNING = true;
 	}
 }

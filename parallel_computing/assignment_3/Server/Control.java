@@ -1,38 +1,42 @@
 public class Control {
 	public static Region[][] A;
-	public static Region[][] B;
 	public static Region[][] updatedAlloy;
-	public static double C1;
-	public static double C2;
-	public static double C3;
+	public static Chunk[] allChunks;
 	
 	public Control(){
 		this.A = initAlloy();
-
-		//this.B = new Region[Settings.HEIGHT][Settings.WIDTH];
-		//this.updatedAlloy = A;
+		this.updatedAlloy = A;
 	}
 
-	public Region[][][] split(Region[][] array){		
-		Chunk[] allChunks = new Chunk[Settings.CLIENTS];
+	public Chunk[] split(Region[][] array){
+		Chunk[] tmpAllChunks = new Chunk[Settings.CLIENTS];
 		int offset = 0;
 
 		for (int i = 0; i < Settings.CLIENTS; i++,offset+=Settings.CHUNK_SIZE){
-			Chunk chunk = new Chunk();
 			Region[][] tmp = new Region[Settings.CHUNK_SIZE][Settings.WIDTH];
+			Chunk chunk = new Chunk();
 			for (int y = offset, z = 0; z < Settings.CHUNK_SIZE; y++,z++){
 				for (int x = 0; x < Settings.WIDTH; x++){	
 					tmp[z][x] = array[y][x];
 				}
 			}
-			//allChunks[i] = chunk;
-			boolean hasTop = (i - 1 > 0) ? true : false;
-			boolean hasBottom = (i + 1 < Settings.HEIGHT) ? true : false;
-
-			chunk.setChunk(tmp, hasTop, hasBottom);
-			allChunks[i] = chunk;
+			chunk.setElements(tmp);
+			tmpAllChunks[i] = chunk;
 		}
-		return allChunks;	
+		updateEdges(tmpAllChunks);
+		return tmpAllChunks;	
+	}
+
+	public static void updateEdges(Chunk[] chunks){
+		boolean topSet = false, bottomSet = false;
+		int offset = 0;
+
+		for (int i = 0; i < chunks.length; i++){
+			Region[] top = (i - 1 >= 0) ? chunks[i-1].elements[Settings.CHUNK_SIZE-1] : null;
+			Region[] bottom = (i + 1 < Settings.CLIENTS) ? chunks[i+1].elements[0] : null;
+		
+			chunks[i].setEdges(top, bottom);
+		}
 	}
 
 	private Region[][] initAlloy(){
@@ -58,9 +62,8 @@ public class Control {
 	}
 
 	public static void updateNeighbors(Region[][] alloy){
-		
-		for (int y = 0; y < Settings.HEIGHT; y++){
-			for (int x = 0; x < Settings.WIDTH; x++){
+		for (int y = 0; y < alloy.length; y++){
+			for (int x = 0; x < alloy[y].length; x++){
 				if (alloy[y][x] == null){
 					continue;
 				}
@@ -83,14 +86,36 @@ public class Control {
 	}
 
 	public static void addPart(Region[][] part){
-		double m = 0.0;
-		for (int y = 0; y < Settings.HEIGHT;y++){
-			for (int x = 0; x < Settings.WIDTH; x++){
+		for (int y = 0; y < part.length; y++){
+			for (int x = 0; x < part[y].length; x++){
 				if (part[y][x] != null){
-					updatedAlloy[y][x] = part[y][x];
+					int newY = part[y][x].getY();
+					int newX = part[y][x].getX(); 
+					updatedAlloy[newY][newX] = part[y][x];
 				}
 			}
 		}
+	}
+
+	public static void update(){
+		for (int i = 0; i < allChunks.length; i++){
+			addPart(allChunks[i].elements);
+		}
+		updateNeighbors(updatedAlloy);
+
+		for (int i = 0,offset=0; i < allChunks.length; i++,offset+=Settings.CHUNK_SIZE){	
+			for (int y = offset, z = 0; z < Settings.CHUNK_SIZE; y++,z++){
+				for (int x = 0; x < Settings.WIDTH; x++){	
+					allChunks[i].elements[z][x] = updatedAlloy[y][x];
+				}
+			}
+		}
+
+		updateEdges(allChunks);
+		for (int i = 0; i < allChunks.length; i++){
+			//System.out.println("CHUNK " + i + allChunks[i]);
+		}
+		//if (1/1 == 1) System.exit(0);
 	}
 
 	public static Region[][] getUpdatedAlloy(){

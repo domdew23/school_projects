@@ -44,6 +44,7 @@ public class Server {
 					chunk[z][x] = array[y][x];
 				}
 			}
+			
 			allChunks[i] = chunk;
 		}
 
